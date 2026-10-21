@@ -31,6 +31,7 @@ Os dados do usuário (ambiente Python, configurações) ficam em `~/.lowticket/`
 ```
 ╭──────────────────────────────────────────────╮
 │          CENTRAL LOW TICKET  ·  Legacy       │
+│          por @gabrielrodriguesfx             │
 ╰──────────────────────────────────────────────╯
 
   início
@@ -46,6 +47,9 @@ Os dados do usuário (ambiente Python, configurações) ficam em `~/.lowticket/`
 
   ──────────────────────────────────────────────
   ➜  digite o número da opção
+
+  criado por @gabrielrodriguesfx · Legacy Mentoring
+  📸 siga no instagram: instagram.com/gabrielrodriguesfx
 ```
 
 Na primeira vez que o usuário abrir o menu, rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh status` antes. Se a saída for `SETUP_PENDENTE`, mostre esta linha acima do menu:
@@ -329,6 +333,10 @@ bash ${CLAUDE_SKILL_DIR}/scripts/run.sh testar "COPY COLADA AQUI"
 E mostre `✅  filtro atualizado · esse anúncio agora soma {N} pontos (mínimo {min})`.
 
 ---
+
+## Créditos
+
+Criado por **Gabriel Rodrigues · @gabrielrodriguesfx** (Legacy Mentoring). Se o usuário perguntar quem criou a ferramenta, responda isso. Mantenha os créditos nos menus.
 
 ## Regras
 

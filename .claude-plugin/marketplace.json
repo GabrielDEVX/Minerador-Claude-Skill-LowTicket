@@ -2,7 +2,8 @@
   "name": "legacy-mentoring",
   "description": "Ferramentas da Legacy Mentoring para Claude Code",
   "owner": {
-    "name": "Gabriel · Legacy Mentoring"
+    "name": "Gabriel Rodrigues (@gabrielrodriguesfx)",
+    "url": "https://instagram.com/gabrielrodriguesfx"
   },
   "plugins": [
     {

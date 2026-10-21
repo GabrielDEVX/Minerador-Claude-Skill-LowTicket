@@ -1,5 +1,11 @@
 # Legacy Mentoring · Central Low Ticket
 
+Criado por **Gabriel Rodrigues** · [@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)
+
+[![Siga no Instagram](https://img.shields.io/badge/Siga%20no%20Instagram-@gabrielrodriguesfx-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/gabrielrodriguesfx)
+
+> 📸 Dicas de low ticket, mineração de ofertas e tráfego pago todo dia no Instagram: **[@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)**. Me segue lá e me marca quando achar uma oferta boa com a ferramenta!
+
 Plugin para o Claude Code que minera ofertas low ticket escaladas na Biblioteca de Anúncios da Meta e no Reclame Aqui. Ele roda em segundo plano, sem abrir o seu navegador.
 
 ## Antes de começar
@@ -42,6 +48,9 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
 
+**1.1.1**
+- Créditos ao criador nos menus.
+
 **1.1.0**
 - Filtro low ticket: ignora Alibaba, Shopee, Amazon, bancos, marcas e lojas de produto físico.
 - Reconhece a estrutura da copy de infoproduto (gancho de dor, "+100 …", "Ideal para:" com lista de emojis, CTA "saiba mais / veja por dentro", preço âncora).
@@ -64,3 +73,13 @@ As suas configurações (nichos, palavras-chave, faixa de preço) ficam em `~/.l
 | `PYTHON_FALTANDO` | Rode `xcode-select --install`, conclua e rode o setup de novo |
 | `anuncios_lidos=0` ou `BLOQUEIO` | Espere alguns minutos e tente de novo, com menos palavras por vez |
 | `SETUP_PENDENTE` | Rode a opção 1 do menu |
+
+---
+
+## Me siga
+
+Gostou da ferramenta? Me segue no Instagram para receber as atualizações, novas skills e conteúdo de low ticket:
+
+👉 **[instagram.com/gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)**
+
+Feito por **Gabriel Rodrigues** · [@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx) · Legacy Mentoring

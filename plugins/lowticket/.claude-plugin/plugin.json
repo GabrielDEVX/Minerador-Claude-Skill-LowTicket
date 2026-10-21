@@ -1,8 +1,10 @@
 {
   "name": "lowticket",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Central de operação low ticket: mineração de ofertas escaladas na Biblioteca de Anúncios da Meta e no Reclame Aqui, com menu numerado.",
   "author": {
-    "name": "Gabriel · Legacy Mentoring"
-  }
+    "name": "Gabriel Rodrigues (@gabrielrodriguesfx)",
+    "url": "https://instagram.com/gabrielrodriguesfx"
+  },
+  "homepage": "https://github.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket"
 }
