@@ -151,13 +151,23 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 - Menus novos, mais organizados.
 - Configurações (7) › 12: ensine o filtro colando a legenda de um anúncio.
 
-## Atualizar
+## Como atualizar (importante)
+
+Esta ferramenta recebe melhorias com frequência. **As atualizações não são automáticas** — cada pessoa precisa puxar a versão nova no seu próprio computador, com 1 comando.
+
+**Para atualizar**, abra o Terminal (Mac/Linux) ou o PowerShell/Git Bash (Windows) e rode:
 
 ```bash
 claude plugin marketplace update legacy-mentoring
 ```
 
-As suas configurações (nichos, palavras-chave, faixa de preço) ficam em `~/.lowticket/` e não se perdem nas atualizações.
+Pronto. Depois, se a atualização mexeu no ambiente, abra o Claude Code, digite `/escala` e rode a opção **1 (Setup)** uma vez.
+
+**Como saber que saiu versão nova?** Sempre que você abrir o menu com `/escala`, a ferramenta avisa no topo se existe uma versão mais recente e mostra o comando de atualizar. Você também pode conferir a versão instalada no rodapé do menu.
+
+**Suas configurações não se perdem:** nichos, palavras-chave, faixa de preço, filtros que você ensinou e favoritos ficam em `~/.lowticket/` e continuam iguais depois de atualizar.
+
+> Dica para quem distribui a ferramenta: avise seu grupo quando sair uma versão nova. Quem não rodar o comando de atualizar continua na versão antiga (funcionando, mas sem as novidades).
 
 ## Problemas comuns
 
