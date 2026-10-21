@@ -1,6 +1,6 @@
 {
   "name": "escala",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Central Escala: minera ofertas escaladas de low ticket no Brasil (Biblioteca de Anúncios, Reclame Aqui e urlscan.io/UTMify) e de nutra por mecanismo em qualquer país e idioma. Comando: /escala.",
   "author": {
     "name": "Gabriel Rodrigues (@gabrielrodriguesfx)",

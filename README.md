@@ -78,13 +78,16 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
 
+**1.5.1**
+- Menu: removida a opção Meta Ads; Configurações agora é a opção 7.
+
 **1.5.0**
 - O comando agora é **`/escala`** (o nome completo do plugin é `/escala:escala`; o setup cria o atalho `/escala`).
 - **Quem tinha a versão anterior:** rode `claude plugin uninstall lowticket@legacy-mentoring`, depois `claude plugin marketplace update legacy-mentoring` e `claude plugin install escala@legacy-mentoring`. Suas configurações continuam salvas.
 
 **1.4.0**
 - Novo método **urlscan.io**: busca páginas que carregam a UTMify, agrupa por domínio, mostra título, data do último scan, plataforma e o print do urlscan, com o link pronto para a Biblioteca de Anúncios.
-- Configurações › 15 e 16: chave grátis do urlscan.io (opcional, aumenta o limite) e rastreadores buscados.
+- Configurações (7) › 15 e 16: chave grátis do urlscan.io (opcional, aumenta o limite) e rastreadores buscados.
 - Correção: o status só fica PRONTO quando o navegador foi realmente baixado. Se você já tinha feito o setup antes, rode a opção 1 de novo uma vez.
 
 **1.3.0**
@@ -105,7 +108,7 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 - Filtro low ticket: ignora Alibaba, Shopee, Amazon, bancos, marcas e lojas de produto físico.
 - Reconhece a estrutura da copy de infoproduto (gancho de dor, "+100 …", "Ideal para:" com lista de emojis, CTA "saiba mais / veja por dentro", preço âncora).
 - Menus novos, mais organizados.
-- Configurações › 12: ensine o filtro colando a legenda de um anúncio.
+- Configurações (7) › 12: ensine o filtro colando a legenda de um anúncio.
 
 ## Atualizar
 
@@ -123,7 +126,7 @@ As suas configurações (nichos, palavras-chave, faixa de preço) ficam em `~/.l
 | `PYTHON_FALTANDO` | Rode `xcode-select --install`, conclua e rode o setup de novo |
 | `anuncios_lidos=0` ou `BLOQUEIO` | Espere alguns minutos e tente de novo, com menos palavras por vez |
 | `SETUP_PENDENTE` | Rode a opção 1 do menu |
-| `LIMITE` (urlscan.io) | Espere alguns minutos ou cadastre uma chave grátis do urlscan.io (Configurações › 15) |
+| `LIMITE` (urlscan.io) | Espere alguns minutos ou cadastre uma chave grátis do urlscan.io (Configurações (7) › 15) |
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: escala
 allowed-tools: Bash(bash ${CLAUDE_SKILL_DIR}/scripts/run.sh *)
-description: Central de operação low ticket e nutra com menu numerado (setup, minerar ofertas escaladas na Biblioteca de Anúncios da Meta ou no Reclame Aqui, minerar nutra por mecanismo em qualquer país e idioma, analisar produto, gerar entregável, modelar funil, criativos, Meta Ads, configurações). Use quando o usuário digitar /escala, pedir o menu, ou pedir para minerar ofertas, packs, kits, infoprodutos baratos (9,90, 19,90) ou ofertas de nutra (truque do cavalo, truque da gelatina etc.) em países como EUA, Alemanha e França.
+description: Central de operação low ticket e nutra com menu numerado (setup, minerar ofertas escaladas na Biblioteca de Anúncios da Meta ou no Reclame Aqui, minerar nutra por mecanismo em qualquer país e idioma, analisar produto, gerar entregável, modelar funil, criativos, configurações). Use quando o usuário digitar /escala, pedir o menu, ou pedir para minerar ofertas, packs, kits, infoprodutos baratos (9,90, 19,90) ou ofertas de nutra (truque do cavalo, truque da gelatina etc.) em países como EUA, Alemanha e França.
 ---
 
 # Central Low Ticket
@@ -47,8 +47,7 @@ Os dados do usuário (ambiente Python, configurações) ficam em `~/.lowticket/`
   [4]  📦  Gerar entregável
   [5]  🧭  Modelar funil
   [6]  🎨  Gerar criativos
-  [7]  📈  Meta Ads
-  [8]  🛠️   Configurações
+  [7]  🛠️   Configurações
 
   ──────────────────────────────────────────────
   ➜  digite o número da opção
@@ -280,7 +279,7 @@ Depois:
   [m]  ↩   menu principal
 ```
 
-Se o usuário escolher `e`, siga a seção **Ensinar o filtro** (opção 8 › 12).
+Se o usuário escolher `e`, siga a seção **Ensinar o filtro** (opção 7 › 12).
 
 ### Método urlscan.io
 
@@ -542,9 +541,9 @@ E o bloco final:
 
 ---
 
-## 3 a 7 · Em construção
+## 3 a 6 · Em construção
 
-Para as opções 3, 4, 5, 6 e 7, mostre:
+Para as opções 3, 4, 5 e 6, mostre:
 
 ```
   🚧  {NOME DA OPÇÃO}
@@ -556,7 +555,7 @@ Para as opções 3, 4, 5, 6 e 7, mostre:
 
 ---
 
-## 8 · Configurações
+## 7 · Configurações
 
 Rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` e mostre com os valores do campo `config`:
 
