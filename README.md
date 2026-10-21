@@ -4,9 +4,9 @@ Criado por **Gabriel Rodrigues** · [@gabrielrodriguesfx](https://instagram.com/
 
 [![Siga no Instagram](https://img.shields.io/badge/Siga%20no%20Instagram-@gabrielrodriguesfx-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/gabrielrodriguesfx)
 
-![Central Escala no Claude Code](instalar.gif)
+![Passo a passo de instalação](instalar.gif)
 
-> Depois de instalada, é só digitar `/escala` dentro do Claude Code para abrir a Central. A instalação está logo abaixo.
+> Passo a passo: adicionar o catálogo, instalar a skill e abrir com `/escala` no Claude Code. Os comandos estão logo abaixo para copiar.
 
 ## Sobre mim
 
