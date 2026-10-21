@@ -1,7 +1,7 @@
 ---
-name: lowticket
+name: escala
 allowed-tools: Bash(bash ${CLAUDE_SKILL_DIR}/scripts/run.sh *)
-description: Central de operação low ticket e nutra com menu numerado (setup, minerar ofertas escaladas na Biblioteca de Anúncios da Meta ou no Reclame Aqui, minerar nutra por mecanismo em qualquer país e idioma, analisar produto, gerar entregável, modelar funil, criativos, Meta Ads, configurações). Use quando o usuário digitar /lowticket, pedir o menu, ou pedir para minerar ofertas, packs, kits, infoprodutos baratos (9,90, 19,90) ou ofertas de nutra (truque do cavalo, truque da gelatina etc.) em países como EUA, Alemanha e França.
+description: Central de operação low ticket e nutra com menu numerado (setup, minerar ofertas escaladas na Biblioteca de Anúncios da Meta ou no Reclame Aqui, minerar nutra por mecanismo em qualquer país e idioma, analisar produto, gerar entregável, modelar funil, criativos, Meta Ads, configurações). Use quando o usuário digitar /escala, pedir o menu, ou pedir para minerar ofertas, packs, kits, infoprodutos baratos (9,90, 19,90) ou ofertas de nutra (truque do cavalo, truque da gelatina etc.) em países como EUA, Alemanha e França.
 ---
 
 # Central Low Ticket
@@ -35,7 +35,7 @@ Os dados do usuário (ambiente Python, configurações) ficam em `~/.lowticket/`
 
 ```
 ╭──────────────────────────────────────────────╮
-│          CENTRAL LOW TICKET  ·  Legacy       │
+│          CENTRAL ESCALA  ·  Legacy           │
 │          por @gabrielrodriguesfx             │
 ╰──────────────────────────────────────────────╯
 
@@ -81,6 +81,7 @@ Interprete a saída e responda com um destes blocos:
       Navegador ......... ok
       Biblioteca Meta ... ok ({N} anúncios lidos no teste)
   ```
+- `ATALHO_OK` → avise em uma linha que, a partir da próxima conversa, basta digitar `/escala`. `ATALHO_EXISTE` → avise que o atalho não foi criado porque já existe outra skill com esse nome, e que `/escala:escala` continua funcionando.
 - `PYTHON_FALTANDO` → peça para rodar `xcode-select --install`, aceitar a instalação e escolher 1 de novo.
 - `anuncios_lidos=0` ou `bloqueado=True` → a Meta não entregou anúncios ao navegador invisível. Sugira esperar alguns minutos e rodar de novo; se persistir, rode com `--visivel` para ver a tela: `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh meta --diagnostico --visivel`.
 - Qualquer `ERRO_*` → mostre a mensagem e a linha relevante.

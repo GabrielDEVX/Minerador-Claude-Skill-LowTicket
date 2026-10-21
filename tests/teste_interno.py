@@ -19,7 +19,7 @@ from contextlib import redirect_stdout, redirect_stderr
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
-SCRIPTS = RAIZ / "plugins/lowticket/skills/lowticket/scripts"
+SCRIPTS = RAIZ / "plugins/escala/skills/escala/scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import comum  # noqa: E402

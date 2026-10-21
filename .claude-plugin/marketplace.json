@@ -7,9 +7,9 @@
   },
   "plugins": [
     {
-      "name": "lowticket",
-      "source": "./plugins/lowticket",
-      "description": "Central Low Ticket + Nutra: minera ofertas escaladas de infoproduto e de nutra (qualquer país e idioma) na Biblioteca de Anúncios"
+      "name": "escala",
+      "source": "./plugins/escala",
+      "description": "Central Escala: minera ofertas escaladas de low ticket e nutra (qualquer país e idioma). Comando: /escala"
     }
   ]
 }

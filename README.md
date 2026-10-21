@@ -1,4 +1,4 @@
-# Legacy Mentoring · Central Low Ticket + Nutra
+# Legacy Mentoring · Central Escala (Low Ticket + Nutra)
 
 Criado por **Gabriel Rodrigues** · [@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)
 
@@ -54,7 +54,7 @@ No Terminal:
 
 ```bash
 claude plugin marketplace add GabrielDEVX/Minerador-Claude-Skill-LowTicket
-claude plugin install lowticket@legacy-mentoring
+claude plugin install escala@legacy-mentoring
 ```
 
 ## Usar
@@ -63,13 +63,13 @@ claude plugin install lowticket@legacy-mentoring
 cd ~ && claude
 ```
 
-Dentro do Claude Code, digite:
+Dentro do Claude Code, na primeira vez, digite:
 
 ```
-/lowticket:lowticket
+/escala:escala
 ```
 
-1. Na primeira vez, escolha **1 (setup e diagnóstico)**. Leva alguns minutos.
+1. Na primeira vez, digite `/escala:escala` e escolha **1 (setup e diagnóstico)**. Leva alguns minutos e cria o atalho `/escala`. Depois disso, é só digitar `/escala`.
 2. Depois, **2 (minerar ofertas escaladas)**:
    - **Low ticket**: escolha o método (Reclame Aqui, Biblioteca de Anúncios ou urlscan.io), o nicho e a palavra-chave.
    - **Nutra**: escolha o país, a categoria e o mecanismo.
@@ -77,6 +77,10 @@ Dentro do Claude Code, digite:
 Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
+
+**1.5.0**
+- O comando agora é **`/escala`** (o nome completo do plugin é `/escala:escala`; o setup cria o atalho `/escala`).
+- **Quem tinha a versão anterior:** rode `claude plugin uninstall lowticket@legacy-mentoring`, depois `claude plugin marketplace update legacy-mentoring` e `claude plugin install escala@legacy-mentoring`. Suas configurações continuam salvas.
 
 **1.4.0**
 - Novo método **urlscan.io**: busca páginas que carregam a UTMify, agrupa por domínio, mostra título, data do último scan, plataforma e o print do urlscan, com o link pronto para a Biblioteca de Anúncios.
