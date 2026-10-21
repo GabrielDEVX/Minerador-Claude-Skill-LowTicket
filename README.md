@@ -10,9 +10,9 @@ Criado por **Gabriel Rodrigues** · [@gabrielrodriguesfx](https://instagram.com/
 
 Sou o **Gabriel Rodrigues** ([@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)), fundador da **Legacy Mentoring**.
 
-Hoje faturo **mais de 1 milhão de euros por mês** vendendo nutra na Europa. Mas eu sei bem quais são os gargalos de quem está começando: não saber qual oferta escolher, perder tempo minerando na mão e entrar em produto que não está vendendo.
+Hoje faturo **mais de 1 milhão de euros por mês** vendendo nutra na Europa, mas sei bem quais são os gargalos de quem está começando.
 
-Por isso resolvi ajudar com o que eu sei. Esta ferramenta é uma parte do processo que uso para encontrar ofertas validadas, colocada à disposição de quem está dando os primeiros passos.
+Por isso resolvi ajudar com o meu conhecimento, e esta ferramenta é uma das formas de fazer isso.
 
 ## O que é
 
