@@ -4,7 +4,7 @@ Criado por **Gabriel Rodrigues** · [@gabrielrodriguesfx](https://instagram.com/
 
 [![Siga no Instagram](https://img.shields.io/badge/Siga%20no%20Instagram-@gabrielrodriguesfx-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/gabrielrodriguesfx)
 
-> 📸 Dicas de low ticket, mineração de ofertas e tráfego pago todo dia no Instagram: **[@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)**. Me segue lá e me marca quando achar uma oferta boa com a ferramenta!
+> 📸 Conteúdo de low ticket, mineração de ofertas e tráfego pago no Instagram: **[@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)**. Me segue lá e me marca quando achar uma oferta boa com a ferramenta!
 
 Plugin para o Claude Code que minera ofertas low ticket escaladas na Biblioteca de Anúncios da Meta e no Reclame Aqui. Ele roda em segundo plano, sem abrir o seu navegador.
 
