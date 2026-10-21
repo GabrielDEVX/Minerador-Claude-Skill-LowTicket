@@ -7,5 +7,9 @@
   "preco_max": 47,
   "paginas_para_contar": 15,
   "pausa_rolagem_seg": 2.5,
-  "pasta_saida": "~/mineracao"
+  "pasta_saida": "~/mineracao",
+  "filtro_lowticket": true,
+  "min_score_lowticket": 5,
+  "max_curtidas_pagina": 300000,
+  "max_ativos_pagina": 800
 }

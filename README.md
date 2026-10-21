@@ -40,6 +40,14 @@ Dentro do Claude Code, digite:
 
 Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
+## Novidades
+
+**1.1.0**
+- Filtro low ticket: ignora Alibaba, Shopee, Amazon, bancos, marcas e lojas de produto físico.
+- Reconhece a estrutura da copy de infoproduto (gancho de dor, "+100 …", "Ideal para:" com lista de emojis, CTA "saiba mais / veja por dentro", preço âncora).
+- Menus novos, mais organizados.
+- Configurações › 12: ensine o filtro colando a legenda de um anúncio.
+
 ## Atualizar
 
 ```bash

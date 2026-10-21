@@ -14,18 +14,140 @@ def pasta_config():
     """Copia os arquivos padrão para ~/.lowticket/config na primeira vez e usa de lá."""
     destino = DADOS / "config"
     destino.mkdir(parents=True, exist_ok=True)
-    for nome in ("config.json", "nichos.json"):
+    for nome in ("config.json", "nichos.json", "filtros.json"):
         if not (destino / nome).exists():
             (destino / nome).write_text((RAIZ / "config" / nome).read_text(encoding="utf-8"), encoding="utf-8")
     return destino
 
 
+def _ler(caminho):
+    return json.loads(caminho.read_text(encoding="utf-8"))
+
+
 def carregar_config():
     pasta = pasta_config()
-    cfg = json.loads((pasta / "config.json").read_text(encoding="utf-8"))
-    nichos = json.loads((pasta / "nichos.json").read_text(encoding="utf-8"))
+    cfg = _ler(RAIZ / "config" / "config.json")        # padrões novos de cada versão
+    cfg.update(_ler(pasta / "config.json"))             # valores que o usuário mudou
+    nichos = _ler(pasta / "nichos.json")
     cfg["pasta_saida"] = os.path.expanduser(cfg.get("pasta_saida", "~/mineracao"))
     return cfg, nichos
+
+
+def carregar_filtros():
+    """Junta os filtros padrão da versão instalada com o que o usuário adicionou (nada se perde)."""
+    padrao = _ler(RAIZ / "config" / "filtros.json")
+    usuario = _ler(pasta_config() / "filtros.json")
+    removidos = {_sem_acento(x) for x in usuario.get("removidos", [])}
+    out = {}
+    for chave in ("termos_infoproduto", "termos_ecommerce", "dominios_lowticket", "lista_negra"):
+        vistos, lista = set(), []
+        for item in padrao.get(chave, []) + usuario.get(chave, []):
+            k = _sem_acento(item)
+            if k not in vistos and k not in removidos:
+                vistos.add(k)
+                lista.append(item)
+        out[chave] = lista
+    por_nome = {p["nome"]: p for p in padrao.get("padroes_copy", [])}
+    por_nome.update({p["nome"]: p for p in usuario.get("padroes_copy", [])})
+    out["padroes_copy"] = [p for n, p in por_nome.items() if _sem_acento(n) not in removidos]
+    return out
+
+
+# ---------- filtro low ticket ----------
+def _sem_acento(s):
+    import unicodedata
+    return "".join(c for c in unicodedata.normalize("NFD", (s or "").lower()) if unicodedata.category(c) != "Mn")
+
+
+def _dominio_base(link):
+    from urllib.parse import urlparse
+    host = urlparse(link or "").netloc.lower().split(":")[0]
+    partes = [p for p in host.split(".") if p and p != "www"]
+    # remove sufixos tipo com.br / net / org
+    sufixos = {"com", "br", "net", "org", "io", "app", "co", "site", "online", "store", "shop", "info", "biz"}
+    while len(partes) > 1 and partes[-1] in sufixos:
+        partes.pop()
+    # partes agora = [subdominio..., dominio]; ex.: nutricao.guiapractico.com -> ['nutricao', 'guiapractico']
+    return host, (partes[-1] if partes else ""), len(partes)
+
+
+NOME_PESSOA_RE = re.compile(r"^[A-ZÀ-Ú][a-zà-ú]+(?:\s+(?:d[aeo]s?\s+)?[A-ZÀ-Ú][a-zà-ú]+){1,3}$")
+SUFIXO_EMPRESA = re.compile(r"\b(ltda|s\.?a\.?|eireli|me|group|grupo|brasil|oficial|store|loja|shop|imoveis|imóveis|"
+                            r"bank|banco|seguros|motors|veiculos|veículos|farma|clinica|clínica|hospital)\b", re.I)
+
+
+_REGEX_CACHE = {}
+
+
+def _regex(padrao):
+    if padrao not in _REGEX_CACHE:
+        try:
+            import unicodedata  # tira acentos sem mudar maiúsculas (\W, \S, \D precisam continuar maiúsculos)
+            limpo = "".join(c for c in unicodedata.normalize("NFD", padrao) if unicodedata.category(c) != "Mn")
+            _REGEX_CACHE[padrao] = re.compile(limpo, re.M | re.I)
+        except re.error:
+            _REGEX_CACHE[padrao] = re.compile(r"(?!x)x")   # padrão inválido nunca casa
+    return _REGEX_CACHE[padrao]
+
+
+def classificar_lowticket(ad, filtros, cfg):
+    """Devolve (pontos, motivo_descartado_ou_vazio, sinais)."""
+    pagina = ad.get("pagina") or ""
+    pag_norm = _sem_acento(pagina).strip()
+    host, base, n_labels = _dominio_base(ad.get("link"))
+    texto = _sem_acento(" ".join([ad.get("texto", ""), ad.get("titulo_link", "")]))
+
+    negra = {_sem_acento(b) for b in filtros["lista_negra"]}
+    negra_sem_espaco = {b.replace(" ", "").replace("-", "") for b in negra}
+    if base and base.replace("-", "") in negra_sem_espaco:
+        return 0, f"grande empresa ({host})", []
+    for b in negra:
+        if pag_norm == b or any(pag_norm == f"{b} {s}" for s in ("brasil", "br", "oficial", "store", "loja", "shop")):
+            return 0, f"grande empresa ({pagina})", []
+
+    curtidas = ad.get("curtidas") or 0
+    if curtidas and curtidas > cfg.get("max_curtidas_pagina", 300000):
+        return 0, f"página grande ({curtidas:,} curtidas)".replace(",", "."), []
+
+    pontos, sinais = 0, []
+    achados = [t for t in filtros["termos_infoproduto"] if _sem_acento(t) in texto]
+    if achados:
+        pontos += min(6, 2 * len(achados))
+        sinais.append("termos: " + ", ".join(achados[:4]))
+
+    ps = [p for p in precos(ad.get("texto", "") + " " + ad.get("titulo_link", ""))
+          if cfg["preco_min"] <= p <= cfg["preco_max"]]
+    if ps:
+        pontos += 3
+        sinais.append("preço low ticket")
+
+    if any(d in (ad.get("link") or "").lower() for d in filtros["dominios_lowticket"]):
+        pontos += 3
+        sinais.append("checkout/landing de infoproduto")
+    elif n_labels >= 2:
+        pontos += 1
+        sinais.append("subdomínio por produto")
+
+    if NOME_PESSOA_RE.match(pagina.strip()) and not SUFIXO_EMPRESA.search(pagina):
+        pontos += 1
+        sinais.append("página com nome de pessoa")
+
+    # estrutura da copy (gancho de dor, "+100 X", "ideal para:", lista com emoji, CTA...)
+    copy_txt = _sem_acento(ad.get("texto", ""))
+    padroes = [p for p in filtros.get("padroes_copy", []) if _regex(p["regex"]).search(copy_txt)]
+    if padroes:
+        pontos += min(8, sum(int(p.get("peso", 1)) for p in padroes))
+        sinais.append("copy: " + ", ".join(p["nome"] for p in padroes[:4]))
+
+    if _sem_acento(ad.get("cta", "")) in ("saiba mais", "ver detalhes", "comprar agora", "baixar", "obter oferta"):
+        pontos += 1
+
+    eco = [t for t in filtros["termos_ecommerce"] if _sem_acento(t) in texto]
+    if eco:
+        pontos -= 2 * len(eco)
+        sinais.append("e-commerce: " + ", ".join(eco[:3]))
+
+    return pontos, "", sinais
 
 
 # ---------- preços ----------
@@ -133,7 +255,10 @@ def normalizar_anuncio(d):
         "inicio_ts": d.get("start_date") or 0,
         "duplicados": int(d.get("collation_count") or 1),
         "link": link,
-        "texto": " ".join(p for p in partes if p).strip()[:600],
+        "texto": "\n".join(p for p in partes if p).strip()[:1500],
+        "titulo_link": " ".join(x for x in [snap.get("title") or "", snap.get("link_description") or ""] if x),
+        "curtidas": int(snap.get("page_like_count") or 0),
+        "cta": snap.get("cta_text") or next((c.get("cta_text") for c in cards if c.get("cta_text")), "") or "",
         "videos": videos,
         "formato": formato,
         "ativo": d.get("is_active", True),

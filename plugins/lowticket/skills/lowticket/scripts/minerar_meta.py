@@ -17,8 +17,8 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote, urlparse
 
-from comum import (UA, carregar_config, extrair_anuncios, extrair_total, fmt_preco,
-                   parse_html, parse_payload, precos, total_do_texto)
+from comum import (UA, carregar_config, carregar_filtros, classificar_lowticket, extrair_anuncios,
+                   extrair_total, fmt_preco, parse_html, parse_payload, precos, total_do_texto)
 
 BASE = "https://www.facebook.com/ads/library/"
 
@@ -119,10 +119,33 @@ class Biblioteca:
         return list(anuncios.values()), total, texto, bloqueado
 
 
+def filtrar_lowticket(anuncios, filtros, cfg):
+    """Mantém só páginas com cara de infoproduto low ticket. Devolve (mantidos, descartadas{pagina: motivo})."""
+    por_pagina = defaultdict(list)
+    for ad in anuncios:
+        pts, motivo, sinais = classificar_lowticket(ad, filtros, cfg)
+        ad["lt_pontos"], ad["lt_motivo"], ad["lt_sinais"] = pts, motivo, sinais
+        por_pagina[ad["page_id"] or ad["pagina"]].append(ad)
+    mantidos, descartadas = [], {}
+    for pid, ads in por_pagina.items():
+        nome = ads[0]["pagina"] or pid
+        bloqueio = next((a["lt_motivo"] for a in ads if a["lt_motivo"]), "")
+        if bloqueio:
+            descartadas[nome] = bloqueio
+            continue
+        melhor = max(a["lt_pontos"] for a in ads)
+        if melhor < cfg["min_score_lowticket"]:
+            descartadas[nome] = f"não parece infoproduto (pontos {melhor})"
+            continue
+        mantidos.extend(ads)
+    return mantidos, descartadas
+
+
 def montar_buscas(palavra, nicho, nichos_cfg):
     nicho_obj = next((n for n in nichos_cfg["nichos"] if n["id"] == nicho), None)
     if not nicho_obj or not nicho_obj["termos"]:
-        return [(palavra, True)]
+        # nicho geral: a palavra sozinha + combinações que puxam infoproduto
+        return [(palavra, True), (f"{palavra} pdf", False), (f"{palavra} digital", False)]
     return [(f"{palavra} {t}", False) for t in nicho_obj["termos"][:3]]
 
 
@@ -143,6 +166,7 @@ def analisar(anuncios, cfg, contagens):
         low = sorted({p for p in todos_precos if cfg["preco_min"] <= p <= cfg["preco_max"]})
         dominios = sorted({urlparse(a["link"]).netloc.replace("www.", "") for a in ads if a["link"]})
         top = max(ads, key=lambda a: (a["duplicados"], a["dias"]))
+        melhor_lt = max(ads, key=lambda a: a.get("lt_pontos", 0))
 
         sinais = []
         if (ativos or len(ads)) >= cfg["min_ativos_escala"]:
@@ -172,6 +196,7 @@ def analisar(anuncios, cfg, contagens):
             "landing": top["link"],
             "dominios": ", ".join(dominios[:3]),
             "copy_top": top["texto"][:160].replace("\n", " "),
+            "por_que_lowticket": "; ".join(melhor_lt.get("lt_sinais") or []),
         })
     linhas.sort(key=lambda r: r["score"], reverse=True)
     return linhas
@@ -200,6 +225,7 @@ def main():
     ap.add_argument("--top", type=int, default=20)
     ap.add_argument("--visivel", action="store_true", help="mostra o navegador (só para depurar)")
     ap.add_argument("--diagnostico", action="store_true")
+    ap.add_argument("--sem-filtro", action="store_true", help="não aplica o filtro de low ticket")
     a = ap.parse_args()
     cfg, nichos = carregar_config()
     log = lambda *x: print(*x, file=sys.stderr, flush=True)
@@ -244,6 +270,17 @@ def main():
                   "Tente outra palavra ou rode a opção 1 para diagnosticar.")
             sys.exit(3)
 
+        lidos = len(anuncios)
+        descartadas = {}
+        if cfg.get("filtro_lowticket", True) and not a.sem_filtro:
+            anuncios, descartadas = filtrar_lowticket(anuncios, carregar_filtros(), cfg)
+            log(f"filtro low ticket: {len(anuncios)} de {lidos} anúncios mantidos, {len(descartadas)} páginas descartadas")
+            if not anuncios:
+                print(f"NENHUM_LOWTICKET: {lidos} anúncios lidos, mas nenhum com cara de infoproduto low ticket. "
+                      "Tente uma palavra mais específica (ex.: 'pack pdf', 'mapas mentais', 'apostila') ou outro nicho.")
+                print("DESCARTADAS: " + json.dumps(dict(list(descartadas.items())[:15]), ensure_ascii=False))
+                sys.exit(4)
+
         # conta os ativos das páginas mais promissoras
         pre = analisar(anuncios, cfg, {})
         contagens = {}
@@ -258,14 +295,26 @@ def main():
             if total is not None:
                 contagens[r["page_id"]] = total
 
+        grandes = {pid for pid, n in contagens.items() if n > cfg.get("max_ativos_pagina", 800)}
+        if grandes and not a.sem_filtro:
+            for ad in anuncios:
+                if ad["page_id"] in grandes:
+                    descartadas[ad["pagina"]] = f"{contagens[ad['page_id']]} anúncios ativos (provável empresa grande)"
+            anuncios = [ad for ad in anuncios if ad["page_id"] not in grandes]
+
         linhas = analisar(anuncios, cfg, contagens)
         data = datetime.now().strftime("%Y-%m-%d_%Hh%M")
         slug = "".join(c if c.isalnum() else "-" for c in a.palavra).strip("-") or "busca"
         pasta = Path(cfg["pasta_saida"]) / f"{data}_{a.nicho}_{slug}"
         salvar(linhas, anuncios, pasta, f"Mineração: '{a.palavra}' · nicho {a.nicho} · {cfg['pais']}")
+        if descartadas:
+            (pasta / "descartadas.md").write_text("# Páginas descartadas pelo filtro low ticket\n\n" + "\n".join(
+                f"- {p}: {m}" for p, m in descartadas.items()) + "\n", encoding="utf-8")
 
         print(f"PASTA: {pasta}")
-        print(f"ANUNCIOS_LIDOS: {len(anuncios)} · PAGINAS: {len(linhas)}")
+        print(f"ANUNCIOS_LIDOS: {lidos} · LOWTICKET: {len(anuncios)} · PAGINAS: {len(linhas)} · DESCARTADAS: {len(descartadas)}")
+        if descartadas:
+            print("EXEMPLOS_DESCARTADOS: " + json.dumps(dict(list(descartadas.items())[:8]), ensure_ascii=False))
         print(json.dumps(linhas[: a.top], ensure_ascii=False, indent=1))
     finally:
         bib.fechar()

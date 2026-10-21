@@ -8,9 +8,10 @@ case "$cmd" in
   setup)       exec bash "$SCRIPTS/setup.sh" ;;
   status)      [ -x "$PY" ] && echo "PRONTO" || echo "SETUP_PENDENTE" ;;
   config)      python3 -c "import sys; sys.path.insert(0, '$SCRIPTS'); from comum import pasta_config; print(pasta_config())" ;;
+  testar)      exec python3 "$SCRIPTS/testar.py" "$@" ;;
   meta|reclameaqui)
     [ -x "$PY" ] || { echo "SETUP_PENDENTE: rode a opção 1 (setup e diagnóstico)."; exit 2; }
     [ "$cmd" = meta ] && alvo=minerar_meta.py || alvo=minerar_reclameaqui.py
     exec "$PY" "$SCRIPTS/$alvo" "$@" ;;
-  *) echo "uso: run.sh setup|status|config|meta|reclameaqui [args]"; exit 1 ;;
+  *) echo "uso: run.sh setup|status|config|testar|meta|reclameaqui [args]"; exit 1 ;;
 esac
