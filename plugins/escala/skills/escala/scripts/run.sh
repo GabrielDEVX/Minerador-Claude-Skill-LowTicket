@@ -21,7 +21,6 @@ case "$cmd" in
   config)      "$PYRUN" -c "import sys, json; sys.path.insert(0, r'$SCRIPTS'); from comum import config_efetiva; print(json.dumps(config_efetiva(), ensure_ascii=False, indent=1))" ;;
   filtros)     "$PYRUN" -c "import sys, json; sys.path.insert(0, r'$SCRIPTS'); from comum import carregar_filtros; print(json.dumps(carregar_filtros(), ensure_ascii=False, indent=1))" ;;
   testar)      exec "$PYRUN" "$SCRIPTS/testar.py" "$@" ;;
-  urlscan)     exec "$PYRUN" "$SCRIPTS/minerar_urlscan.py" "$@" ;;
   radar)       exec "$PYRUN" "$SCRIPTS/radar.py" "$@" ;;
   favoritos)   exec "$PYRUN" "$SCRIPTS/favoritos.py" "$@" ;;
   comparar)    exec "$PYRUN" "$SCRIPTS/comparar_nutra.py" "$@" ;;
@@ -31,9 +30,24 @@ case "$cmd" in
   infoapp)     exec "$PYRUN" "$SCRIPTS/gerar_infoapp.py" "$@" ;;
   pagina)      exec "$PYRUN" "$SCRIPTS/gerar_pagina.py" "$@" ;;
   utm)         exec "$PYRUN" "$SCRIPTS/utm.py" "$@" ;;
-  meta|reclameaqui)
-    { [ -n "$PY" ] && [ -f "$OK" ]; } || { echo "SETUP_PENDENTE: rode a opção 1 (setup e diagnóstico)."; exit 2; }
-    [ "$cmd" = meta ] && alvo=minerar_meta.py || alvo=minerar_reclameaqui.py
-    exec "$PY" "$SCRIPTS/$alvo" "$@" ;;
+  meta|reclameaqui|urlscan)
+    # trava de atualizacao: nao minera desatualizado (ESCALA_SEM_UPDATE=1 pula a trava)
+    if [ "${ESCALA_SEM_UPDATE:-0}" != "1" ]; then
+      estado="${ESCALA_ESTADO:-$("$PYRUN" "$SCRIPTS/versao.py" --curto 2>/dev/null)}"
+      case "$estado" in
+        DESATUALIZADA*) set -- $estado
+          echo "DESATUALIZADA: ha uma versao mais nova (${3:-nova}, voce tem ${2:-?}). "
+          echo "Atualize antes de minerar: claude plugin marketplace update legacy-mentoring"
+          echo "(depois abra o Claude Code e rode a opcao 1). Para minerar mesmo assim: ESCALA_SEM_UPDATE=1"
+          exit 5 ;;
+      esac
+    fi
+    case "$cmd" in
+      urlscan) { [ -n "$PY" ] || true; }; exec "$PYRUN" "$SCRIPTS/minerar_urlscan.py" "$@" ;;
+      meta)    { [ -n "$PY" ] && [ -f "$OK" ]; } || { echo "SETUP_PENDENTE: rode a opção 1 (setup e diagnóstico)."; exit 2; }
+               exec "$PY" "$SCRIPTS/minerar_meta.py" "$@" ;;
+      reclameaqui) { [ -n "$PY" ] && [ -f "$OK" ]; } || { echo "SETUP_PENDENTE: rode a opção 1 (setup e diagnóstico)."; exit 2; }
+               exec "$PY" "$SCRIPTS/minerar_reclameaqui.py" "$@" ;;
+    esac ;;
   *) echo "uso: run.sh setup|status|config|filtros|testar|urlscan|radar|favoritos|comparar|versao|analisar|produto|infoapp|pagina|utm|meta|reclameaqui [args]"; exit 1 ;;
 esac

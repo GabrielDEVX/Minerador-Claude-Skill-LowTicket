@@ -94,6 +94,9 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
 
+**1.10.0**
+- **Trava de atualização**: a ferramenta checa a versão mais recente no GitHub e **bloqueia a mineração** se estiver desatualizada, pedindo para atualizar antes (1 comando). Sem internet, não bloqueia. O menu também avisa quando saiu versão nova.
+
 **1.9.0**
 - **Funciona no Windows** (além de Mac e Linux): os scripts detectam o Python do sistema e o ambiente em `Scripts\\python.exe`; o atalho `/escala` é criado por cópia quando não há link simbólico. Requisito no Windows: ter o **Git para Windows** (Git Bash). Instalador PowerShell incluído.
 
@@ -152,6 +155,9 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 - Configurações (7) › 12: ensine o filtro colando a legenda de um anúncio.
 
 ## Como atualizar (importante)
+
+> **A ferramenta não deixa minerar desatualizada.** Toda vez que você vai minerar, ela confere no GitHub se há versão nova; se houver, ela para e pede para você atualizar antes (é 1 comando). Isso garante que todo mundo use sempre a versão mais recente.
+
 
 Esta ferramenta recebe melhorias com frequência. **As atualizações não são automáticas** — cada pessoa precisa puxar a versão nova no seu próprio computador, com 1 comando.
 

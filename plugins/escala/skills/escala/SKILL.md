@@ -60,11 +60,11 @@ Os dados do usuário (ambiente Python, configurações) ficam em `~/.lowticket/`
 
 (preencha {INSTALADA} com o campo INSTALADA da saída de `run.sh versao`.)
 
-Sempre que abrir o menu principal, rode antes `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh versao`. Se a saída tiver `ATUALIZACAO_DISPONIVEL`, mostre acima do menu:
+Sempre que abrir o menu principal, rode antes `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh versao` (ela compara a versão instalada com a mais recente no GitHub). Se a saída tiver `ATUALIZACAO_DISPONIVEL`, **não deixe o usuário minerar sem atualizar**: mostre, acima do menu, em destaque:
 
-`🆕 Versão nova disponível ({CATALOGO}). Atualize com: claude plugin marketplace update legacy-mentoring`
+`🆕 Saiu uma versão nova ({ULTIMA}, você tem a {INSTALADA}). Atualize antes de usar: claude plugin marketplace update legacy-mentoring — depois abra o Claude Code e rode a opção 1.`
 
-E rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh status`. Se a saída for `SETUP_PENDENTE`, mostre esta linha acima do menu:
+Ofereça as opções mesmo assim, mas se o usuário escolher minerar (opção 2) estando desatualizado, peça para atualizar primeiro; a própria mineração vai recusar com `DESATUALIZADA` até ele atualizar. Se a saída for `SEM_CHECAGEM` (sem internet), siga normalmente. Rode também `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh status`. Se a saída for `SETUP_PENDENTE`, mostre esta linha acima do menu:
 
 `⚠️  Primeira vez aqui? Rode a opção 1 antes de minerar.`
 
@@ -234,6 +234,8 @@ bash ${CLAUDE_SKILL_DIR}/scripts/run.sh reclameaqui --nicho {ID_DO_NICHO} [--pal
 - **preço** de R$ 7 a R$ 47; **checkout ou landing** de infoproduto (Kiwify, Hotmart, Cakto, subdomínio por produto); **página com nome de pessoa**.
 
 Se o usuário pedir "sem filtro", acrescente `--sem-filtro` ao comando.
+
+Se a saída começar com `DESATUALIZADA`, **pare**: diga que saiu uma versão nova e que é preciso atualizar antes de minerar. Mostre o comando `claude plugin marketplace update legacy-mentoring` e lembre de, depois, abrir o Claude Code e rodar a opção 1. Só siga a mineração depois que ele atualizar (ou, se ele insistir em rodar assim mesmo e estiver ciente, oriente que dá para forçar com `ESCALA_SEM_UPDATE=1` antes do comando — mas o certo é atualizar).
 
 Se a saída trouxer `NENHUM_LOWTICKET`, diga quantos anúncios foram lidos, mostre 3–5 exemplos de `DESCARTADAS` com o motivo, e sugira uma palavra mais específica (ex.: "pack pdf", "mapas mentais", "apostila", "moldes") ou outro nicho.
 

@@ -538,15 +538,46 @@ def t_premium():
              str(Path(os.environ["HOME"]) / "x_nutra_DE_ed_cavalo"))
     comp = json.loads(out)
     checar(comp[0]["pais"] == "US" and comp[0]["paginas_escala"] == 1, "comparar países: EUA (com escala) em 1º")
-    # versão / aviso de update
-    v = sh("versao")
-    checar("INSTALADA: 1." in v, "versão: mostra a versão instalada")
-    cat = Path(os.environ["HOME"]) / ".claude/plugins/marketplaces/legacy-mentoring/plugins/escala/.claude-plugin"
-    cat.mkdir(parents=True, exist_ok=True)
-    (cat / "plugin.json").write_text('{"version":"99.0.0"}', encoding="utf-8")
-    checar("ATUALIZACAO_DISPONIVEL" in sh("versao"), "versão: avisa quando o catálogo tem versão nova")
-    (cat / "plugin.json").write_text('{"version":"0.0.1"}', encoding="utf-8")
-    checar("ATUALIZACAO_DISPONIVEL" not in sh("versao"), "versão: não avisa quando já está atualizado")
+    # versão: comparação local x GitHub (sem rede, via stub)
+    import versao as _versao
+    inst = _versao.versao_instalada()
+    checar(bool(inst) and inst[0].isdigit(), "versão: lê a versão instalada do plugin")
+    _orig = _versao.versao_github
+    try:
+        _versao.versao_github = lambda timeout=6: "99.0.0"
+        out = io.StringIO()
+        with redirect_stdout(out):
+            sys.argv = ["versao.py"]; _versao.main()
+        checar("ATUALIZACAO_DISPONIVEL" in out.getvalue(), "versão: avisa quando o GitHub tem versão nova")
+        out = io.StringIO()
+        with redirect_stdout(out):
+            sys.argv = ["versao.py", "--curto"]; _versao.main()
+        campos = out.getvalue().split()
+        checar(campos[0] == "DESATUALIZADA" and campos[2] == "99.0.0", "versão --curto: DESATUALIZADA com as versões")
+        _versao.versao_github = lambda timeout=6: inst
+        out = io.StringIO()
+        with redirect_stdout(out):
+            sys.argv = ["versao.py", "--curto"]; _versao.main()
+        checar(out.getvalue().strip() == "OK", "versão --curto: OK quando já atualizado")
+        _versao.versao_github = lambda timeout=6: ""
+        out = io.StringIO()
+        with redirect_stdout(out):
+            sys.argv = ["versao.py", "--curto"]; _versao.main()
+        checar(out.getvalue().strip() == "OFFLINE", "versão --curto: OFFLINE quando não consegue checar")
+    finally:
+        _versao.versao_github = _orig
+
+    # trava de atualização no run.sh (via gancho ESCALA_ESTADO)
+    env = dict(os.environ)
+    def sh_env(e, *args):
+        r = subprocess.run(["bash", str(SCRIPTS / "run.sh"), *args], capture_output=True, text=True, env={**env, **e})
+        return r.stdout + r.stderr, r.returncode
+    out, cod = sh_env({"ESCALA_ESTADO": "DESATUALIZADA 1.5.0 9.9.9"}, "meta", "--palavra", "x")
+    checar(cod == 5 and "DESATUALIZADA" in out and "marketplace update" in out, "trava: minerar desatualizado é bloqueado")
+    out, cod = sh_env({"ESCALA_ESTADO": "DESATUALIZADA 1.5.0 9.9.9", "ESCALA_SEM_UPDATE": "1"}, "meta", "--palavra", "x")
+    checar("DESATUALIZADA" not in out, "trava: ESCALA_SEM_UPDATE=1 pula a trava")
+    out, cod = sh_env({"ESCALA_ESTADO": "OFFLINE"}, "meta", "--palavra", "x")
+    checar("DESATUALIZADA" not in out, "trava: offline não bloqueia a mineração")
 
 
 
