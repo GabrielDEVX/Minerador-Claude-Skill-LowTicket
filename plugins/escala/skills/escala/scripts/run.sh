@@ -1,5 +1,5 @@
 #!/bin/bash
-# Ponto único de entrada: run.sh <setup|status|config|filtros|testar|urlscan|radar|favoritos|comparar|versao|meta|reclameaqui> [argumentos]
+# Ponto único de entrada: run.sh <setup|status|config|filtros|testar|urlscan|radar|favoritos|comparar|versao|analisar|produto|infoapp|pagina|utm|meta|reclameaqui> [argumentos]
 SCRIPTS="$(cd "$(dirname "$0")" && pwd)"
 PY="$HOME/.lowticket/.venv/bin/python"
 OK="$HOME/.lowticket/.navegador_ok"
@@ -16,9 +16,14 @@ case "$cmd" in
   favoritos)   exec python3 "$SCRIPTS/favoritos.py" "$@" ;;
   comparar)    exec python3 "$SCRIPTS/comparar_nutra.py" "$@" ;;
   versao)      exec python3 "$SCRIPTS/versao.py" ;;
+  analisar)    exec python3 "$SCRIPTS/analisar.py" "$@" ;;
+  produto)     exec python3 "$SCRIPTS/produtos.py" "$@" ;;
+  infoapp)     exec python3 "$SCRIPTS/gerar_infoapp.py" "$@" ;;
+  pagina)      exec python3 "$SCRIPTS/gerar_pagina.py" "$@" ;;
+  utm)         exec python3 "$SCRIPTS/utm.py" "$@" ;;
   meta|reclameaqui)
     { [ -x "$PY" ] && [ -f "$OK" ]; } || { echo "SETUP_PENDENTE: rode a opção 1 (setup e diagnóstico)."; exit 2; }
     [ "$cmd" = meta ] && alvo=minerar_meta.py || alvo=minerar_reclameaqui.py
     exec "$PY" "$SCRIPTS/$alvo" "$@" ;;
-  *) echo "uso: run.sh setup|status|config|filtros|testar|urlscan|radar|favoritos|comparar|versao|meta|reclameaqui [args]"; exit 1 ;;
+  *) echo "uso: run.sh setup|status|config|filtros|testar|urlscan|radar|favoritos|comparar|versao|analisar|produto|infoapp|pagina|utm|meta|reclameaqui [args]"; exit 1 ;;
 esac

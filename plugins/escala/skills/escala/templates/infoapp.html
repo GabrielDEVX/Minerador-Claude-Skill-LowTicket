@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="__COR__">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="__TITULO_CURTO__">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icone.svg">
+<title>__TITULO__</title>
+<style>
+:root{--cor:__COR__;--bg:__FUNDO__;--card:#16161f;--tx:#f0f0f4;--mut:#9a9aa8;--bd:#272733}
+@media(prefers-color-scheme:light){:root:not([data-t=dark]){--bg:#f5f5f8;--card:#fff;--tx:#17171c;--mut:#5a5a66;--bd:#e5e5ea}}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--tx);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+a{color:var(--cor)}
+.topo{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;align-items:center;gap:10px}
+.topo .volta{background:none;border:0;color:var(--tx);font-size:22px;cursor:pointer;display:none;padding:2px 6px}
+.topo h1{font-size:16px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.capa{padding:26px 18px 10px;text-align:center}
+.capa .ic{width:84px;height:84px;border-radius:22px;margin:0 auto 14px;display:block;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.capa h2{font-size:23px;font-weight:800;letter-spacing:-.4px}
+.capa p{color:var(--mut);margin-top:8px;font-size:14.5px}
+.busca{margin:16px 16px 0}.busca input{width:100%;background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:12px;padding:12px 14px;font-size:15px;outline:none}
+.prog{margin:14px 16px 0;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--mut)}
+.prog .barra{height:7px;background:var(--bd);border-radius:5px;margin-top:8px;overflow:hidden}.prog .barra i{display:block;height:100%;background:var(--cor);width:0;transition:.3s}
+.lista{padding:14px 16px 30px;max-width:640px;margin:0 auto}
+.mod{margin-bottom:12px;border:1px solid var(--bd);border-radius:14px;overflow:hidden;background:var(--card)}
+.mod>summary{padding:15px 16px;font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px}
+.mod>summary::-webkit-details-marker{display:none}
+.mod>summary .n{background:var(--bg);color:var(--mut);font-size:12px;font-weight:700;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;flex:none}
+.mod>summary .seta{margin-left:auto;color:var(--mut);transition:.2s}.mod[open]>summary .seta{transform:rotate(90deg)}
+.item{padding:13px 16px 13px 50px;border-top:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;gap:10px}
+.item:hover{background:color-mix(in srgb,var(--card) 80%,var(--cor) 6%)}
+.item .ck{width:20px;height:20px;border:2px solid var(--bd);border-radius:50%;flex:none}.item.feito .ck{background:var(--cor);border-color:var(--cor)}
+.item .tt{flex:1;font-size:14.5px}.item.feito .tt{color:var(--mut);text-decoration:line-through}
+.leitor{position:fixed;inset:0;background:var(--bg);z-index:20;overflow:auto;display:none;flex-direction:column}
+.leitor.on{display:flex}
+.leitor .conteudo{padding:20px 18px 40px;max-width:680px;margin:0 auto;width:100%}
+.leitor h3{font-size:22px;font-weight:800;margin-bottom:14px}
+.leitor p{margin:0 0 14px;color:#d8d8e0}.leitor img,.leitor video{max-width:100%;border-radius:12px;margin:6px 0 14px}
+.leitor .baixar{display:inline-block;background:var(--cor);color:#fff;padding:11px 18px;border-radius:11px;font-weight:700;text-decoration:none;margin:4px 0 14px}
+.leitor .nav{display:flex;gap:10px;margin-top:20px}.leitor .nav button{flex:1;background:var(--card);border:1px solid var(--bd);color:var(--tx);padding:12px;border-radius:11px;font-weight:700;cursor:pointer}
+.leitor .nav button.prim{background:var(--cor);color:#fff;border-color:var(--cor)}
+.off{text-align:center;color:var(--mut);font-size:12px;padding:16px}
+</style>
+</head>
+<body>
+<div class="topo"><button class="volta" id="volta">‹</button><h1 id="tituloTopo">__TITULO__</h1></div>
+
+<div id="inicio">
+  <div class="capa">
+    <img src="icone.svg" class="ic" alt="">
+    <h2>__TITULO__</h2>
+    <p>__DESCRICAO__</p>
+  </div>
+  <div class="busca"><input id="q" placeholder="🔎 buscar no conteúdo…"></div>
+  <div class="prog">Seu progresso: <b id="pt">0%</b><div class="barra"><i id="pb"></i></div></div>
+  <div class="lista" id="lista"></div>
+  <div class="off">📶 Funciona offline depois de aberto uma vez.</div>
+</div>
+
+<div class="leitor" id="leitor"><div class="conteudo" id="leitorC"></div></div>
+
+<script id="dados" type="application/json">__DADOS__</script>
+<script>
+const D=JSON.parse(document.getElementById('dados').textContent);
+const KP='escala_app_'+(D.slug||'x')+'_prog';
+let feitos=new Set();try{feitos=new Set(JSON.parse(localStorage.getItem(KP)||'[]'))}catch(e){}
+const planos=[];D.modulos.forEach((m,mi)=>m.itens.forEach((it,ii)=>planos.push({mi,ii,it,m})));
+function id(mi,ii){return mi+'-'+ii}
+function salvar(){try{localStorage.setItem(KP,JSON.stringify([...feitos]))}catch(e){}}
+function prog(){const t=planos.length||1,f=[...feitos].filter(x=>planos.some(p=>id(p.mi,p.ii)===x)).length;
+ const pc=Math.round(f/t*100);document.getElementById('pt').textContent=pc+'%';document.getElementById('pb').style.width=pc+'%';}
+function render(filtro){
+ const L=document.getElementById('lista');L.innerHTML='';const f=(filtro||'').toLowerCase();
+ D.modulos.forEach((m,mi)=>{
+  const its=m.itens.map((it,ii)=>({it,ii})).filter(({it})=>!f||(it.titulo+' '+(it.conteudo||'')).toLowerCase().includes(f));
+  if(!its.length)return;
+  const d=document.createElement('details');d.className='mod';d.open=!!f||mi===0;
+  const s=document.createElement('summary');s.innerHTML='<span class="n">'+(mi+1)+'</span>'+esc(m.titulo)+'<span class="seta">›</span>';
+  d.appendChild(s);
+  its.forEach(({it,ii})=>{const el=document.createElement('div');el.className='item'+(feitos.has(id(mi,ii))?' feito':'');
+   el.innerHTML='<span class="ck"></span><span class="tt">'+esc(it.titulo)+'</span>';
+   el.onclick=()=>abrir(mi,ii);d.appendChild(el);});
+  L.appendChild(d);
+ });prog();
+}
+function esc(s){const e=document.createElement('div');e.textContent=s==null?'':s;return e.innerHTML}
+function abrir(mi,ii){
+ const m=D.modulos[mi],it=m.itens[ii];const C=document.getElementById('leitorC');
+ let h='<h3>'+esc(it.titulo)+'</h3>';
+ if(it.video)h+=(/^https?:/.test(it.video)&&!/\.(mp4|webm|mov)$/i.test(it.video)?'<p><a class="baixar" href="'+esc(it.video)+'" target="_blank">▶ Assistir ao vídeo</a></p>':'<video controls src="'+esc(it.video)+'"></video>');
+ if(it.imagem)h+='<img src="'+esc(it.imagem)+'" alt="">';
+ if(it.conteudo)h+='<div>'+it.conteudo.split(/\n\n+/).map(p=>'<p>'+esc(p).replace(/\n/g,'<br>')+'</p>').join('')+'</div>';
+ if(it.arquivo)h+='<a class="baixar" href="'+esc(it.arquivo)+'" download target="_blank">⬇ Baixar material</a>';
+ const idx=planos.findIndex(p=>p.mi===mi&&p.ii===ii);
+ h+='<div class="nav">';
+ if(idx>0)h+='<button onclick="abrirIdx('+(idx-1)+')">‹ Anterior</button>';
+ h+='<button class="prim" onclick="concluir('+mi+','+ii+')">'+(feitos.has(id(mi,ii))?'✓ Concluído':'Marcar como concluído')+'</button>';
+ if(idx<planos.length-1)h+='<button onclick="abrirIdx('+(idx+1)+')">Próximo ›</button>';
+ h+='</div>';
+ C.innerHTML=h;document.getElementById('leitor').classList.add('on');document.getElementById('volta').style.display='block';
+ document.getElementById('tituloTopo').textContent=it.titulo;window.scrollTo(0,0);
+}
+function abrirIdx(i){const p=planos[i];abrir(p.mi,p.ii)}
+function concluir(mi,ii){feitos.add(id(mi,ii));salvar();abrir(mi,ii);}
+function fechar(){document.getElementById('leitor').classList.remove('on');document.getElementById('volta').style.display='none';
+ document.getElementById('tituloTopo').textContent=D.titulo;render(document.getElementById('q').value);}
+document.getElementById('volta').onclick=fechar;
+document.getElementById('q').addEventListener('input',e=>render(e.target.value));
+render('');
+if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+</script>
+</body>
+</html>

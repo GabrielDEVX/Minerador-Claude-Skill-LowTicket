@@ -1,7 +1,7 @@
 ---
 name: escala
 allowed-tools: Bash(bash ${CLAUDE_SKILL_DIR}/scripts/run.sh *)
-description: Central de operação low ticket e nutra com menu numerado (setup, minerar ofertas escaladas na Biblioteca de Anúncios da Meta ou no Reclame Aqui, minerar nutra por mecanismo em qualquer país e idioma, analisar produto, gerar entregável, modelar funil, criativos, configurações). Use quando o usuário digitar /escala, pedir o menu, ou pedir para minerar ofertas, packs, kits, infoprodutos baratos (9,90, 19,90) ou ofertas de nutra (truque do cavalo, truque da gelatina etc.) em países como EUA, Alemanha e França.
+description: Central de operação low ticket e nutra com menu numerado (setup, minerar ofertas escaladas na Biblioteca de Anúncios da Meta ou no Reclame Aqui, minerar nutra por mecanismo em qualquer país e idioma, analisar e dar nota à oferta, gerar entregável em infoapp, modelar funil e página de vendas, gerar criativos, configurações). Use quando o usuário digitar /escala, pedir o menu, ou pedir para minerar ofertas, packs, kits, infoprodutos baratos (9,90, 19,90) ou ofertas de nutra (truque do cavalo, truque da gelatina etc.) em países como EUA, Alemanha e França.
 ---
 
 # Central Low Ticket
@@ -550,17 +550,122 @@ E o bloco final:
 
 ---
 
-## 3 a 6 · Em construção
+## 3 · Analisar e definir produto
 
-Para as opções 3, 4, 5 e 6, mostre:
+Dois momentos: **medir** a oferta e **definir** o seu produto a partir dela.
+
+### 3a — Medir a oferta
+
+Se o usuário colou uma página/link de uma mineração, use-a. Senão, analise a última mineração:
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh analisar --ultima
+```
+
+Isso lista as páginas. Para medir uma:
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh analisar --ultima --pagina "{NOME OU page_id}"
+```
+
+A saída traz `nota_final` (0 a 10), `veredito` (MODELAR ≥7 / OBSERVAR / DESCARTAR), as `notas` por critério (dias rodando, anúncios ativos, criativos e variações, preço, concorrência), as `metricas` e as `copies_top`. Mostre assim:
 
 ```
-  🚧  {NOME DA OPÇÃO}
+  🧪  ANÁLISE · {pagina}
   ──────────────────────────────────────────────
-  essa opção ainda está sendo montada.
+  Nota {nota_final}/10 → {veredito}
 
-  [m]  ↩  menu principal
+  📅 {dias} dias rodando        🔁 {concorrentes} ofertas parecidas
+  📣 {ativos} anúncios ativos   🎬 {variacoes} variações de vídeo
+  🏷️ {precos}                   🛒 {plataforma}
 ```
+
+Explique o veredito em 2–3 linhas (o que puxou a nota para cima/baixo) e lembre que `verificar_manual` (order bump/upsell e a entrega) só dá para confirmar abrindo o anúncio no celular, sem comprar.
+
+### 3b — Definir o seu produto
+
+Se o usuário quer modelar, crie a ficha:
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh produto novo "{NOME DO SEU PRODUTO}"
+```
+
+Isso cria `~/mineracao/produtos/{slug}/produto.json`. Preencha com a ferramenta de edição, a partir da oferta analisada e do que o usuário responder: `promessa`, `publico`, `dor_principal`, `mecanismo`, `preco`, `preco_ancora`, `checkout` (Kiwify/Cakto/Hotmart…), `order_bumps` (lista de `{nome, descricao, preco}`), `upsell`, `diferenciais`, `bonus`, `garantia_dias`, `cores` (`primaria`, `fundo`). Não copie a copy do concorrente — use o mesmo ângulo com as suas palavras. Pergunte só o que faltar (preço e checkout são essenciais). Confirme com `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh produto validar {slug}` e mostre:
+
+```
+  ✅  Produto definido: {nome}  ·  R$ {preco}  ·  {checkout}
+
+  próximos passos:
+  [4]  📦  gerar o entregável (infoapp)
+  [5]  🧭  modelar o funil e a página de vendas
+  [6]  🎨  gerar os criativos
+```
+
+## 4 · Gerar entregável (infoapp)
+
+Entrega o produto como um **app** que o comprador adiciona à tela do celular (funciona offline). Precisa de um produto definido (opção 3b).
+
+1. Escreva o conteúdo em `~/mineracao/produtos/{slug}/conteudo.json` com a ferramenta de edição. Formato:
+   ```json
+   {"titulo":"...","modulos":[
+     {"titulo":"Módulo 1","itens":[
+       {"titulo":"Aula 1","conteudo":"texto em parágrafos"},
+       {"titulo":"Material","arquivo":"guia.pdf"},
+       {"titulo":"Vídeo","video":"https://..."}
+     ]}]}
+   ```
+   Cada item tem `conteudo` (texto), `arquivo` (um caminho local — coloque o arquivo na pasta do produto — ou um link), `video` e/ou `imagem`. Monte o conteúdo a partir do produto (promessa, mecanismo, público); crie módulos e aulas reais, não títulos vazios. Se o usuário tem os materiais (PDFs, vídeos), use os caminhos; senão, escreva o conteúdo em texto.
+2. Gere o app:
+   ```bash
+   bash ${CLAUDE_SKILL_DIR}/scripts/run.sh infoapp {slug}
+   ```
+3. A saída traz `INFOAPP:` (o index.html) e `ZIP:` (pronto para publicar). Ofereça abrir com `open "{INFOAPP}"`. Explique que, para entregar ao comprador, ele sobe a pasta `infoapp/` (ou o zip) em um host grátis como **Netlify Drop** (arrasta a pasta em app.netlify.com/drop) ou Vercel, e usa o link gerado como área de membros. Se vier `ARQUIVOS_FALTANDO`, diga quais caminhos não foram encontrados.
+
+## 5 · Modelar funil
+
+Entrega a estrutura do funil e a **página de vendas em HTML**. Precisa do produto (opção 3b).
+
+Primeiro mostre a estrutura, preenchendo com os dados do produto:
+
+```
+  🧭  FUNIL · {nome}
+  ──────────────────────────────────────────────
+  1. Anúncio (criativo)      →  opção 6
+  2. Página de vendas        →  gerada aqui
+  3. Checkout {checkout}     R$ {preco}
+     + order bump: {bumps}
+  4. Upsell: {upsell}
+```
+
+Depois escreva a copy em `~/mineracao/produtos/{slug}/funil.json`:
+```json
+{"link_checkout":"https://...","pagina_vendas":{
+  "selo":"SÓ HOJE","headline":"use <em>destaque</em> aqui","subhead":"...","cta":"QUERO AGORA","cta_sub":"acesso imediato",
+  "secoes":[{"titulo":"...","texto":"...","bullets":["...","..."],"depoimentos":[{"nome":"...","estrelas":5,"texto":"..."}]}],
+  "titulo_oferta":"...","garantia_titulo":"...","garantia_texto":"...",
+  "faq":[{"p":"...","r":"..."}],"rodape":"..."}}
+```
+Escreva copy de resposta direta real, no ângulo da oferta validada, com as suas palavras. Os depoimentos são opcionais: só inclua se forem verdadeiros (nunca invente depoimento de pessoa real). Gere a página:
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh pagina {slug}
+```
+Mostre o caminho (`PAGINA:`), ofereça `open "{PAGINA}"` e explique que ela é publicada junto com o checkout. Ofereça também o link de checkout com rastreamento da UTMify:
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh utm "{link_checkout}"
+```
+
+## 6 · Gerar criativos
+
+Gera os criativos do anúncio a partir do produto e da oferta validada. Escreva em `~/mineracao/produtos/{slug}/criativos.md` com a ferramenta de edição, contendo:
+
+- **5 ganchos** (primeiros 3 segundos do vídeo / primeira linha da legenda) no ângulo da oferta.
+- **2 roteiros de vídeo** (UGC, estilo dos criativos que escalam no nicho): cena a cena, com fala e indicação visual, 30–60 s. Descreva o que gravar; não gere o vídeo.
+- **3 legendas** completas (dor → mecanismo → prova → CTA), no idioma do país.
+- **3 briefings de imagem** (para quem for fazer arte estática): o que aparece, texto na imagem, sensação.
+
+Baseie tudo no `produto.json` (promessa, dor, mecanismo, público) e nas `copies_top` da análise — mesmo ângulo, palavras suas, sem copiar. Ao final, mostre os 5 ganchos no chat e diga onde salvou o arquivo. Se o usuário pedir, ajuste o tom ou gere mais variações.
+
+Em qualquer uma destas opções, se ainda não houver um produto definido, leve o usuário para a opção 3b primeiro.
 
 ---
 

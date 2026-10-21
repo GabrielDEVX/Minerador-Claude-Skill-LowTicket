@@ -31,6 +31,8 @@ import historico  # noqa: E402
 import relatorio  # noqa: E402
 import favoritos  # noqa: E402
 import versao  # noqa: E402
+import analisar as _analisar  # noqa: E402
+import produtos as _produtos  # noqa: E402
 
 AGORA = int(time.time())
 FALHAS, OK = [], []
@@ -548,8 +550,83 @@ def t_premium():
 
 
 
+def t_produto():
+    secao("13) Opções 3 a 6: análise, produto, infoapp, página")
+    # prepara uma mineração salva para analisar
+    r = rodar(["--palavra", "pack", "--nicho", "geral"])
+    pasta = r["pasta"]
+    # 3a — analisar lista as páginas
+    out = sh("analisar", "--pasta", str(pasta))
+    checar("MINERACAO:" in out and "PAGINAS:" in out, "analisar lista as páginas da mineração")
+    # analisar uma página (Mariana está nos dados simulados de low ticket)
+    out = sh("analisar", "--pasta", str(pasta), "--pagina", "Mariana Oliveira")
+    j = out[out.index("{"):]
+    an = json.loads(j)
+    checar(0 <= an["nota_final"] <= 10 and an["veredito"] in ("MODELAR", "OBSERVAR", "DESCARTAR"), f"dá nota e veredito ({an['nota_final']} {an['veredito']})")
+    checar(set(an["notas"]) >= {"dias_rodando", "anuncios_ativos", "criativos_e_variacoes"}, "nota por critério")
+    checar("concorrentes_parecidos" in an["metricas"] and an["copies_top"], "mede concorrência e traz copies de referência")
+    out = sh("analisar", "--pasta", str(pasta), "--pagina", "Inexistente XYZ")
+    checar("PAGINA_NAO_ENCONTRADA" in out, "avisa quando a página não está na mineração")
+    # 3b — criar produto
+    out = sh("produto", "novo", "Meu Pack de Teste")
+    checar("CRIADO" in out and "SLUG: meu-pack-de-teste" in out, "cria a ficha do produto")
+    base = Path(os.environ["HOME"]) / "mineracao/produtos/meu-pack-de-teste"
+    prod = json.loads((base / "produto.json").read_text(encoding="utf-8"))
+    prod.update({"promessa": "Transforme seus stories", "publico": "criadores", "preco": 19.9, "preco_ancora": 97,
+                 "formato": "infoapp", "checkout": "Cakto", "link_checkout": "https://pay.cakto.com.br/x",
+                 "order_bumps": [{"nome": "Bônus Fontes", "descricao": "+50", "preco": 9.9}],
+                 "cores": {"primaria": "#e4336b", "fundo": "#0e0e14"}})
+    (base / "produto.json").write_text(json.dumps(prod, ensure_ascii=False), encoding="utf-8")
+    checar("VALIDO" in sh("produto", "validar", "meu-pack-de-teste"), "valida o produto preenchido")
+    # produto incompleto é barrado
+    ruim = Path(os.environ["HOME"]) / "mineracao/produtos/ruim"
+    ruim.mkdir(parents=True, exist_ok=True)
+    (ruim / "produto.json").write_text('{"nome":"x","slug":"ruim","preco":0}', encoding="utf-8")
+    checar("INVALIDO" in sh("produto", "validar", "ruim"), "produto sem preço/promessa é invalidado")
+    # 4 — infoapp
+    conteudo = {"titulo": "Meu Pack", "modulos": [{"titulo": "Início", "itens": [
+        {"titulo": "Aula 1", "conteudo": "Bem-vindo ao pack."},
+        {"titulo": "Material", "arquivo": "guia.txt"}]}]}
+    (base / "conteudo.json").write_text(json.dumps(conteudo, ensure_ascii=False), encoding="utf-8")
+    (base / "guia.txt").write_text("exemplo", encoding="utf-8")
+    out = sh("infoapp", "meu-pack-de-teste")
+    checar("INFOAPP:" in out and "ZIP:" in out, "gera o infoapp e o zip")
+    app = base / "infoapp"
+    checar((app / "index.html").exists() and (app / "manifest.webmanifest").exists() and (app / "sw.js").exists()
+           and (app / "icone.svg").exists(), "app tem index, manifest, service worker e ícone")
+    h = (app / "index.html").read_text(encoding="utf-8")
+    checar('"modulos"' in h and "#e4336b" in h and "serviceWorker" in h, "app traz o conteúdo, a cor e o modo offline")
+    checar((app / "arquivos" / "guia.txt").exists(), "copia os arquivos locais para o app")
+    import zipfile
+    checar(zipfile.ZipFile(base / "infoapp.zip").namelist(), "o zip do app não está vazio")
+    # infoapp sem conteúdo é barrado
+    base2 = Path(os.environ["HOME"]) / "mineracao/produtos/meu-pack-de-teste"
+    (base2 / "conteudo.json").write_text('{"titulo":"x","modulos":[]}', encoding="utf-8")
+    cod = subprocess.run(["bash", str(SCRIPTS / "run.sh"), "infoapp", "meu-pack-de-teste"], capture_output=True, text=True)
+    checar("INVALIDO_CONTEUDO" in (cod.stdout + cod.stderr), "infoapp exige módulos com itens")
+    (base2 / "conteudo.json").write_text(json.dumps(conteudo, ensure_ascii=False), encoding="utf-8")
+    # 5 — funil / página de vendas
+    funil = {"link_checkout": "https://pay.cakto.com.br/x", "pagina_vendas": {
+        "selo": "SÓ HOJE", "headline": "Transforme seus stories em <em>arte</em>", "subhead": "+500 figurinhas",
+        "cta": "QUERO O PACK", "cta_sub": "acesso imediato",
+        "secoes": [{"titulo": "O que vem", "bullets": ["+500 figurinhas", "Atualizações"]}],
+        "faq": [{"p": "Como recebo?", "r": "Na hora."}], "garantia_titulo": "7 dias", "rodape": "Pack"}}
+    (base / "funil.json").write_text(json.dumps(funil, ensure_ascii=False), encoding="utf-8")
+    out = sh("pagina", "meu-pack-de-teste")
+    checar("PAGINA:" in out, "gera a página de vendas")
+    pg = (base / "pagina" / "index.html").read_text(encoding="utf-8")
+    checar("pay.cakto.com.br" in pg and "Bônus Fontes" in pg and "<em>arte</em>" in pg and "de R$ 97" in pg,
+           "página traz checkout, order bump, headline destacada e preço de/por")
+    # 6 — UTM da UTMify
+    out = sh("utm", "https://pay.cakto.com.br/x")
+    checar("{{campaign.id}}" in out and "utm_source=facebook" in out, "monta link de checkout com UTMs dinâmicos (UTMify)")
+    out = sh("utm", "https://pay.cakto.com.br/x?ja=tem")
+    checar("ja=tem&utm_source" in out, "preserva parâmetros já existentes no link")
+
+
+
 def t_comandos():
-    secao("13) Comandos do run.sh, diagnóstico e setup")
+    secao("14) Comandos do run.sh, diagnóstico e setup")
     checar("SETUP_PENDENTE" in sh("status"), "status antes do setup: SETUP_PENDENTE")
     checar("SETUP_PENDENTE" in sh("meta", "--palavra", "x"), "minerar sem setup: pede a opção 1")
     venv = Path(os.environ["HOME"]) / ".lowticket/.venv/bin"
@@ -572,6 +649,7 @@ def t_comandos():
     checar("uso:" in sh("qualquercoisa"), "comando desconhecido mostra o uso")
     checar("urlscan" in sh("qualquercoisa"), "urlscan listado nos comandos")
     checar(all(c in sh("qualquercoisa") for c in ("radar", "favoritos", "comparar", "versao")), "novos comandos listados no uso")
+    checar(all(c in sh("qualquercoisa") for c in ("analisar", "produto", "infoapp", "pagina", "utm")), "comandos das opções 3-6 listados")
     r = rodar(["--diagnostico"])
     checar("META_OK anuncios_lidos=" in r["texto"] and "bloqueado=False" in r["texto"], "diagnóstico da biblioteca")
     for f in ("run.sh", "setup.sh"):
@@ -582,7 +660,7 @@ def t_comandos():
 
 
 def main():
-    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_urlscan, t_premium, t_comandos):
+    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_urlscan, t_premium, t_produto, t_comandos):
         try:
             t()
         except Exception as e:  # um erro numa seção não esconde as outras

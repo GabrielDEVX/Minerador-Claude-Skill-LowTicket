@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="__COR__">
+<title>__TITULO__</title>
+<style>
+:root{--cor:__COR__;--cor2:__COR2__;--bg:#ffffff;--tx:#1a1a22;--mut:#6a6a78;--card:#f6f6f9;--bd:#e6e6ec;--ok:#16a34a}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--tx);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:620px;margin:0 auto;padding:0 18px}
+.hero{text-align:center;padding:34px 0 10px}
+.selo{display:inline-block;background:color-mix(in srgb,var(--cor) 14%,#fff);color:var(--cor);font-size:13px;font-weight:700;padding:5px 13px;border-radius:30px;margin-bottom:16px}
+h1{font-size:30px;line-height:1.2;font-weight:800;letter-spacing:-.5px}
+h1 em{color:var(--cor);font-style:normal}
+.sub{color:var(--mut);font-size:18px;margin-top:14px}
+.vid{margin:22px 0;border-radius:16px;overflow:hidden;background:#000;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
+.vid img{width:100%;height:100%;object-fit:cover}
+.cta{display:block;width:100%;background:var(--cor);color:#fff;text-align:center;font-size:19px;font-weight:800;padding:18px;border-radius:14px;text-decoration:none;box-shadow:0 8px 24px color-mix(in srgb,var(--cor) 40%,transparent);margin:8px 0;border:0;cursor:pointer}
+.cta small{display:block;font-weight:600;font-size:13px;opacity:.9;margin-top:3px}
+.cta.pulse{animation:p 1.8s infinite}@keyframes p{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+section{padding:26px 0;border-top:1px solid var(--bd)}
+h2{font-size:24px;font-weight:800;margin-bottom:16px;letter-spacing:-.3px}
+.bul{list-style:none;display:grid;gap:12px}.bul li{display:flex;gap:11px;align-items:flex-start;font-size:17px}
+.bul li::before{content:"✓";color:var(--ok);font-weight:800;flex:none;margin-top:1px}
+.oferta{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:24px;text-align:center;margin:8px 0}
+.de{color:var(--mut);text-decoration:line-through;font-size:18px}
+.por{font-size:44px;font-weight:800;color:var(--cor);margin:4px 0}.por span{font-size:20px}
+.bumps{text-align:left;margin:18px 0}.bump{display:flex;gap:11px;background:#fff;border:1px dashed var(--bd);border-radius:12px;padding:13px;margin-bottom:9px}
+.bump b{display:block}.bump .p{margin-left:auto;color:var(--cor);font-weight:700;white-space:nowrap}
+.gar{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px}
+.gar .sel{font-size:40px;flex:none}
+.faq details{border:1px solid var(--bd);border-radius:12px;padding:0;margin-bottom:10px;overflow:hidden}
+.faq summary{padding:15px 16px;font-weight:700;cursor:pointer;list-style:none}.faq summary::-webkit-details-marker{display:none}
+.faq p{padding:0 16px 15px;color:var(--mut)}
+.dep{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:12px}
+.dep .nm{font-weight:700;font-size:14px;margin-bottom:4px}.dep .st{color:#f5a623}
+footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 18px 50px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <span class="selo">__SELO__</span>
+    <h1>__HEADLINE__</h1>
+    <p class="sub">__SUBHEAD__</p>
+  </div>
+  __VIDEO__
+  <a href="__CHECKOUT__" class="cta pulse">__CTA__<small>__CTA_SUB__</small></a>
+</div>
+
+<div class="wrap">
+__SECOES__
+
+  <section>
+    <h2>__TITULO_OFERTA__</h2>
+    <div class="oferta">
+      <div class="de">__DE__</div>
+      <div class="por">__POR__</div>
+      <div class="bumps">__BUMPS__</div>
+      <a href="__CHECKOUT__" class="cta">__CTA__<small>__CTA_SUB__</small></a>
+    </div>
+  </section>
+
+  <section>
+    <div class="gar"><span class="sel">🛡️</span><div><b>__GARANTIA_TITULO__</b><p style="color:var(--mut);margin-top:4px">__GARANTIA_TEXTO__</p></div></div>
+  </section>
+
+  <section class="faq">
+    <h2>Perguntas frequentes</h2>
+    __FAQ__
+  </section>
+
+  <div class="wrap" style="padding:0 0 10px"><a href="__CHECKOUT__" class="cta">__CTA__<small>__CTA_SUB__</small></a></div>
+</div>
+<footer>__RODAPE__</footer>
+</body>
+</html>

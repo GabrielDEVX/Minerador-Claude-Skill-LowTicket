@@ -86,6 +86,13 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
 
+**1.7.0**
+- Opções 3 a 6 agora funcionam, fechando o ciclo do garimpo à oferta pronta:
+  - **3 · Analisar**: dá uma nota de 0 a 10 à oferta (dias rodando, ativos, criativos, preço, concorrência) e um veredito (modelar / observar / descartar).
+  - **4 · Entregável**: gera um **infoapp** (app web que o comprador instala no celular, com módulos, progresso e modo offline) e um zip pronto para publicar.
+  - **5 · Funil**: monta a estrutura do funil e gera a **página de vendas em HTML** (headline, oferta de/por, order bump, garantia, FAQ), mais o link de checkout com rastreamento da UTMify.
+  - **6 · Criativos**: ganchos, roteiros de vídeo, legendas e briefings de imagem no ângulo da oferta validada.
+
 **1.6.0**
 - **Relatório visual**: toda mineração gera um `relatorio.html` para abrir no navegador — cards com os sinais, mini-gráfico de tendência, copy, plataforma e botões (ver anúncios, landing, favoritar), com filtros e ordenação.
 - **Radar**: a ferramenta guarda o histórico de cada página; ao repetir a mesma busca, mostra quem está **subindo** (escalando agora) e quem parou. Comando: `run.sh radar`.
