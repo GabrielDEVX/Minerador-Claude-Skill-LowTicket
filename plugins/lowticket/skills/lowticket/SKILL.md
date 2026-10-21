@@ -132,11 +132,17 @@ Depois, mostre o menu principal.
   [2]  📚  Biblioteca de Anúncios
            Meta · encontra páginas escaladas
 
+  [3]  🛰️   urlscan.io
+           grátis · páginas que usam UTMify
+           (depois você confere os ads na biblioteca)
+
   [0]  ← voltar
 
   ──────────────────────────────────────────────
   ➜  digite o número
 ```
+
+Se escolher **3 (urlscan.io)**, siga a seção **Método urlscan.io** (logo abaixo do passo 5).
 
 ### Passo 2 — nicho
 
@@ -274,6 +280,81 @@ Depois:
 ```
 
 Se o usuário escolher `e`, siga a seção **Ensinar o filtro** (opção 8 › 12).
+
+### Método urlscan.io
+
+Busca no urlscan.io as páginas que carregam o rastreador da UTMify (`domain:utmify.com.br`). Quem usa UTMify normalmente roda tráfego pago para uma oferta do digital. A busca **não abre as páginas**: só lê o que o urlscan.io já registrou (endereço, título, data e o print que ele tirou). **Não precisa de setup.**
+
+**U1 — nicho:** mostre o menu de nicho do passo 2 (geral = sem filtro de nicho).
+
+**U2 — período:**
+
+```
+  início › mineração › low ticket › urlscan.io › {nicho}
+
+  📅  PERÍODO DOS SCANS
+  ──────────────────────────────────────────────
+  [1]  últimos 7 dias
+  [2]  últimos 30 dias   (recomendado)
+  [3]  últimos 90 dias
+
+  [0]  ← voltar
+
+  ──────────────────────────────────────────────
+  ➜  digite o número
+```
+
+**U3 — rodar:** mostre `⏳ Buscando no urlscan.io · {nicho} · últimos {N} dias` e rode:
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh urlscan --dias {N} --nicho {ID_DO_NICHO} [--palavra "{PALAVRA}"]
+```
+
+Saídas especiais:
+- `LIMITE` → o urlscan.io limitou as buscas: sugira esperar alguns minutos ou cadastrar uma chave grátis em urlscan.io (Configurações › 15).
+- `SEM_CONEXAO`, `ACESSO_NEGADO` ou `ERRO_URLSCAN` → mostre a mensagem em uma frase e ofereça o método 2.
+- `NENHUM_SCAN` → sugira um período maior ou o nicho geral.
+
+**U4 — resultado:**
+
+```
+  ✅  URLSCAN CONCLUÍDO · {nicho} · últimos {N} dias
+  ──────────────────────────────────────────────
+  {SCANS_LIDOS} scans lidos
+  {DOMINIOS} domínios com UTMify
+  {DESCARTADOS} descartados (empresas grandes)
+```
+
+Tabela markdown com até 20 linhas:
+
+| # | Domínio | Título da página | Último scan | Scans | Plataforma | Biblioteca | urlscan |
+|---|---|---|---|---|---|---|---|
+
+- **Biblioteca**: `[buscar ads](buscar_na_biblioteca)`.
+- **urlscan**: `[ver scan](urlscan)`.
+- **Scans**: muitos scans do mesmo domínio = página muito visitada/analisada (sinal de tráfego).
+
+Se houver `print_local` nas primeiras linhas, abra esses prints (são as imagens que o urlscan.io tirou, salvas na pasta) com a ferramenta de leitura de arquivos, e escreva **uma linha por domínio** do que a página mostra: tipo (VSL, advertorial, página de vendas, checkout, quiz), produto/promessa e preço se aparecer. Se o print mostrar uma página genérica que não combina com o título, diga "print não mostra a oferta". Não descreva mais de 8.
+
+Feche com:
+
+```
+  💡  PRÓXIMO PASSO
+  ──────────────────────────────────────────────
+  confira os anúncios de um domínio na biblioteca:
+  clique em [buscar ads] na tabela, ou
+
+  [b]  📚  minerar na biblioteca os domínios que eu escolher
+  [m]  ↩   menu principal
+```
+
+Se escolher **[b]**: pergunte quais números da tabela (até 3) e rode, para cada um, o método 2 com o domínio como palavra e sem filtro:
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh meta --palavra "{DOMINIO}" --nicho geral --sem-filtro
+```
+
+e entregue o resultado no formato do passo 5 (método 2).
 
 ### Passo 5 — entregar o resultado (método 1)
 
@@ -505,6 +586,10 @@ Rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` e mostre com os valores do
   [13]  países e mecanismos de nutra
   [14]  rigor do filtro nutra ........... {min_score_nutra}
 
+  URLSCAN.IO
+  [15]  chave da API (opcional) ......... {configurada|não configurada}
+  [16]  rastreadores buscados ........... {rastreadores_urlscan}
+
   [0]  ← voltar
 
   ──────────────────────────────────────────────
@@ -516,6 +601,8 @@ Ao escolher um item de 1 a 7, 9, 10 ou 14, pergunte o novo valor e grave **só e
 - **8**: mostre os nichos e palavras de `~/.lowticket/config/nichos.json` e permita adicionar/remover palavras ou termos de um nicho.
 - **9**: alterne `filtro_lowticket` (true/false).
 - **13**: mostre as categorias do campo `nutra` (saída de `run.sh config`) e permita adicionar/remover mecanismos (em `principais` ou `outras`), criar uma categoria nova (`id`, `nome`, `emoji`) ou adicionar um país (`codigo`, `nome`, `bandeira`, `idioma`). Grave só os acréscimos, em `~/.lowticket/config/nutra.json` (para tirar um mecanismo de fábrica, coloque-o em `removidos`).
+- **15**: explique que a chave é grátis (criar conta em urlscan.io › Settings › API Keys) e aumenta o limite de buscas. Peça para o usuário colar a chave e grave em `urlscan_api_key` no `~/.lowticket/config/config.json`. Nunca mostre a chave de volta, nem em parte.
+- **16**: lista de domínios de rastreadores (padrão `utmify.com.br`). Permita adicionar ou remover domínios e grave a lista completa em `rastreadores_urlscan`.
 - **14**: `min_score_nutra`. Explique: 2 = solto, 3 = padrão, 5+ = rigoroso.
 - **10**: `min_score_lowticket`. Explique: 3 = solto (entra mais coisa), 5 = padrão, 8+ = rigoroso.
 - **11**: edite os acréscimos em `~/.lowticket/config/filtros.json`: `lista_negra` (empresas/marcas a ignorar), `termos_infoproduto` (somam pontos), `termos_ecommerce` (tiram pontos), `dominios_lowticket` (checkouts e construtores de página). Para tirar um item que veio de fábrica, adicione-o à lista `removidos` do mesmo arquivo. Se o usuário disser que uma página grande ainda apareceu, ofereça adicioná-la à lista negra.

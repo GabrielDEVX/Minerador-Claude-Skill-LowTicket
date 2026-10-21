@@ -21,6 +21,7 @@ Plugin para o Claude Code que minera ofertas escaladas na Biblioteca de Anúncio
 - Descarta grandes empresas e e-commerce (Alibaba, Shopee, Amazon, lojas de produto físico).
 - Reconhece a estrutura da copy de low ticket: gancho de dor, "+100 …", "Ideal para:" com lista de emojis, CTA "saiba mais" e preço âncora.
 - Também minera pelo Reclame Aqui: os produtos mais reclamados nas plataformas BR (Kiwify, Hotmart, Cakto…).
+- E pelo **urlscan.io**: encontra páginas que usam o rastreador da **UTMify** (ofertas do digital rodando tráfego) e entrega o link para conferir os anúncios de cada domínio na biblioteca. Não precisa de setup.
 
 **💊 Nutra (qualquer país)**
 - Escolha o país (EUA, Alemanha, França, Espanha, Itália, Reino Unido, Portugal, Brasil ou qualquer outro) e a busca é feita **no idioma daquele país**.
@@ -70,12 +71,17 @@ Dentro do Claude Code, digite:
 
 1. Na primeira vez, escolha **1 (setup e diagnóstico)**. Leva alguns minutos.
 2. Depois, **2 (minerar ofertas escaladas)**:
-   - **Low ticket**: escolha o método, o nicho e a palavra-chave.
+   - **Low ticket**: escolha o método (Reclame Aqui, Biblioteca de Anúncios ou urlscan.io), o nicho e a palavra-chave.
    - **Nutra**: escolha o país, a categoria e o mecanismo.
 
 Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
+
+**1.4.0**
+- Novo método **urlscan.io**: busca páginas que carregam a UTMify, agrupa por domínio, mostra título, data do último scan, plataforma e o print do urlscan, com o link pronto para a Biblioteca de Anúncios.
+- Configurações › 15 e 16: chave grátis do urlscan.io (opcional, aumenta o limite) e rastreadores buscados.
+- Correção: o status só fica PRONTO quando o navegador foi realmente baixado. Se você já tinha feito o setup antes, rode a opção 1 de novo uma vez.
 
 **1.3.0**
 - Filtro de nutra treinado com anúncios reais (DE/FR): gancho de dor em pergunta em vários idiomas, lista de benefícios com ✨, CTA "Klicken Sie hier / Click here", promessa de transformação e advertorial ("L'énigme est résolue").
@@ -113,6 +119,7 @@ As suas configurações (nichos, palavras-chave, faixa de preço) ficam em `~/.l
 | `PYTHON_FALTANDO` | Rode `xcode-select --install`, conclua e rode o setup de novo |
 | `anuncios_lidos=0` ou `BLOQUEIO` | Espere alguns minutos e tente de novo, com menos palavras por vez |
 | `SETUP_PENDENTE` | Rode a opção 1 do menu |
+| `LIMITE` (urlscan.io) | Espere alguns minutos ou cadastre uma chave grátis do urlscan.io (Configurações › 15) |
 
 ---
 

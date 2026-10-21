@@ -3,14 +3,18 @@
 
 Simula as respostas dos sites no formato real e roda cada função da ferramenta.
 
-  HOME=/pasta/vazia python3 tests/teste_interno.py
+  python3 tests/teste_interno.py   (usa uma pasta temporária; não mexe nas suas configurações)
 """
 import io
 import json
 import os
 import subprocess
 import sys
+import tempfile
 import time
+
+# cada execução usa uma pasta de usuário nova e vazia (não mexe nas suas configurações)
+os.environ["HOME"] = tempfile.mkdtemp(prefix="teste_lowticket_")
 from contextlib import redirect_stdout, redirect_stderr
 from pathlib import Path
 
@@ -21,6 +25,7 @@ sys.path.insert(0, str(SCRIPTS))
 import comum  # noqa: E402
 import minerar_meta  # noqa: E402
 import minerar_reclameaqui  # noqa: E402
+import minerar_urlscan  # noqa: E402
 
 AGORA = int(time.time())
 FALHAS, OK = [], []
@@ -373,8 +378,102 @@ def t_reclameaqui():
     checar(cod == 3 and "NENHUMA_RECLAMACAO" in out.getvalue(), "Reclame Aqui fora do ar: avisa e sugere o método 2")
 
 
+def t_urlscan():
+    secao("10) urlscan.io (páginas com UTMify)")
+    import urllib.error
+
+    def scan(uid, dom, url, titulo, dias=1):
+        t = time.strftime("%Y-%m-%dT%H:%M:%S.000Z", time.gmtime(AGORA - dias * 86400))
+        return {"_id": uid, "sort": [AGORA - dias, uid], "page": {"domain": dom, "url": url, "title": titulo},
+                "task": {"url": url, "time": t, "uuid": uid}}
+    resultados = [
+        scan("a1", "receitasdavo.com.br", "https://receitasdavo.com.br/oferta", "+300 Receitas Fit em PDF por R$ 19,90", 1),
+        scan("a2", "www.receitasdavo.com.br", "https://receitasdavo.com.br/oferta?src=fb", "+300 Receitas Fit em PDF por R$ 19,90", 3),
+        scan("a3", "pay.kiwify.com.br", "https://pay.kiwify.com.br/xyz", "Checkout Kiwify", 2),
+        scan("a4", "app.utmify.com.br", "https://app.utmify.com.br/login", "UTMify", 1),
+        scan("a5", "www.alibaba.com", "https://www.alibaba.com/x", "Alibaba", 1),
+        scan("a6", "crochefacil.com", "https://crochefacil.com/vsl", "Aprenda crochê do zero · moldes", 5),
+    ]
+    chamadas = []
+
+    class Resp:
+        def __init__(self, corpo):
+            self.corpo = corpo
+
+        def read(self):
+            return self.corpo
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+    modo = {"erro": None, "vazio": False}
+
+    def urlopen_falso(req, timeout=0):
+        url = req.full_url
+        chamadas.append((url, dict(req.header_items())))
+        if "/screenshots/" in url:
+            return Resp(b"\x89PNG falso")
+        if modo["erro"]:
+            raise urllib.error.HTTPError(url, modo["erro"], "erro", {}, None)
+        return Resp(json.dumps({"results": [] if modo["vazio"] else resultados, "has_more": False}).encode())
+    minerar_urlscan.urllib.request.urlopen = urlopen_falso
+
+    def rodar_u(args):
+        sys.argv = ["minerar_urlscan.py"] + args
+        out = io.StringIO()
+        cod = 0
+        with redirect_stdout(out), redirect_stderr(io.StringIO()):
+            try:
+                minerar_urlscan.main()
+            except SystemExit as e:
+                cod = e.code
+        return out.getvalue(), cod
+
+    txt, cod = rodar_u(["--dias", "30", "--prints", "2"])
+    dados = json.loads(txt[txt.index("\n[") + 1:])
+    doms = [d["dominio"] for d in dados]
+    q = chamadas[0][0]
+    checar("domain%3Autmify.com.br" in q and "NOT%20page.domain%3Autmify.com.br" in q and "now-30d" in q,
+           "consulta: páginas que carregam utmify.com.br, sem a própria UTMify, últimos 30 dias")
+    checar("CentralLowTicket" in chamadas[0][1].get("User-agent", ""), "identifica a ferramenta para o urlscan.io")
+    checar(doms[0] == "receitasdavo.com.br" and dados[0]["scans"] == 2, f"agrupa www e sem www no mesmo domínio ({doms})")
+    checar(not {"app.utmify.com.br", "alibaba.com"} & set(doms), "tira a UTMify e o Alibaba")
+    checar("pay.kiwify.com.br" in doms and dados[doms.index("pay.kiwify.com.br")]["plataforma"] == "Kiwify", "detecta Kiwify")
+    checar("19,90" in dados[0]["precos"], "lê preço do título")
+    checar("facebook.com/ads/library" in dados[0]["buscar_na_biblioteca"] and "receitasdavo.com.br" in dados[0]["buscar_na_biblioteca"],
+           "link pronto para buscar o domínio na biblioteca")
+    checar(dados[0]["urlscan"].endswith("/result/a1/"), "link do scan mais recente")
+    pasta = Path(next(l.split("PASTA: ")[1] for l in txt.splitlines() if l.startswith("PASTA: ")))
+    checar(len(list((pasta / "prints").glob("*.png"))) == 2 and dados[0].get("print_local"), "baixa os prints do urlscan (2)")
+    checar((pasta / "ranking.md").exists() and (pasta / "dominios.json").exists() and (pasta / "descartadas.md").exists(),
+           "gera ranking.md, dominios.json e descartadas.md")
+    txt, _ = rodar_u(["--nicho", "artesanato", "--prints", "0"])
+    dados = json.loads(txt[txt.index("\n[") + 1:])
+    checar([d["dominio"] for d in dados] == ["crochefacil.com"], "filtro de nicho (artesanato → só crochê)")
+    txt, _ = rodar_u(["--palavra", "receitas", "--prints", "0"])
+    checar('"receitasdavo.com.br"' in txt and "crochefacil" not in txt, "filtro por palavra")
+    txt, _ = rodar_u(["--rastreador", "outro.com", "--prints", "0"])
+    checar("domain%3Aoutro.com" in chamadas[-1][0], "aceita outros rastreadores")
+    modo["erro"] = 429
+    txt, cod = rodar_u([])
+    checar(cod == 3 and txt.startswith("LIMITE"), "limite do urlscan.io (429): avisa e para")
+    modo["erro"] = None
+    modo["vazio"] = True
+    txt, cod = rodar_u([])
+    checar(cod == 3 and "NENHUM_SCAN" in txt, "sem scans: sugere período maior")
+    modo["vazio"] = False
+    pasta_cfg = comum.pasta_config()
+    (pasta_cfg / "config.json").write_text(json.dumps({"urlscan_api_key": "segredo123"}), encoding="utf-8")
+    rodar_u(["--prints", "0"])
+    checar(chamadas[-1][1].get("Api-key") == "segredo123", "usa a chave da API quando configurada")
+    checar("segredo123" not in sh("config"), "a chave nunca aparece nas configurações mostradas")
+    (pasta_cfg / "config.json").write_text("{}", encoding="utf-8")
+
+
 def t_comandos():
-    secao("10) Comandos do run.sh, diagnóstico e setup")
+    secao("11) Comandos do run.sh, diagnóstico e setup")
     checar("SETUP_PENDENTE" in sh("status"), "status antes do setup: SETUP_PENDENTE")
     checar("SETUP_PENDENTE" in sh("meta", "--palavra", "x"), "minerar sem setup: pede a opção 1")
     venv = Path(os.environ["HOME"]) / ".lowticket/.venv/bin"
@@ -395,6 +494,7 @@ def t_comandos():
     checar("NUTRA" in t, "testar --modo nutra")
     checar("DESCARTADO: grande empresa" in sh("testar", "x", "--link", "https://www.alibaba.com/x"), "testar: lista negra")
     checar("uso:" in sh("qualquercoisa"), "comando desconhecido mostra o uso")
+    checar("urlscan" in sh("qualquercoisa"), "urlscan listado nos comandos")
     r = rodar(["--diagnostico"])
     checar("META_OK anuncios_lidos=" in r["texto"] and "bloqueado=False" in r["texto"], "diagnóstico da biblioteca")
     for f in ("run.sh", "setup.sh"):
@@ -405,7 +505,7 @@ def t_comandos():
 
 
 def main():
-    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_comandos):
+    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_urlscan, t_comandos):
         try:
             t()
         except Exception as e:  # um erro numa seção não esconde as outras

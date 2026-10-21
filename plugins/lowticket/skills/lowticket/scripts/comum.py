@@ -96,6 +96,8 @@ def config_efetiva():
     """Configuração final (fábrica + usuário) para mostrar no menu de configurações."""
     cfg, nichos = carregar_config()
     cfg = {k: v for k, v in cfg.items() if not k.startswith("_")}
+    if cfg.get("urlscan_api_key"):
+        cfg["urlscan_api_key"] = "configurada"          # nunca mostra a chave
     return {"arquivo_usuario": str(pasta_config()), "config": cfg, "nichos": nichos, "nutra": carregar_nutra()}
 
 
