@@ -16,6 +16,8 @@ bash ${CLAUDE_SKILL_DIR}/scripts/run.sh <comando> [argumentos]
 
 Os dados do usuário (ambiente Python, configurações) ficam em `~/.lowticket/`. As minerações ficam em `~/mineracao/`.
 
+**Sistema:** funciona no Mac, no Linux e no **Windows** (neste caso o usuário precisa ter o **Git para Windows** instalado, que dá o Git Bash usado pelo Claude Code; sem ele, o Claude Code usa PowerShell e os comandos `bash` não rodam). Para **abrir um arquivo** gerado, use o comando do sistema do usuário: `open "ARQUIVO"` no Mac, `start "" "ARQUIVO"` no Windows (Git Bash) e `xdg-open "ARQUIVO"` no Linux. Se não souber o sistema, diga o caminho do arquivo e que é só abrir no navegador.
+
 **Configurações:** para saber os valores, nichos, palavras, países e mecanismos atuais, rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` (mostra tudo já combinado: fábrica + usuário). Para mudar algo, edite os arquivos do usuário em `~/.lowticket/config/`:
 - `config.json` e os acréscimos de `filtros.json` e `nutra.json` guardam **só o que o usuário mudou ou acrescentou** (os padrões de fábrica vêm sempre da versão instalada, então as atualizações chegam a todos);
 - para desligar um item de fábrica, coloque o texto ou o nome do padrão na lista `removidos` do arquivo correspondente;
@@ -86,8 +88,9 @@ Interprete a saída e responda com um destes blocos:
       Navegador ......... ok
       Biblioteca Meta ... ok ({N} anúncios lidos no teste)
   ```
-- `ATALHO_OK` → avise em uma linha que, a partir da próxima conversa, basta digitar `/escala`. `ATALHO_EXISTE` → avise que o atalho não foi criado porque já existe outra skill com esse nome, e que `/escala:escala` continua funcionando.
-- `PYTHON_FALTANDO` → peça para rodar `xcode-select --install`, aceitar a instalação e escolher 1 de novo.
+- `ATALHO_OK` → avise em uma linha que, a partir da próxima conversa, basta digitar `/escala`. `ATALHO_EXISTE` ou `ATALHO_PULADO` → avise que o atalho não foi criado e que `/escala:escala` continua funcionando.
+- `PYTHON_FALTANDO` → **repasse a mensagem exatamente como veio** (ela já traz a instrução certa para o sistema do usuário: `xcode-select --install` no Mac, instalar o Python do python.org no Windows). Depois peça para escolher 1 de novo.
+- `ERRO_VENV`, `ERRO_PIP`, `ERRO_CHROMIUM` → mostre a mensagem e a linha relevante.
 - `anuncios_lidos=0` ou `bloqueado=True` → a Meta não entregou anúncios ao navegador invisível. Sugira esperar alguns minutos e rodar de novo; se persistir, rode com `--visivel` para ver a tela: `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh meta --diagnostico --visivel`.
 - Qualquer `ERRO_*` → mostre a mensagem e a linha relevante.
 
@@ -270,7 +273,7 @@ Embaixo da tabela, a legenda (uma vez só):
 
 Depois:
 1. **⭐ Mais fortes:** em 2–3 linhas, as páginas com 🔥 + 💰 juntas; se alguma estiver **SUBINDO**, destaque ("está escalando agora").
-2. **📊 Relatório visual:** diga que a mineração gerou um relatório bonito para abrir no navegador (filtros, ordenação e favoritar) e ofereça abrir com `open "{PASTA}/relatorio.html"` (caminho na linha `RELATORIO:`). Os outros arquivos ficam em `{PASTA}/ranking.md`, `ranking.csv` e `descartadas.md`.
+2. **📊 Relatório visual:** diga que a mineração gerou um relatório bonito para abrir no navegador (filtros, ordenação e favoritar) e ofereça abrir com o comando do sistema (`open`/`start`/`xdg-open` — veja a nota de Sistema no topo) o arquivo da linha `RELATORIO:`. Os outros arquivos ficam em `{PASTA}/ranking.md`, `ranking.csv` e `descartadas.md`.
 3. Feche com:
 
 ```
@@ -620,7 +623,7 @@ Entrega o produto como um **app** que o comprador adiciona à tela do celular (f
    ```bash
    bash ${CLAUDE_SKILL_DIR}/scripts/run.sh infoapp {slug}
    ```
-3. A saída traz `INFOAPP:` (o index.html) e `ZIP:` (pronto para publicar). Ofereça abrir com `open "{INFOAPP}"`. Explique que, para entregar ao comprador, ele sobe a pasta `infoapp/` (ou o zip) em um host grátis como **Netlify Drop** (arrasta a pasta em app.netlify.com/drop) ou Vercel, e usa o link gerado como área de membros. Se vier `ARQUIVOS_FALTANDO`, diga quais caminhos não foram encontrados.
+3. A saída traz `INFOAPP:` (o index.html) e `ZIP:` (pronto para publicar). Ofereça abrir com o comando do sistema (`open`/`start`/`xdg-open`) o arquivo da linha `INFOAPP:`. Explique que, para entregar ao comprador, ele sobe a pasta `infoapp/` (ou o zip) em um host grátis como **Netlify Drop** (arrasta a pasta em app.netlify.com/drop) ou Vercel, e usa o link gerado como área de membros. Se vier `ARQUIVOS_FALTANDO`, diga quais caminhos não foram encontrados.
 
 ## 5 · Modelar funil
 
@@ -659,7 +662,7 @@ Escreva copy de resposta direta real, no ângulo da oferta validada, com as suas
 ```bash
 bash ${CLAUDE_SKILL_DIR}/scripts/run.sh pagina {slug}
 ```
-Mostre o caminho (`PAGINA:`), ofereça `open "{PAGINA}"` e explique que ela é publicada junto com o checkout. Ofereça também o link de checkout com rastreamento da UTMify:
+Mostre o caminho (`PAGINA:`), ofereça abrir com o comando do sistema (`open`/`start`/`xdg-open`) e explique que ela é publicada junto com o checkout. Ofereça também o link de checkout com rastreamento da UTMify:
 ```bash
 bash ${CLAUDE_SKILL_DIR}/scripts/run.sh utm "{link_checkout}"
 ```

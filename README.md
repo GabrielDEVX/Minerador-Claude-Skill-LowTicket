@@ -42,7 +42,7 @@ E entrega o link da biblioteca de cada página.
 
 ## Antes de começar
 
-- Mac (macOS 13 ou mais novo)
+- **Mac** (macOS 13+) ou **Windows** 10/11. No Windows, instale também o **Git para Windows** (https://git-scm.com/downloads/win) — ele traz o Git Bash que o Claude Code usa para rodar a ferramenta.
 - Conta paga do Claude (Pro, Max, Team ou Enterprise)
 - Claude Code instalado. Se não tiver, cole no Terminal:
 
@@ -54,13 +54,17 @@ E entrega o link da biblioteca de cada página.
 
 ## Instalar
 
-**Jeito fácil (um comando só):** cole no Terminal do Mac:
+**Jeito fácil (um comando só):**
 
+No **Mac/Linux**, no Terminal:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket/main/instalar.sh | bash
 ```
-
-Ele instala o Claude Code (se faltar), adiciona o catálogo e instala o plugin.
+No **Windows**, no PowerShell:
+```powershell
+irm https://raw.githubusercontent.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket/main/instalar.ps1 | iex
+```
+Ele instala o Claude Code (se faltar), adiciona o catálogo e instala o plugin. No Windows, lembre de ter o **Git para Windows** instalado.
 
 **Ou manualmente, no Terminal:**
 
@@ -89,6 +93,9 @@ Dentro do Claude Code, na primeira vez, digite:
 Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
+
+**1.9.0**
+- **Funciona no Windows** (além de Mac e Linux): os scripts detectam o Python do sistema e o ambiente em `Scripts\\python.exe`; o atalho `/escala` é criado por cópia quando não há link simbólico. Requisito no Windows: ter o **Git para Windows** (Git Bash). Instalador PowerShell incluído.
 
 **1.8.0**
 - **Entregável como área de membros**: o infoapp agora é uma área de membros completa — dashboard com anel de progresso e "continuar de onde parei", e abas **Início / Conteúdo / Bônus / Suporte**. Mesmo layout base para todos os nichos, com a cor de cada um. Os bônus e o canal de suporte entram pelo `conteudo.json`.
