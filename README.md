@@ -12,7 +12,7 @@ Sou o **Gabriel Rodrigues** ([@gabrielrodriguesfx](https://instagram.com/gabriel
 
 Hoje faturo **mais de 1 milhão de euros por mês** vendendo nutra na Europa, mas sei bem quais são os gargalos de quem está começando.
 
-Por isso resolvi ajudar com o meu conhecimento, e esta ferramenta é uma das formas de fazer isso.
+Por isso resolvi ajudar com o meu conhecimento, e esta ferramenta é uma das formas de fazer isso. Como eu já rodei low ticket e comecei por ele, sei o quanto ele é uma boa porta de entrada, e esta ferramenta foi feita para auxiliar iniciantes no mercado digital!
 
 ## O que é
 
