@@ -18,8 +18,8 @@ from pathlib import Path
 from urllib.parse import quote, urlparse
 
 from comum import (UA, carregar_config, carregar_filtros, classificar_lowticket, classificar_nutra,
-                   extrair_anuncios, extrair_total, fmt_preco, parse_html, parse_payload, plataforma, precos,
-                   total_do_texto)
+                   extrair_anuncios, extrair_total, fmt_preco, nome_produto, parse_html, parse_payload, plataforma,
+                   precos, tipo_landing, total_do_texto)
 
 BASE = "https://www.facebook.com/ads/library/"
 
@@ -129,6 +129,8 @@ def filtrar_lowticket(anuncios, filtros, cfg, modo="lowticket"):
     for ad in anuncios:
         pts, motivo, sinais = classificar(ad, filtros, cfg)
         ad["lt_pontos"], ad["lt_motivo"], ad["lt_sinais"] = pts, motivo, sinais
+        ad["tipo_landing"] = tipo_landing(ad, filtros)
+        ad["produto"] = nome_produto(ad)
         por_pagina[ad["page_id"] or ad["pagina"]].append(ad)
     mantidos, descartadas = [], {}
     for pid, ads in por_pagina.items():
@@ -201,6 +203,9 @@ def analisar(anuncios, cfg, contagens, modo="lowticket"):
                 " / ".join(fmt_preco(p) for p in sorted(set(todos_precos))[:3])),
             "sinais": ", ".join(sinais),
             "plataforma": ", ".join(plats),
+            "tipo_provavel": max(([a.get("tipo_landing") for a in ads if a.get("tipo_landing")] or [""]),
+                                 key=lambda t: sum(1 for a in ads if a.get("tipo_landing") == t)),
+            "produto": next((a["produto"] for a in ads if a.get("produto")), ""),
             "score": round(score, 1),
             "link_biblioteca": url_pagina(pid, cfg["pais"]) if pid.isdigit() else "",
             "anuncio_top": url_anuncio(top["ad_id"]),

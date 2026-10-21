@@ -318,7 +318,27 @@
     "remedy",
     "/order",
     "/checkout",
-    "official"
+    "official",
+    "leben",
+    "aktiv",
+    "heute",
+    "gesund",
+    "vital",
+    "bienetre",
+    "bien-etre",
+    "vida",
+    "benessere",
+    "life",
+    "daily",
+    "tips",
+    "journal",
+    "magazin",
+    "report",
+    "wellbeing",
+    "bemestar",
+    "actu",
+    "infos",
+    "decouverte"
   ],
   "padroes_nutra": [
     {
@@ -349,7 +369,84 @@
     {
       "nome": "manifestação / dinheiro",
       "peso": 1,
-      "regex": "(prayer|oración|oração|gebet|prière|preghiera|frequency|frequenz|fréquence|frecuencia|frequenza|frequência|manifest|abundan|wealth|reichtum|richesse|riqueza|ricchezza|angel|engel|ange|ángel|angelo|anjo|pineal|solomon|salomon|salomão|salomone)"
+      "regex": "\\b(prayer|oracion|oracao|gebet|priere|preghiera|frequency|frequenz|frequence|frecuencia|frequenza|frequencia|manifest\\w*|abundan\\w*|wealth|reichtum|richesse|riqueza|ricchezza|angel|engel|ange|angelo|anjo|pineal|solomon|salomon|salomao|salomone)\\b"
+    },
+    {
+      "nome": "gancho de dor em pergunta (vários idiomas)",
+      "peso": 2,
+      "regex": "^\\W*(mude davon|sind sie (es )?(mude|leid)|haben sie (genug|schon alles)|tired of|sick of|are you (tired|struggling|still)|have you tried everything|fatigue[e]? de|marre de|vous en avez assez|avez-vous (tout|deja)|cansad[oa] de|harta? de|esta[s]? cansad|ya (lo )?probaste todo|stanc[oa] di|sei stanc|hai gia provato|ja tentou de tudo|chega de)[^?]{0,200}\\?"
+    },
+    {
+      "nome": "lista de benefícios com emoji (✨ ✅ 👉)",
+      "peso": 2,
+      "regex": "(✨|✅|✔️|✔|👉|🔹|🔸|💪|🌿|⭐|☑️|➡️|📌)\\s?[^\\n]{3,90}?(✨|✅|✔️|✔|👉|🔹|🔸|💪|🌿|⭐|☑️|➡️|📌)\\s?\\w"
+    },
+    {
+      "nome": "verbos de benefício (unterstützt / helps / aide…)",
+      "peso": 1,
+      "regex": "(unterstutzt|hilft|fordert|reduziert|steigert|supports?|helps?|promotes?|boosts?|reduces?|soutient|aide a|favorise|reduit|ayuda a|favorece|reduce|aiuta a|favorisce|supporta|riduce|ajuda a|apoia|favorece|reduz)"
+    },
+    {
+      "nome": "apetite / compulsão / metabolismo",
+      "peso": 1,
+      "regex": "(appetit|heisshunger|stoffwechsel|cravings|appetite|metabolism|fringales|appetit|metabolisme|antojos|apetito|metabolismo|fame nervosa|appetito|compulsao|apetite)"
+    },
+    {
+      "nome": "CTA clique (klicken sie hier / click here…)",
+      "peso": 2,
+      "regex": "(klicken sie (hier|auf|jetzt)|jetzt (starten|entdecken|ansehen|bestellen)|click (here|below|the link)|tap (here|below)|learn more|cliquez (ici|sur|maintenant)|decouvrez|haga clic|haz clic|descubre|clicca (qui|sul)|scopri|clique (aqui|no|em)|saiba mais|toque (aqui|em))"
+    },
+    {
+      "nome": "transformação / nova vida / começar hoje",
+      "peso": 1,
+      "regex": "(transformation|transformacao|transformacion|trasformazione|neues lebensgefuhl|neues leben|nouvelle vie|new (life|you)|nueva vida|nuova vita|nova vida|noch heute|starten sie|beginnen sie|start today|commencez|empieza hoy|inizia oggi|comece hoje|warten sie nicht|don.t wait|n.attendez pas|no esperes|non aspettare|nao espere)"
+    },
+    {
+      "nome": "advertorial / mistério revelado",
+      "peso": 2,
+      "regex": "(l.enigme est resolue|ce n.est pas|voici ce qui se cache|ce qui se cache|die wahrheit uber|was wirklich dahinter|the truth about|what.s really behind|la verdad sobre|lo que realmente|la verita su|cosa c.e dietro|a verdade sobre|o que esta por tras|revealed|enthullt|revele|revelado|rivelato|finally (explained|revealed)|endlich|enfin|por fin|finalmente)"
+    },
+    {
+      "nome": "promessa de retomar o controle",
+      "peso": 1,
+      "regex": "(gewinn\\w* sie die kontrolle|kontrolle zuruck|reprenez le controle|reprendre le controle|take back control|regain control|recupera el control|riprendi il controllo|retome o controle|recupere o controle)"
+    },
+    {
+      "nome": "já tentou de tudo",
+      "peso": 1,
+      "regex": "(alles (zu )?versucht|alles ausprobiert|tout essaye|tried everything|tried it all|lo he probado todo|probaste todo|provato di tutto|tentou de tudo|ja tentei de tudo)"
+    },
+    {
+      "nome": "resultados visíveis",
+      "peso": 1,
+      "regex": "((sichtbare|spurbare) ergebnisse|resultats visibles|visible results|real results|resultados visibles|risultati visibili|resultados visiveis)"
+    }
+  ],
+  "_tipo_provavel": "Tipo provável da landing, deduzido só pelo link, domínio e título do anúncio (a página não é aberta).",
+  "tipos_landing": [
+    {
+      "tipo": "plataforma/checkout",
+      "regex": "(digistore24|ds24|clickbank|hop\\.|buygoods|maxweb|cartpanda|/checkout|/order|/cart)"
+    },
+    {
+      "tipo": "quiz",
+      "regex": "(/quiz|quiz\\.|/survey|/test\\b|/teste\\b|/questionario|/fragebogen)"
+    },
+    {
+      "tipo": "VSL",
+      "regex": "(/vsl|vsl\\.|/video|/watch|/webinar|/presentation|/apresentacao|/praesentation)"
+    },
+    {
+      "tipo": "presell",
+      "regex": "(/presell|/pre/|/pre-|/bridge|/lp\\d|/pv\\b)"
+    },
+    {
+      "tipo": "advertorial",
+      "regex": "(news|actu|journal|magazin|heute|daily|report|noticias|notizie|noticia|/article|/artikel|/articulo|/artigo|/story|/blog|l.enigme|la verdad|die wahrheit|the truth|a verdade|ce n.est pas|was wirklich|cache vraiment)"
+    },
+    {
+      "tipo": "loja",
+      "regex": "(myshopify|/products/|/product/|/shop/|/produkt/|/produit/|/producto/)"
     }
   ]
 }

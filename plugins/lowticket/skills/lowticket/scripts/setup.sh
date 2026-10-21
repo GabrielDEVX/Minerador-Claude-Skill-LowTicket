@@ -20,7 +20,9 @@ fi
 "$VENV/bin/python" -m pip install -q playwright || { echo "ERRO_PIP: não instalou o Playwright"; exit 1; }
 
 echo "== 3/4 Navegador invisível (Chromium)"
-"$VENV/bin/python" -m playwright install chromium || { echo "ERRO_CHROMIUM"; exit 1; }
+rm -f "$DADOS/.navegador_ok"
+"$VENV/bin/python" -m playwright install chromium || { echo "ERRO_CHROMIUM: não baixou o navegador. Verifique a internet e rode a opção 1 de novo."; exit 1; }
+touch "$DADOS/.navegador_ok"
 
 echo "== 4/4 Diagnóstico na Biblioteca de Anúncios"
 "$VENV/bin/python" "$SCRIPTS/minerar_meta.py" --diagnostico

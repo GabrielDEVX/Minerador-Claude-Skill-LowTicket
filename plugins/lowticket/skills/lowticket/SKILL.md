@@ -16,6 +16,11 @@ bash ${CLAUDE_SKILL_DIR}/scripts/run.sh <comando> [argumentos]
 
 Os dados do usuário (ambiente Python, configurações) ficam em `~/.lowticket/`. As minerações ficam em `~/mineracao/`.
 
+**Configurações:** para saber os valores, nichos, palavras, países e mecanismos atuais, rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` (mostra tudo já combinado: fábrica + usuário). Para mudar algo, edite os arquivos do usuário em `~/.lowticket/config/`:
+- `config.json` e os acréscimos de `filtros.json` e `nutra.json` guardam **só o que o usuário mudou ou acrescentou** (os padrões de fábrica vêm sempre da versão instalada, então as atualizações chegam a todos);
+- para desligar um item de fábrica, coloque o texto ou o nome do padrão na lista `removidos` do arquivo correspondente;
+- `nichos.json` é a lista completa de nichos e palavras do low ticket e pode ser editada diretamente.
+
 ## Como mostrar os menus
 
 - Mostre cada menu **exatamente** como está nos blocos abaixo, **dentro de um bloco de código** (três crases), para manter o alinhamento. Troque só os valores entre `{chaves}`.
@@ -135,7 +140,7 @@ Depois, mostre o menu principal.
 
 ### Passo 2 — nicho
 
-Leia `~/.lowticket/config/nichos.json` (se não existir, rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` antes) e monte a lista com o campo `nome` de cada nicho, na ordem do arquivo. Use os emojis abaixo para os nichos padrão; para nichos que o usuário criou, use `•`.
+Use os `nichos` da saída de `run.sh config` e monte a lista com o campo `nome` de cada nicho, na ordem do arquivo. Use os emojis abaixo para os nichos padrão; para nichos que o usuário criou, use `•`.
 
 ```
   início › mineração › low ticket › {método}
@@ -160,7 +165,7 @@ Leia `~/.lowticket/config/nichos.json` (se não existir, rode `bash ${CLAUDE_SKI
 
 ### Passo 3 — palavra-chave
 
-Obrigatório no método 2; no método 1 é opcional (mostre a linha `[Enter]  pular` também). Leia a lista `palavras` de `~/.lowticket/config/nichos.json` e mostre em duas colunas, na ordem do arquivo:
+Obrigatório no método 2; no método 1 é opcional (mostre a linha `[Enter]  pular` também). Use a lista `palavras` de `nichos` (saída de `run.sh config`) e mostre em duas colunas, na ordem do arquivo:
 
 ```
   início › mineração › low ticket › {método} › {nicho}
@@ -278,7 +283,7 @@ Resumo no mesmo estilo (`✅ MINERAÇÃO CONCLUÍDA · Reclame Aqui · {nicho}` 
 
 ## Mineração de nutra
 
-Os países, as categorias e os mecanismos ficam em `~/.lowticket/config/nutra.json` (padrões de fábrica em `${CLAUDE_SKILL_DIR}/config/nutra.json`; os do usuário são somados aos de fábrica). Leia o arquivo do usuário (se não existir, rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` antes).
+Os países, as categorias e os mecanismos vêm do campo `nutra` da saída de `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` (fábrica + acréscimos do usuário em `~/.lowticket/config/nutra.json`).
 
 ### N1 — país
 
@@ -395,7 +400,13 @@ E rode (timeout de 10 min), um comando por mecanismo, com as variações em `--p
 bash ${CLAUDE_SKILL_DIR}/scripts/run.sh meta --modo nutra --pais {CODIGO} --nicho {ID_CATEGORIA} --rotulo "{MECANISMO EM PT}" --palavra "{VARIAÇÃO 1}" --palavra "{VARIAÇÃO 2}"
 ```
 
-O **filtro de nutra** descarta grandes empresas (Amazon, lojas, marcas) mas **não** penaliza e-commerce (nutra físico usa frete grátis). Ele pontua plataforma (Digistore24, ClickBank, BuyGoods, MaxWeb, CartPanda), landing de VSL/presell/advertorial, copy de VSL em vários idiomas ("watch the video", "sehen Sie das Video", "regardez la vidéo"), mecanismo, urgência, dose/tempo e criativo em vídeo. Se o usuário pedir "sem filtro", acrescente `--sem-filtro`.
+O **filtro de nutra** descarta grandes empresas (Amazon, lojas, marcas) mas **não** penaliza e-commerce (nutra físico usa frete grátis). Ele pontua, em vários idiomas:
+- **link**: plataforma (Digistore24, ClickBank, BuyGoods, MaxWeb, CartPanda) ou domínio genérico de saúde, estilo de vida ou notícia (ex.: `aktivlebenheute.de`, `sante-decouvertes.fr`);
+- **copy**: gancho de dor em pergunta ("Müde davon…?", "Tired of…?", "Fatiguée de…?"), lista de benefícios com ✨ ✅ 👉, verbos de benefício ("unterstützt", "hilft", "supports"), apetite/metabolismo, CTA ("Klicken Sie hier", "Click here", "Cliquez ici"), transformação ("neues Lebensgefühl", "new you"), advertorial/mistério ("L'énigme est résolue", "ce qui se cache vraiment", "the truth about"), vídeo, mecanismo, urgência e dose/tempo;
+- **nome de produto** que aparece na legenda e no título (ex.: "Slim Jara");
+- **página com nome de pessoa** (ex.: "Sofia Fischer") e **criativo em vídeo**.
+
+A ferramenta **não abre as landings**. O `tipo_provavel` (advertorial, VSL, presell, quiz, plataforma/checkout, loja) é deduzido só pelo link, pelo domínio e pelo título do anúncio. Se o usuário pedir "sem filtro", acrescente `--sem-filtro`.
 
 Se a saída trouxer `NENHUM_NUTRA`, mostre 3–5 exemplos de `DESCARTADAS` e sugira outras variações do termo no idioma do país. Para `NENHUM_ANUNCIO` ou `BLOQUEIO`, siga o mesmo tratamento do low ticket.
 
@@ -412,9 +423,11 @@ Se a saída trouxer `NENHUM_NUTRA`, mostre 3–5 exemplos de `DESCARTADAS` e sug
 
 Tabela markdown (fora do bloco de código), até 15 linhas:
 
-| # | Página | Ativos | Dias | Vídeos | Plataforma | Sinais | Biblioteca |
-|---|---|---|---|---|---|---|---|
+| # | Página | Produto | Ativos | Dias | Vídeos | Tipo provável | Plataforma | Sinais | Biblioteca |
+|---|---|---|---|---|---|---|---|---|---|
 
+- **Produto**: campo `produto` (vazio → `—`).
+- **Tipo provável**: campo `tipo_provavel` (vazio → `—`).
 - **Plataforma**: campo `plataforma` (vazio → `—`).
 - **Sinais**: `🔥 escala`, `💰 lucrativo`, `🎬 testando`, `🎥 VSL`.
 - **Biblioteca**: `[abrir](link_biblioteca)` (vazio → `anuncio_top`).
@@ -428,7 +441,12 @@ Legenda (uma vez):
   🎥 VSL ......... leva para VSL / plataforma de afiliado
 ```
 
-Depois: **⭐ Mais fortes** (🔥 + 💰), onde ficaram os arquivos (`ranking.md`, `ranking.csv`, `descartadas.md`) e o bloco final:
+Depois:
+- **⭐ Mais fortes:** as páginas com 🔥 + 💰.
+- **📱 Para ver a página de verdade:** uma linha explicando que o tipo é só provável e que, para ver o que a landing realmente diz, o ideal é abrir o anúncio pelo link da biblioteca **no celular**, clicando no botão do anúncio. Muitas páginas de nutra têm filtro de tráfego e mostram outra coisa para quem abre direto.
+- Onde ficaram os arquivos (`ranking.md`, `ranking.csv`, `descartadas.md`).
+
+E o bloco final:
 
 ```
   💡  PRÓXIMOS PASSOS
@@ -458,7 +476,7 @@ Para as opções 3, 4, 5, 6 e 7, mostre:
 
 ## 8 · Configurações
 
-Leia `~/.lowticket/config/config.json` (se não existir, rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` antes) e mostre com os valores reais:
+Rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` e mostre com os valores do campo `config`:
 
 ```
   início › configurações
@@ -493,14 +511,14 @@ Leia `~/.lowticket/config/config.json` (se não existir, rode `bash ${CLAUDE_SKI
   ➜  digite o número
 ```
 
-Ao escolher um item de 1 a 7, 9 ou 10, pergunte o novo valor e grave em `~/.lowticket/config/config.json` com a ferramenta de edição. Confirme com `✅  {item} atualizado: {antigo} → {novo}` e mostre as configurações de novo.
+Ao escolher um item de 1 a 7, 9, 10 ou 14, pergunte o novo valor e grave **só essa chave** em `~/.lowticket/config/config.json` com a ferramenta de edição. Confirme com `✅  {item} atualizado: {antigo} → {novo}` e mostre as configurações de novo.
 
 - **8**: mostre os nichos e palavras de `~/.lowticket/config/nichos.json` e permita adicionar/remover palavras ou termos de um nicho.
 - **9**: alterne `filtro_lowticket` (true/false).
-- **13**: mostre as categorias de `~/.lowticket/config/nutra.json` e permita adicionar/remover mecanismos (em `principais` ou `outras`), criar uma categoria nova (`id`, `nome`, `emoji`) ou adicionar um país (`codigo`, `nome`, `bandeira`, `idioma`). Grave só no arquivo do usuário.
+- **13**: mostre as categorias do campo `nutra` (saída de `run.sh config`) e permita adicionar/remover mecanismos (em `principais` ou `outras`), criar uma categoria nova (`id`, `nome`, `emoji`) ou adicionar um país (`codigo`, `nome`, `bandeira`, `idioma`). Grave só os acréscimos, em `~/.lowticket/config/nutra.json` (para tirar um mecanismo de fábrica, coloque-o em `removidos`).
 - **14**: `min_score_nutra`. Explique: 2 = solto, 3 = padrão, 5+ = rigoroso.
 - **10**: `min_score_lowticket`. Explique: 3 = solto (entra mais coisa), 5 = padrão, 8+ = rigoroso.
-- **11**: edite `~/.lowticket/config/filtros.json`: `lista_negra` (empresas/marcas a ignorar), `termos_infoproduto` (somam pontos), `termos_ecommerce` (tiram pontos), `dominios_lowticket` (checkouts e construtores de página). Para tirar um item que veio de fábrica, adicione-o à lista `removidos` do mesmo arquivo. Se o usuário disser que uma página grande ainda apareceu, ofereça adicioná-la à lista negra.
+- **11**: edite os acréscimos em `~/.lowticket/config/filtros.json`: `lista_negra` (empresas/marcas a ignorar), `termos_infoproduto` (somam pontos), `termos_ecommerce` (tiram pontos), `dominios_lowticket` (checkouts e construtores de página). Para tirar um item que veio de fábrica, adicione-o à lista `removidos` do mesmo arquivo. Se o usuário disser que uma página grande ainda apareceu, ofereça adicioná-la à lista negra.
 
 ### 12 · Ensinar o filtro com um anúncio
 
@@ -515,7 +533,7 @@ Use quando o usuário colar a copy de um anúncio (texto ou print) ou disser "a 
 
 Se for **É low ticket**:
 1. Leia a copy e identifique o que a caracteriza: o gancho de abertura, a forma de citar quantidade, a estrutura de lista, o tipo de promessa, o CTA, o preço, o público, o tipo de entrega.
-2. Compare com os `padroes_copy` e `termos_infoproduto` atuais (os padrões de fábrica estão em `${CLAUDE_SKILL_DIR}/config/filtros.json`; os do usuário em `~/.lowticket/config/filtros.json`).
+2. Rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh filtros` para ver todos os padrões atuais (fábrica + usuário) e `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh testar "COPY" [--modo nutra]` para ver quais já casam. Compare com `padroes_copy`/`termos_infoproduto` (low ticket) ou `padroes_nutra`/`dominios_nutra` (nutra). Os acréscimos do usuário ficam em `~/.lowticket/config/filtros.json`.
 3. Para o que ainda não é coberto, proponha **no máximo 5** adições: termos novos (palavras ou expressões curtas) e/ou padrões novos (`{"nome": "...", "peso": 1 ou 2, "regex": "..."}`). A regex deve ser genérica, sem acento, e casar com variações da mesma estrutura, não só com esse anúncio.
 4. Mostre as propostas numeradas e pergunte quais gravar. Grave no `~/.lowticket/config/filtros.json` do usuário (crie as listas se não existirem; não edite o arquivo de fábrica).
 

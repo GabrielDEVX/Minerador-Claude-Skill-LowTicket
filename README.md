@@ -77,6 +77,12 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
 
+**1.3.0**
+- Filtro de nutra treinado com anúncios reais (DE/FR): gancho de dor em pergunta em vários idiomas, lista de benefícios com ✨, CTA "Klicken Sie hier / Click here", promessa de transformação e advertorial ("L'énigme est résolue").
+- Lê o **nome do produto** (ex.: Slim Jara) e reconhece página com nome de pessoa.
+- Nova coluna **tipo provável** da landing (advertorial, VSL, presell, quiz, checkout, loja), deduzido pelo link e pelo título. A página não é aberta: para ver a landing de verdade, abra o anúncio pelo celular.
+- As correções de fábrica agora chegam a todos nas atualizações; o que você ensinou ao filtro continua salvo.
+
 **1.2.0**
 - Modo **Nutra**: mineração por mecanismo em qualquer país, com busca no idioma local.
 - 7 categorias e mais de 100 mecanismos prontos (os principais aparecem primeiro; os outros ficam a um toque).

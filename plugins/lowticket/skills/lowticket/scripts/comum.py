@@ -10,13 +10,27 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36")
 
 
+MODELOS_USUARIO = {
+    # o usuário guarda só o que mudou/acrescentou; os padrões de fábrica sempre vêm da versão instalada
+    "config.json": {"_como_funciona": "Coloque aqui só os valores que você quer mudar. O resto vem da versão instalada."},
+    "filtros.json": {"_como_funciona": "Seus acréscimos ao filtro. Somados aos de fábrica a cada versão. "
+                                       "Para desligar um item de fábrica, coloque o texto (ou o nome do padrão) em 'removidos'.",
+                     "termos_infoproduto": [], "termos_ecommerce": [], "dominios_lowticket": [], "lista_negra": [],
+                     "padroes_copy": [], "dominios_nutra": [], "padroes_nutra": [], "tipos_landing": [], "removidos": []},
+    "nutra.json": {"_como_funciona": "Seus países e mecanismos extras de nutra. Somados aos de fábrica a cada versão.",
+                   "paises": [], "categorias": []},
+}
+
+
 def pasta_config():
-    """Copia os arquivos padrão para ~/.lowticket/config na primeira vez e usa de lá."""
+    """Cria ~/.lowticket/config na primeira vez. nichos.json é copiado inteiro (o usuário edita a lista)."""
     destino = DADOS / "config"
     destino.mkdir(parents=True, exist_ok=True)
-    for nome in ("config.json", "nichos.json", "filtros.json", "nutra.json"):
+    if not (destino / "nichos.json").exists():
+        (destino / "nichos.json").write_text((RAIZ / "config" / "nichos.json").read_text(encoding="utf-8"), encoding="utf-8")
+    for nome, modelo in MODELOS_USUARIO.items():
         if not (destino / nome).exists():
-            (destino / nome).write_text((RAIZ / "config" / nome).read_text(encoding="utf-8"), encoding="utf-8")
+            (destino / nome).write_text(json.dumps(modelo, ensure_ascii=False, indent=2), encoding="utf-8")
     return destino
 
 
@@ -47,12 +61,13 @@ def carregar_filtros():
                 vistos.add(k)
                 lista.append(item)
         out[chave] = lista
-    por_nome = {p["nome"]: p for p in padrao.get("padroes_copy", [])}
-    por_nome.update({p["nome"]: p for p in usuario.get("padroes_copy", [])})
+    por_nome = {p["nome"]: p for p in usuario.get("padroes_copy", [])}
+    por_nome.update({p["nome"]: p for p in padrao.get("padroes_copy", [])})   # fábrica vence: correções chegam a todos
     out["padroes_copy"] = [p for n, p in por_nome.items() if _sem_acento(n) not in removidos]
-    por_nome = {p["nome"]: p for p in padrao.get("padroes_nutra", [])}
-    por_nome.update({p["nome"]: p for p in usuario.get("padroes_nutra", [])})
+    por_nome = {p["nome"]: p for p in usuario.get("padroes_nutra", [])}
+    por_nome.update({p["nome"]: p for p in padrao.get("padroes_nutra", [])})
     out["padroes_nutra"] = [p for n, p in por_nome.items() if _sem_acento(n) not in removidos]
+    out["tipos_landing"] = usuario.get("tipos_landing", []) + padrao.get("tipos_landing", [])
     return out
 
 
@@ -64,13 +79,24 @@ def carregar_nutra():
     paises.update({p["codigo"]: p for p in usuario.get("paises", [])})
     cats = {c["id"]: {**c, "principais": list(c["principais"]), "outras": list(c.get("outras", []))}
             for c in padrao["categorias"]}
+    removidos = {_sem_acento(x) for x in usuario.get("removidos", [])}
     for c in usuario.get("categorias", []):
         base = cats.setdefault(c["id"], {**c, "principais": [], "outras": []})
         for k in ("principais", "outras"):
             for m in c.get(k, []):
                 if m not in base["principais"] and m not in base["outras"]:
                     base[k].append(m)
+    for c in cats.values():
+        for k in ("principais", "outras"):
+            c[k] = [m for m in c[k] if _sem_acento(m) not in removidos]
     return {"paises": list(paises.values()), "categorias": list(cats.values())}
+
+
+def config_efetiva():
+    """Configuração final (fábrica + usuário) para mostrar no menu de configurações."""
+    cfg, nichos = carregar_config()
+    cfg = {k: v for k, v in cfg.items() if not k.startswith("_")}
+    return {"arquivo_usuario": str(pasta_config()), "config": cfg, "nichos": nichos, "nutra": carregar_nutra()}
 
 
 def plataforma(link):
@@ -114,15 +140,55 @@ def classificar_nutra(ad, filtros, cfg):
     elif any(d in link for d in filtros.get("dominios_nutra", [])):
         pontos += 2
         sinais.append("landing de VSL/advertorial")
-    txt = _sem_acento(ad.get("texto", "") + " " + ad.get("titulo_link", ""))
+    txt = _sem_acento(ad.get("texto", "") + "\n" + ad.get("titulo_link", ""))
     padroes = [p for p in filtros.get("padroes_nutra", []) if _regex(p["regex"]).search(txt)]
     if padroes:
-        pontos += min(7, sum(int(p.get("peso", 1)) for p in padroes))
-        sinais.append("copy: " + ", ".join(p["nome"] for p in padroes[:4]))
+        pontos += min(9, sum(int(p.get("peso", 1)) for p in padroes))
+        sinais.append("copy: " + ", ".join(p["nome"] for p in padroes[:5]))
+    produto = nome_produto(ad)
+    if produto:
+        pontos += 1
+        sinais.append(f"produto: {produto}")
+    pagina = (ad.get("pagina") or "").strip()
+    if NOME_PESSOA_RE.match(pagina) and not SUFIXO_EMPRESA.search(pagina):
+        pontos += 1
+        sinais.append("página com nome de pessoa")
     if (ad.get("videos") or ad.get("formato") == "VIDEO"):
         pontos += 1
         sinais.append("criativo em vídeo")
     return pontos, "", sinais
+
+
+_PALAVRAS_COMUNS = {"mit", "sie", "ihre", "ihr", "der", "die", "das", "und", "the", "you", "your", "with", "this", "avec",
+                    "vous", "votre", "les", "con", "tu", "su", "com", "seu", "sua", "para", "per", "il", "la", "le",
+                    "jetzt", "heute", "now", "today", "starten", "start", "klicken", "click", "cliquez", "clique",
+                    "warten", "reduzieren", "unterstutzt", "hilft", "fordert", "facebook", "instagram"}
+
+
+def nome_produto(ad):
+    """Nome de produto que aparece na legenda E no título do link (ex.: 'Slim Jara')."""
+    titulo = ad.get("titulo_link") or ""
+    texto = ad.get("texto") or ""
+    if not titulo or not texto:
+        return ""
+    candidatos = re.findall(r"\b([A-ZÀ-Ú][a-zà-ú0-9]{2,}(?:[ -][A-ZÀ-Ú][a-zà-ú0-9]{1,})?)\b", titulo)
+    for c in candidatos:
+        if " " not in c and "-" not in c:
+            continue          # só nomes de 2 palavras (no alemão todo substantivo tem maiúscula)
+        if any(_sem_acento(w) in _PALAVRAS_COMUNS for w in re.split(r"[ -]", c)):
+            continue
+        if c in texto:
+            return c
+    return ""
+
+
+def tipo_landing(ad, filtros):
+    """Tipo provável da landing pelo link, domínio e título (a página não é aberta)."""
+    alvo = _sem_acento((ad.get("link") or "") + " " + (ad.get("titulo_link") or ""))
+    for t in filtros.get("tipos_landing", []):
+        if _regex(t["regex"]).search(alvo):
+            return t["tipo"]
+    return ""
 
 
 # ---------- filtro low ticket ----------
@@ -144,7 +210,7 @@ def _dominio_base(link):
     return host, (partes[-1] if partes else ""), len(partes)
 
 
-NOME_PESSOA_RE = re.compile(r"^[A-ZÀ-Ú][a-zà-ú]+(?:\s+(?:d[aeo]s?\s+)?[A-ZÀ-Ú][a-zà-ú]+){1,3}$")
+NOME_PESSOA_RE = re.compile(r"^[A-ZÀ-Ú][a-zà-ú]+(?:\s+(?:d[aeo]s?\s+|van\s+|von\s+|de\s+la\s+)?[A-ZÀ-Úa-zà-ú][a-zà-ú]+){1,3}$")
 SUFIXO_EMPRESA = re.compile(r"\b(ltda|s\.?a\.?|eireli|me|group|grupo|brasil|oficial|store|loja|shop|imoveis|imóveis|"
                             r"bank|banco|seguros|motors|veiculos|veículos|farma|clinica|clínica|hospital)\b", re.I)
 
