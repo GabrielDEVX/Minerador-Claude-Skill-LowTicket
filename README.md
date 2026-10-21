@@ -86,6 +86,9 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
 
+**1.7.1**
+- Página de vendas (opção 5) refeita no **layout validado**: hero com mockup e números, "veja por dentro", "para você que", bônus com preços, **dois planos** (básico e completo em destaque), garantia e FAQ. As imagens (mockup, prévias, bônus) entram quando você aponta os arquivos.
+
 **1.7.0**
 - Opções 3 a 6 agora funcionam, fechando o ciclo do garimpo à oferta pronta:
   - **3 · Analisar**: dá uma nota de 0 a 10 à oferta (dias rodando, ativos, criativos, preço, concorrência) e um veredito (modelar / observar / descartar).

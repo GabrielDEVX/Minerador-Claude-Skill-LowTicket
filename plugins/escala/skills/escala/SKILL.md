@@ -637,14 +637,23 @@ Primeiro mostre a estrutura, preenchendo com os dados do produto:
   4. Upsell: {upsell}
 ```
 
-Depois escreva a copy em `~/mineracao/produtos/{slug}/funil.json`:
+Depois escreva a copy e aponte as imagens em `~/mineracao/produtos/{slug}/funil.json`. A página segue um **layout validado** (hero com números → "veja por dentro" → "para você que" → bônus → dois planos → garantia → FAQ → CTA final). Preencha só o que fizer sentido; seções sem dados não aparecem:
 ```json
 {"link_checkout":"https://...","pagina_vendas":{
-  "selo":"SÓ HOJE","headline":"use <em>destaque</em> aqui","subhead":"...","cta":"QUERO AGORA","cta_sub":"acesso imediato",
-  "secoes":[{"titulo":"...","texto":"...","bullets":["...","..."],"depoimentos":[{"nome":"...","estrelas":5,"texto":"..."}]}],
-  "titulo_oferta":"...","garantia_titulo":"...","garantia_texto":"...",
-  "faq":[{"p":"...","r":"..."}],"rodape":"..."}}
+  "selo":"+ de 1.000 pessoas","headline":"use <em>destaque</em> no gancho","subhead":"1 ou 2 linhas",
+  "mockup":"capa.png","stats":[{"n":"100+","t":"mapas"},{"n":"17","t":"módulos"},{"n":"PDF","t":"formato"}],
+  "por_dentro":{"titulo":"Veja o material por dentro.","subtitulo":"...","imagens":["p1.png","p2.png"],"bullets":["...","..."]},
+  "para_voce":{"selo":"pra quem é","titulo":"Esses mapas são para você que...","itens":["...","...","..."]},
+  "bonus":{"selo":"bônus exclusivos","titulo":"...","subtitulo":"...","itens":[{"nome":"...","de":47,"img":"b1.png"}],"total":235,"valor_mapas":97},
+  "planos":{"selo":"escolha seu plano","titulo":"...","subtitulo":"...",
+    "basico":{"nome":"Só o produto","por":17,"bullets":["...","..."],"cta":"Quero o básico","link_checkout":"https://.../basico"},
+    "completo":{"nome":"Produto + bônus","selo":"melhor valor","por":37,"bullets":["...","..."],"cta":"Quero o completo","link_checkout":"https://.../completo"}},
+  "garantia_titulo":"Garantia de 7 dias","garantia_texto":"...",
+  "faq":[{"p":"...","r":"..."}],
+  "cta_final":"frase de fechamento","cta_final_botao":"Quero acessar","rodape":"© ..."}}
 ```
+Regras: o `headline` aceita `<em>...</em>` para destacar uma palavra. Cada plano precisa de `por` (preço) e, de preferência, seu próprio `link_checkout` (o básico e o completo vão para checkouts diferentes). As **imagens** (`mockup`, `por_dentro.imagens`, `bonus[].img`) são caminhos de arquivos que o usuário tem na pasta do produto, ou URLs; sem elas, aparece um espaço reservado — peça as imagens ao usuário quando ele tiver. Os `bonus` só valem para o plano completo. 
+
 Escreva copy de resposta direta real, no ângulo da oferta validada, com as suas palavras. Os depoimentos são opcionais: só inclua se forem verdadeiros (nunca invente depoimento de pessoa real). Gere a página:
 ```bash
 bash ${CLAUDE_SKILL_DIR}/scripts/run.sh pagina {slug}

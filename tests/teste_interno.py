@@ -606,17 +606,34 @@ def t_produto():
     checar("INVALIDO_CONTEUDO" in (cod.stdout + cod.stderr), "infoapp exige módulos com itens")
     (base2 / "conteudo.json").write_text(json.dumps(conteudo, ensure_ascii=False), encoding="utf-8")
     # 5 — funil / página de vendas
-    funil = {"link_checkout": "https://pay.cakto.com.br/x", "pagina_vendas": {
+    funil = {"link_checkout": "https://pay.cakto.com.br/basico", "pagina_vendas": {
         "selo": "SÓ HOJE", "headline": "Transforme seus stories em <em>arte</em>", "subhead": "+500 figurinhas",
-        "cta": "QUERO O PACK", "cta_sub": "acesso imediato",
-        "secoes": [{"titulo": "O que vem", "bullets": ["+500 figurinhas", "Atualizações"]}],
-        "faq": [{"p": "Como recebo?", "r": "Na hora."}], "garantia_titulo": "7 dias", "rodape": "Pack"}}
+        "stats": [{"n": "500+", "t": "figurinhas"}, {"n": "PDF", "t": "formato"}],
+        "por_dentro": {"titulo": "Veja por dentro", "bullets": ["+500 figurinhas", "Atualizações"]},
+        "para_voce": {"titulo": "Para você que", "itens": ["cria conteúdo", "quer se destacar", "ama design"]},
+        "bonus": {"titulo": "Bônus", "itens": [{"nome": "Pack de Fontes", "de": 47}], "total": 90, "valor_mapas": 19},
+        "planos": {"titulo": "Escolha",
+                   "basico": {"nome": "Só o pack", "por": 19.9, "bullets": ["+500 figurinhas"], "cta": "Quero",
+                              "link_checkout": "https://pay.cakto.com.br/basico"},
+                   "completo": {"nome": "Pack + bônus", "selo": "melhor valor", "por": 37,
+                                "bullets": ["tudo do básico", "+ bônus"], "cta": "Quero tudo",
+                                "link_checkout": "https://pay.cakto.com.br/completo"}},
+        "faq": [{"p": "Como recebo?", "r": "Na hora."}], "garantia_titulo": "7 dias",
+        "cta_final": "Garanta agora", "rodape": "Pack"}}
     (base / "funil.json").write_text(json.dumps(funil, ensure_ascii=False), encoding="utf-8")
     out = sh("pagina", "meu-pack-de-teste")
-    checar("PAGINA:" in out, "gera a página de vendas")
+    checar("PAGINA:" in out and "PLANOS: 2" in out and "BONUS: 1" in out, "gera a página de vendas (2 planos, bônus)")
     pg = (base / "pagina" / "index.html").read_text(encoding="utf-8")
-    checar("pay.cakto.com.br" in pg and "Bônus Fontes" in pg and "<em>arte</em>" in pg and "de R$ 97" in pg,
-           "página traz checkout, order bump, headline destacada e preço de/por")
+    checar("<em>arte</em>" in pg and 'class="stats"' in pg and 'class="g2"' in pg and 'class="bgrid"' in pg,
+           "layout validado: hero com números, 'para você que' e grade de bônus")
+    checar("plano dest" in pg and "melhor valor" in pg and "pay.cakto.com.br/completo" in pg,
+           "dois planos, com o completo em destaque e checkout próprio")
+    checar("Pack de Fontes" in pg and "R$ 90" in pg, "bônus com preço e valor total")
+    # funil sem plano é barrado
+    (base / "funil.json").write_text(json.dumps({"pagina_vendas": {"headline": "x"}}, ensure_ascii=False), encoding="utf-8")
+    cod = subprocess.run(["bash", str(SCRIPTS / "run.sh"), "pagina", "meu-pack-de-teste"], capture_output=True, text=True)
+    checar("INVALIDO" in (cod.stdout + cod.stderr), "página exige ao menos um plano com preço")
+    (base / "funil.json").write_text(json.dumps(funil, ensure_ascii=False), encoding="utf-8")
     # 6 — UTM da UTMify
     out = sh("utm", "https://pay.cakto.com.br/x")
     checar("{{campaign.id}}" in out and "utm_source=facebook" in out, "monta link de checkout com UTMs dinâmicos (UTMify)")

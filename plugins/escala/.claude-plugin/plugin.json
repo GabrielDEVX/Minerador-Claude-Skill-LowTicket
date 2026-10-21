@@ -1,6 +1,6 @@
 {
   "name": "escala",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Central Escala: do garimpo à oferta pronta. Minera ofertas escaladas de low ticket (Biblioteca de Anúncios, Reclame Aqui, urlscan.io/UTMify) e de nutra por país/idioma, analisa e dá nota, e gera o entregável (infoapp), a página de vendas e os criativos. Comando: /escala.",
   "author": {
     "name": "Gabriel Rodrigues (@gabrielrodriguesfx)",

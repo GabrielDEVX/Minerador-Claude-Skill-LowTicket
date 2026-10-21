@@ -95,9 +95,15 @@ def validar(slug, arquivo="produto"):
                     erros.append(f"modulos[{i}].itens[{j}] precisa de 'conteudo', 'arquivo' ou 'video'")
     if arquivo == "funil":
         pv = dados.get("pagina_vendas") or {}
-        for c in ("headline", "secoes", "cta"):
-            if not pv.get(c):
-                erros.append(f"pagina_vendas sem '{c}'")
+        if not pv.get("headline"):
+            erros.append("pagina_vendas sem 'headline'")
+        planos = pv.get("planos") or {}
+        if not (planos.get("basico") or planos.get("completo")):
+            erros.append("pagina_vendas.planos sem 'basico' ou 'completo' (pelo menos um plano)")
+        for nome in ("basico", "completo"):
+            pl = planos.get(nome)
+            if pl and not pl.get("por"):
+                erros.append(f"planos.{nome} sem 'por' (preço)")
     return erros
 
 
