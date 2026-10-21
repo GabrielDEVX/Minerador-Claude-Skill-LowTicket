@@ -283,6 +283,15 @@ def classificar_lowticket(ad, filtros, cfg):
     if _sem_acento(ad.get("cta", "")) in ("saiba mais", "ver detalhes", "comprar agora", "baixar", "obter oferta"):
         pontos += 1
 
+    link_l = (ad.get("link") or "").lower()
+    # destino WhatsApp/Instagram sem landing própria = funil de conversa (negócio local), não infoproduto
+    if any(d in link_l for d in ("wa.me", "api.whatsapp.com", "whatsapp.com", "/instagram.com", "ig.me", "m.me", "fb.me", "messenger.com")):
+        pontos -= 3
+        sinais.append("destino WhatsApp/DM")
+    # catálogo dinâmico de loja (placeholders de produto não substituídos)
+    if "{{product" in link_l or "{{product" in (ad.get("texto") or "").lower():
+        pontos -= 3
+        sinais.append("catálogo de e-commerce")
     eco = [t for t in filtros["termos_ecommerce"] if _sem_acento(t) in texto]
     if eco:
         pontos -= 2 * len(eco)

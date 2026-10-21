@@ -218,7 +218,7 @@ def analisar(anuncios, cfg, contagens, modo="lowticket"):
     return linhas
 
 
-def salvar(linhas, anuncios, pasta, cabecalho):
+def salvar(linhas, anuncios, pasta, cabecalho, meta=None):
     pasta.mkdir(parents=True, exist_ok=True)
     (pasta / "anuncios.json").write_text(json.dumps(anuncios, ensure_ascii=False, indent=1), encoding="utf-8")
     if linhas:
@@ -232,6 +232,11 @@ def salvar(linhas, anuncios, pasta, cabecalho):
     for i, r in enumerate(linhas, 1):
         md.append("| " + " | ".join([str(i)] + [str(r[c]).replace("|", "/") for c in cols[1:]]) + " |")
     (pasta / "ranking.md").write_text("\n".join(md) + "\n", encoding="utf-8")
+    try:
+        import relatorio
+        relatorio.gerar(linhas, pasta, meta or {"titulo": cabecalho})
+    except Exception as e:
+        print(f"(relatório visual não gerado: {e})", file=sys.stderr)
 
 
 def main():
@@ -334,17 +339,25 @@ def main():
             anuncios = [ad for ad in anuncios if ad["page_id"] not in grandes]
 
         linhas = analisar(anuncios, cfg, contagens, a.modo)
+        try:
+            import historico
+            linhas = historico.registrar(linhas, cfg["pais"])
+        except Exception as e:
+            log(f"(radar não atualizado: {e})")
         data = datetime.now().strftime("%Y-%m-%d_%Hh%M")
         nome_busca = a.rotulo or a.palavra[0]
         slug = "".join(c if c.isalnum() else "-" for c in nome_busca).strip("-")[:40] or "busca"
         pasta = Path(cfg["pasta_saida"]) / f"{data}_{a.modo}_{cfg['pais']}_{a.nicho}_{slug}"
+        meta = {"modo": a.modo, "titulo": nome_busca, "pais": cfg["pais"], "nicho": a.nicho,
+                "subtitulo": f"{a.modo} · {a.nicho} · {cfg['pais']} · " + " / ".join(a.palavra)}
         salvar(linhas, anuncios, pasta, f"Mineração {a.modo}: '{nome_busca}' ({' / '.join(a.palavra)}) · "
-                                         f"{a.nicho} · {cfg['pais']}")
+                                        f"{a.nicho} · {cfg['pais']}", meta)
         if descartadas:
             (pasta / "descartadas.md").write_text("# Páginas descartadas pelo filtro low ticket\n\n" + "\n".join(
                 f"- {p}: {m}" for p, m in descartadas.items()) + "\n", encoding="utf-8")
 
         print(f"PASTA: {pasta}")
+        print(f"RELATORIO: {pasta / 'relatorio.html'}")
         print(f"ANUNCIOS_LIDOS: {lidos} · {a.modo.upper()}: {len(anuncios)} · PAGINAS: {len(linhas)} · DESCARTADAS: {len(descartadas)}")
         if descartadas:
             print("EXEMPLOS_DESCARTADOS: " + json.dumps(dict(list(descartadas.items())[:8]), ensure_ascii=False))

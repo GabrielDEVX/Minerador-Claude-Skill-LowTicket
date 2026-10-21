@@ -50,7 +50,15 @@ E entrega o link da biblioteca de cada página.
 
 ## Instalar
 
-No Terminal:
+**Jeito fácil (um comando só):** cole no Terminal do Mac:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket/main/instalar.sh | bash
+```
+
+Ele instala o Claude Code (se faltar), adiciona o catálogo e instala o plugin.
+
+**Ou manualmente, no Terminal:**
 
 ```bash
 claude plugin marketplace add GabrielDEVX/Minerador-Claude-Skill-LowTicket
@@ -77,6 +85,14 @@ Dentro do Claude Code, na primeira vez, digite:
 Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
+
+**1.6.0**
+- **Relatório visual**: toda mineração gera um `relatorio.html` para abrir no navegador — cards com os sinais, mini-gráfico de tendência, copy, plataforma e botões (ver anúncios, landing, favoritar), com filtros e ordenação.
+- **Radar**: a ferramenta guarda o histórico de cada página; ao repetir a mesma busca, mostra quem está **subindo** (escalando agora) e quem parou. Comando: `run.sh radar`.
+- **Favoritos / swipe file**: salve ofertas e criativos com etiquetas e busque depois.
+- **Comparar países (nutra)**: rode o mesmo mecanismo em vários países e veja onde está mais quente.
+- **Aviso de atualização** e versão no menu; **instalador em um comando**.
+- Filtro mais preciso: descarta anúncios que levam para WhatsApp/DM (negócio local) e catálogos de e-commerce.
 
 **1.5.1**
 - Menu: removida a opção Meta Ads; Configurações agora é a opção 7.

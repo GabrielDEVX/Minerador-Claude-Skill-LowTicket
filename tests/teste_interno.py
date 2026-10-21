@@ -5,6 +5,7 @@ Simula as respostas dos sites no formato real e roda cada função da ferramenta
 
   python3 tests/teste_interno.py   (usa uma pasta temporária; não mexe nas suas configurações)
 """
+import csv
 import io
 import json
 import os
@@ -26,6 +27,10 @@ import comum  # noqa: E402
 import minerar_meta  # noqa: E402
 import minerar_reclameaqui  # noqa: E402
 import minerar_urlscan  # noqa: E402
+import historico  # noqa: E402
+import relatorio  # noqa: E402
+import favoritos  # noqa: E402
+import versao  # noqa: E402
 
 AGORA = int(time.time())
 FALHAS, OK = [], []
@@ -209,8 +214,10 @@ def t_lowticket():
     buscas = [u for u in r["bib"].urls if "q=" in u]
     checar(len(buscas) == 3 and "keyword_exact_phrase" in buscas[0] and "country=BR" in buscas[0],
            "geral: 'pack' exata + 'pack pdf' + 'pack digital', no Brasil")
-    for arq in ("ranking.md", "ranking.csv", "anuncios.json", "descartadas.md"):
+    for arq in ("ranking.md", "ranking.csv", "anuncios.json", "descartadas.md", "relatorio.html"):
         checar(r["pasta"] and (r["pasta"] / arq).exists(), f"gera {arq}")
+    checar(all("tendencia" in l for l in r["linhas"]), "cada oferta recebe a tendência do radar")
+    checar("RELATORIO:" in r["texto"], "a saída informa o caminho do relatório")
     desc = (r["pasta"] / "descartadas.md").read_text(encoding="utf-8") if r["pasta"] else ""
     checar("Alibaba" in desc and "grande empresa" in desc, "descartadas.md com o motivo")
     checar("DESCARTADAS: 3" in r["texto"], "resumo: 3 descartadas")
@@ -472,8 +479,77 @@ def t_urlscan():
     (pasta_cfg / "config.json").write_text("{}", encoding="utf-8")
 
 
+def t_premium():
+    secao("12) Relatório, radar, favoritos, comparação e versão")
+    import datetime, subprocess
+    linhas = [
+        {"page_id": "1", "pagina": "Comic Play", "ativos_pagina": 10, "anuncios_na_busca": 9, "sinais": "ESCALA, LUCRATIVO",
+         "dias_max": 30, "precos": "", "plataforma": "", "landing": "https://comicplay.site/", "link_biblioteca": "https://x",
+         "copy_top": "biblioteca digital de HQs", "produto": "", "variacoes_video": 2, "tipo_provavel": ""},
+        {"page_id": "2", "pagina": "Chef Cecília", "ativos_pagina": 5, "anuncios_na_busca": 5, "sinais": "LUCRATIVO",
+         "dias_max": 40, "precos": "R$ 9,90", "plataforma": "Kiwify", "landing": "", "link_biblioteca": "https://y",
+         "copy_top": "receitas", "produto": "", "variacoes_video": 0, "tipo_provavel": ""},
+    ]
+    # radar: primeiro ponto = NOVA
+    r1 = historico.registrar([dict(x) for x in linhas], "BR", datetime.datetime(2026, 10, 14, tzinfo=datetime.timezone.utc))
+    checar(all(l["tendencia"]["estado"] == "NOVA" for l in r1), "primeira mineração: tudo NOVA")
+    # segundo ponto: Comic sobe, Chef cai
+    l2 = [dict(linhas[0], ativos_pagina=38), dict(linhas[1], ativos_pagina=2)]
+    r2 = historico.registrar(l2, "BR")
+    t = {l["pagina"]: l["tendencia"] for l in r2}
+    checar(t["Comic Play"]["estado"] == "SUBINDO" and t["Comic Play"]["variacao"] == 28, "detecta página SUBINDO (+28)")
+    checar(t["Chef Cecília"]["estado"] == "CAINDO", "detecta página CAINDO")
+    checar(t["Comic Play"]["pontos"] == [10, 38], "guarda o histórico de ativos")
+    res = historico.resumo("BR")
+    checar(res and res[0]["pagina"] == "Comic Play" and res[0]["variacao"] == 28, "radar lista quem mais subiu")
+    # relatório HTML
+    pasta = Path(os.environ["HOME"]) / "rel"
+    pasta.mkdir(exist_ok=True)
+    arq = relatorio.gerar(r2, pasta, {"modo": "lowticket", "titulo": "pack", "pais": "BR", "subtitulo": "teste"})
+    h = arq.read_text(encoding="utf-8")
+    checar(arq.exists() and h.count('class="card"') == 2, "relatório HTML com um card por oferta")
+    checar("<svg" in h and "escala_favoritos" in h and "Comic Play" in h, "relatório tem gráfico de tendência, favoritos e dados")
+    checar("</html>" in h and h.count("<script") >= 1, "relatório é uma página completa e autossuficiente")
+    # radar vazio
+    sys.argv = ["radar.py", "--pais", "ZZ"]
+    import radar as _radar
+    out = io.StringIO(); cod = 0
+    with redirect_stdout(out), redirect_stderr(io.StringIO()):
+        try: _radar.main()
+        except SystemExit as e: cod = e.code
+    checar(cod == 3 and "RADAR_VAZIO" in out.getvalue(), "radar sem histórico avisa RADAR_VAZIO")
+    # favoritos
+    checar("SALVO" in sh("favoritos", "add", "--json", '{"pagina":"Comic Play","page_id":"1","link_biblioteca":"https://x"}', "--tags", "lowticket,BR"), "favoritos: salva")
+    checar("JA_SALVO" in sh("favoritos", "add", "--json", '{"pagina":"Comic Play","page_id":"1"}'), "favoritos: não duplica")
+    sh("favoritos", "add", "--json", '{"pagina":"Gesundheit","page_id":"9","landing":"https://de"}', "--tags", "nutra,DE")
+    lst = json.loads(sh("favoritos", "listar", "--tag", "nutra").split("\n", 1)[1])
+    checar(len(lst) == 1 and lst[0]["pagina"] == "Gesundheit", "favoritos: filtra por tag")
+    checar("REMOVIDO" in sh("favoritos", "remover", lst[0]["id"]), "favoritos: remove")
+    # comparar países
+    for nome, ativos, sinais in [("US_dir", 80, "ESCALA, VSL"), ("DE_dir", 30, "LUCRATIVO")]:
+        d = Path(os.environ["HOME"]) / f"x_nutra_{nome[:2]}_ed_cavalo"
+        d.mkdir(exist_ok=True)
+        with open(d / "ranking.csv", "w", encoding="utf-8") as fp:
+            w = csv.DictWriter(fp, fieldnames=["pagina", "ativos_pagina", "sinais", "link_biblioteca"])
+            w.writeheader(); w.writerow({"pagina": nome, "ativos_pagina": ativos, "sinais": sinais, "link_biblioteca": "u"})
+    out = sh("comparar", "--pastas", str(Path(os.environ["HOME"]) / "x_nutra_US_ed_cavalo"),
+             str(Path(os.environ["HOME"]) / "x_nutra_DE_ed_cavalo"))
+    comp = json.loads(out)
+    checar(comp[0]["pais"] == "US" and comp[0]["paginas_escala"] == 1, "comparar países: EUA (com escala) em 1º")
+    # versão / aviso de update
+    v = sh("versao")
+    checar("INSTALADA: 1." in v, "versão: mostra a versão instalada")
+    cat = Path(os.environ["HOME"]) / ".claude/plugins/marketplaces/legacy-mentoring/plugins/escala/.claude-plugin"
+    cat.mkdir(parents=True, exist_ok=True)
+    (cat / "plugin.json").write_text('{"version":"99.0.0"}', encoding="utf-8")
+    checar("ATUALIZACAO_DISPONIVEL" in sh("versao"), "versão: avisa quando o catálogo tem versão nova")
+    (cat / "plugin.json").write_text('{"version":"0.0.1"}', encoding="utf-8")
+    checar("ATUALIZACAO_DISPONIVEL" not in sh("versao"), "versão: não avisa quando já está atualizado")
+
+
+
 def t_comandos():
-    secao("11) Comandos do run.sh, diagnóstico e setup")
+    secao("13) Comandos do run.sh, diagnóstico e setup")
     checar("SETUP_PENDENTE" in sh("status"), "status antes do setup: SETUP_PENDENTE")
     checar("SETUP_PENDENTE" in sh("meta", "--palavra", "x"), "minerar sem setup: pede a opção 1")
     venv = Path(os.environ["HOME"]) / ".lowticket/.venv/bin"
@@ -495,6 +571,7 @@ def t_comandos():
     checar("DESCARTADO: grande empresa" in sh("testar", "x", "--link", "https://www.alibaba.com/x"), "testar: lista negra")
     checar("uso:" in sh("qualquercoisa"), "comando desconhecido mostra o uso")
     checar("urlscan" in sh("qualquercoisa"), "urlscan listado nos comandos")
+    checar(all(c in sh("qualquercoisa") for c in ("radar", "favoritos", "comparar", "versao")), "novos comandos listados no uso")
     r = rodar(["--diagnostico"])
     checar("META_OK anuncios_lidos=" in r["texto"] and "bloqueado=False" in r["texto"], "diagnóstico da biblioteca")
     for f in ("run.sh", "setup.sh"):
@@ -505,7 +582,7 @@ def t_comandos():
 
 
 def main():
-    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_urlscan, t_comandos):
+    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_urlscan, t_premium, t_comandos):
         try:
             t()
         except Exception as e:  # um erro numa seção não esconde as outras

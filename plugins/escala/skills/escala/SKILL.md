@@ -52,11 +52,17 @@ Os dados do usuário (ambiente Python, configurações) ficam em `~/.lowticket/`
   ──────────────────────────────────────────────
   ➜  digite o número da opção
 
-  criado por @gabrielrodriguesfx · Legacy Mentoring
-  📸 siga no instagram: instagram.com/gabrielrodriguesfx
+  v{INSTALADA} · criado por @gabrielrodriguesfx
+  📸 instagram.com/gabrielrodriguesfx
 ```
 
-Na primeira vez que o usuário abrir o menu, rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh status` antes. Se a saída for `SETUP_PENDENTE`, mostre esta linha acima do menu:
+(preencha {INSTALADA} com o campo INSTALADA da saída de `run.sh versao`.)
+
+Sempre que abrir o menu principal, rode antes `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh versao`. Se a saída tiver `ATUALIZACAO_DISPONIVEL`, mostre acima do menu:
+
+`🆕 Versão nova disponível ({CATALOGO}). Atualize com: claude plugin marketplace update legacy-mentoring`
+
+E rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh status`. Se a saída for `SETUP_PENDENTE`, mostre esta linha acima do menu:
 
 `⚠️  Primeira vez aqui? Rode a opção 1 antes de minerar.`
 
@@ -244,12 +250,13 @@ Comece com o resumo:
 
 Depois, uma tabela markdown (fora do bloco de código, para os links funcionarem) com as **até 15 melhores**:
 
-| # | Página | Ativos | Dias | Vídeos | Preço | Sinais | Biblioteca |
-|---|---|---|---|---|---|---|---|
+| # | Página | Ativos | Dias | Vídeos | Preço | Tend. | Sinais | Biblioteca |
+|---|---|---|---|---|---|---|---|---|
 
 - **Biblioteca**: `link_biblioteca` como `[abrir](url)`. Se vier vazio, use `anuncio_top`.
 - **Ativos**: `ativos_pagina` (se vazio, `anuncios_na_busca` seguido de `+`).
 - **Vídeos**: `variacoes_video`.
+- **Tend.**: do campo `tendencia`: NOVA → ✦; SUBINDO → ▲ e a variação (ex.: ▲+28); ESTÁVEL → →; CAINDO → ▼ e a variação.
 - **Sinais**: troque cada sinal por um ícone curto: `🔥 escala`, `💰 lucrativo`, `🎬 testando`, `🏷️ low ticket`.
 
 Embaixo da tabela, a legenda (uma vez só):
@@ -262,8 +269,8 @@ Embaixo da tabela, a legenda (uma vez só):
 ```
 
 Depois:
-1. **⭐ Mais fortes:** em 2–3 linhas, as páginas com 🔥 + 💰 juntas.
-2. Onde ficaram os arquivos: `{PASTA}/ranking.md`, `ranking.csv` e `descartadas.md`. Se o usuário perguntar por que uma página entrou, use o campo `por_que_lowticket`.
+1. **⭐ Mais fortes:** em 2–3 linhas, as páginas com 🔥 + 💰 juntas; se alguma estiver **SUBINDO**, destaque ("está escalando agora").
+2. **📊 Relatório visual:** diga que a mineração gerou um relatório bonito para abrir no navegador (filtros, ordenação e favoritar) e ofereça abrir com `open "{PASTA}/relatorio.html"` (caminho na linha `RELATORIO:`). Os outros arquivos ficam em `{PASTA}/ranking.md`, `ranking.csv` e `descartadas.md`.
 3. Feche com:
 
 ```
@@ -273,6 +280,8 @@ Depois:
 
   [3]  🧪  analisar e definir produto
   [5]  🧭  modelar funil (se já tem o link da página)
+  [r]  📊  abrir o relatório visual
+  [s]  ⭐  salvar uma oferta nos favoritos (ex.: "salva a 3")
 
   [e]  ✏️   ensinar o filtro: "a página X é low ticket"
            ou "a página Y não é"
