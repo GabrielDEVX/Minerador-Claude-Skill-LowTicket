@@ -4,8 +4,6 @@ Criado por **Gabriel Rodrigues** · [@gabrielrodriguesfx](https://instagram.com/
 
 [![Siga no Instagram](https://img.shields.io/badge/Siga%20no%20Instagram-@gabrielrodriguesfx-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/gabrielrodriguesfx)
 
-> 📸 Conteúdo de low ticket, mineração de ofertas e tráfego pago no Instagram: **[@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)**. Me segue lá e me marca quando achar uma oferta boa com a ferramenta!
-
 ## Sobre mim
 
 Sou o **Gabriel Rodrigues** ([@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)), fundador da **Legacy Mentoring**.
