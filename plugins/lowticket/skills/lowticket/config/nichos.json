@@ -1,0 +1,39 @@
+{
+  "nichos": [
+    {"id": "geral", "nome": "Geral (todos os nichos)", "termos": []},
+    {"id": "saude", "nome": "Saúde / emagrecimento", "termos": ["emagrecer", "dieta", "receitas fit", "jejum", "detox", "barriga"]},
+    {"id": "artesanato", "nome": "Artesanato", "termos": ["moldes", "crochê", "amigurumi", "bordado", "papelaria", "laços"]},
+    {"id": "culinaria", "nome": "Culinária", "termos": ["receitas", "bolos", "doces", "marmitas", "salgados", "confeitaria"]},
+    {"id": "beleza", "nome": "Beleza", "termos": ["unhas", "maquiagem", "cabelo", "skincare", "sobrancelha", "cílios"]},
+    {"id": "educacao", "nome": "Educação / concurso", "termos": ["concurso", "apostila", "questões", "atividades", "alfabetização", "enem"]},
+    {"id": "renda", "nome": "Renda / digital", "termos": ["renda extra", "plr", "revenda", "inteligência artificial", "chatgpt", "vender online"]},
+    {"id": "esoterico", "nome": "Esotérico", "termos": ["tarô", "oração", "signos", "simpatia", "manifestação", "numerologia"]},
+    {"id": "design", "nome": "Design / social media", "termos": ["canva", "artes editáveis", "posts", "templates", "social media", "feed"]}
+  ],
+  "palavras": [
+    "pack",
+    "mega pack",
+    "kit completo",
+    "+500",
+    "+1000",
+    "combo",
+    "atividades",
+    "projetos",
+    "19,90",
+    "9,90",
+    "por apenas 9,90"
+  ],
+  "gateways_reclameaqui": {
+    "Kiwify": "kiwify",
+    "Hotmart": "hotmart",
+    "Eduzz": "eduzz",
+    "Monetizze": "monetizze",
+    "Cakto": "cakto",
+    "Perfect Pay": "perfect-pay",
+    "Ticto": "ticto",
+    "Braip": "braip",
+    "Kirvano": "kirvano",
+    "Greenn": "greenn",
+    "Lastlink": "lastlink"
+  }
+}

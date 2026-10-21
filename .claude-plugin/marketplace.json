@@ -1,0 +1,14 @@
+{
+  "name": "legacy-mentoring",
+  "description": "Ferramentas da Legacy Mentoring para Claude Code",
+  "owner": {
+    "name": "Gabriel · Legacy Mentoring"
+  },
+  "plugins": [
+    {
+      "name": "lowticket",
+      "source": "./plugins/lowticket",
+      "description": "Central low ticket: minera ofertas escaladas na Biblioteca de Anúncios e no Reclame Aqui"
+    }
+  ]
+}

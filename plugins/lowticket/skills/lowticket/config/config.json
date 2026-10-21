@@ -1,0 +1,11 @@
+{
+  "pais": "BR",
+  "max_anuncios": 150,
+  "min_ativos_escala": 5,
+  "min_dias_lucrativo": 30,
+  "preco_min": 7,
+  "preco_max": 47,
+  "paginas_para_contar": 15,
+  "pausa_rolagem_seg": 2.5,
+  "pasta_saida": "~/mineracao"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "lowticket",
+  "version": "1.0.0",
+  "description": "Central de operação low ticket: mineração de ofertas escaladas na Biblioteca de Anúncios da Meta e no Reclame Aqui, com menu numerado.",
+  "author": {
+    "name": "Gabriel · Legacy Mentoring"
+  }
+}
