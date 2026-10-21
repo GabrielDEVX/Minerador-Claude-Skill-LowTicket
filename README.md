@@ -4,9 +4,9 @@ Criado por **Gabriel Rodrigues** · [@gabrielrodriguesfx](https://instagram.com/
 
 [![Siga no Instagram](https://img.shields.io/badge/Siga%20no%20Instagram-@gabrielrodriguesfx-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/gabrielrodriguesfx)
 
-![Como instalar](instalar.gif)
+![Central Escala no Claude Code](instalar.gif)
 
-> Instalação em um comando (veja abaixo).
+> Depois de instalada, é só digitar `/escala` dentro do Claude Code para abrir a Central. A instalação está logo abaixo.
 
 ## Sobre mim
 
@@ -92,7 +92,7 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 **1.8.0**
 - **Entregável como área de membros**: o infoapp agora é uma área de membros completa — dashboard com anel de progresso e "continuar de onde parei", e abas **Início / Conteúdo / Bônus / Suporte**. Mesmo layout base para todos os nichos, com a cor de cada um. Os bônus e o canal de suporte entram pelo `conteudo.json`.
-- **Vídeo de instalação** (GIF) no topo deste README.
+- **Vídeo** (GIF) no topo do README mostrando a Central aberta dentro do Claude Code com `/escala`.
 
 **1.7.1**
 - Página de vendas (opção 5) refeita no **layout validado**: hero com mockup e números, "veja por dentro", "para você que", bônus com preços, **dois planos** (básico e completo em destaque), garantia e FAQ. As imagens (mockup, prévias, bônus) entram quando você aponta os arquivos.
