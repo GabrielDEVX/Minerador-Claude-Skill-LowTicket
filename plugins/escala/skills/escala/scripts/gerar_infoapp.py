@@ -79,13 +79,38 @@ def main():
     cores = produto.get("cores") or {}
     cor = cores.get("primaria", "#7c3aed")
     fundo = cores.get("fundo", "#0e0e14")
+    # bonus: podem vir do conteudo.json (com conteudo/arquivo/link) ou dos order_bumps/bonus do produto
+    bonus = conteudo.get("bonus")
+    if bonus is None:
+        bonus = []
+        for b in (produto.get("bonus") or produto.get("order_bumps") or []):
+            if isinstance(b, dict):
+                bonus.append({"titulo": b.get("nome") or b.get("titulo"), "descricao": b.get("descricao", "Bônus incluso"),
+                              "link": b.get("link", ""), "img": b.get("img", "")})
+    # copia imagens/arquivos citados nos bônus (mesma logica dos itens)
+    for b in bonus:
+        for campo in ("arquivo", "video", "imagem", "img"):
+            v = b.get(campo)
+            if not v or re.match(r"^https?://", v):
+                continue
+            origem = Path(v).expanduser()
+            if not origem.is_absolute():
+                origem = base / v
+            if origem.exists():
+                (destino / "arquivos").mkdir(exist_ok=True)
+                shutil.copy2(origem, destino / "arquivos" / origem.name)
+                b[campo] = "arquivos/" + origem.name
+            else:
+                faltando.append(v)
+    suporte = conteudo.get("suporte") or produto.get("suporte") or {}
     titulo = conteudo.get("titulo") or produto.get("nome") or "Meu App"
     descricao = produto.get("promessa") or ""
-    dados = {"titulo": titulo, "slug": slug, "modulos": conteudo.get("modulos", [])}
+    dados = {"titulo": titulo, "slug": slug, "promessa": descricao, "modulos": conteudo.get("modulos", []),
+             "bonus": bonus, "suporte": suporte}
 
     html = TEMPLATE.read_text(encoding="utf-8")
     html = (html.replace("__TITULO__", _esc(titulo)).replace("__TITULO_CURTO__", _esc(titulo[:28]))
-            .replace("__DESCRICAO__", _esc(descricao)).replace("__COR__", cor).replace("__FUNDO__", fundo)
+            .replace("__PROMESSA__", _esc(descricao)).replace("__COR__", cor).replace("__FUNDO__", fundo)
             .replace("__DADOS__", json.dumps(dados, ensure_ascii=False)))
     (destino / "index.html").write_text(html, encoding="utf-8")
     (destino / "icone.svg").write_text(icone_svg(titulo, cor), encoding="utf-8")
@@ -104,7 +129,7 @@ def main():
     n_itens = sum(len(m.get("itens", [])) for m in conteudo.get("modulos", []))
     print(f"INFOAPP: {destino / 'index.html'}")
     print(f"ZIP: {zip_path}")
-    print(f"MODULOS: {len(conteudo.get('modulos', []))} · ITENS: {n_itens}")
+    print(f"MODULOS: {len(conteudo.get('modulos', []))} · ITENS: {n_itens} · BONUS: {len(bonus)} · SUPORTE: {'sim' if suporte else 'não'}")
     if faltando:
         print("ARQUIVOS_FALTANDO: " + json.dumps(faltando, ensure_ascii=False))
 

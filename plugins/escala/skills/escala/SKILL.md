@@ -615,6 +615,7 @@ Entrega o produto como um **app** que o comprador adiciona à tela do celular (f
      ]}]}
    ```
    Cada item tem `conteudo` (texto), `arquivo` (um caminho local — coloque o arquivo na pasta do produto — ou um link), `video` e/ou `imagem`. Monte o conteúdo a partir do produto (promessa, mecanismo, público); crie módulos e aulas reais, não títulos vazios. Se o usuário tem os materiais (PDFs, vídeos), use os caminhos; senão, escreva o conteúdo em texto.
+   O app é uma **área de membros** com dashboard (progresso + "continuar de onde parei") e abas Início / Conteúdo / Bônus / Suporte. Para a aba de bônus, adicione `"bonus":[{"titulo":"...","descricao":"...","conteudo":"..." ou "arquivo":"..." ou "link":"..."}]` no `conteudo.json` (se não houver, a ferramenta usa os `bonus`/`order_bumps` do produto; a aba some se não houver nenhum). Para o suporte, adicione `"suporte":{"whatsapp":"5549...","email":"...","texto":"..."}` (ou deixe em `suporte` no produto.json).
 2. Gere o app:
    ```bash
    bash ${CLAUDE_SKILL_DIR}/scripts/run.sh infoapp {slug}

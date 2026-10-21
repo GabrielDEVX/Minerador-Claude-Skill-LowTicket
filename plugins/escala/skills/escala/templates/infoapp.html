@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="__COR__">
+<meta name="theme-color" content="__FUNDO__">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="__TITULO_CURTO__">
@@ -12,57 +12,117 @@
 <link rel="apple-touch-icon" href="icone.svg">
 <title>__TITULO__</title>
 <style>
-:root{--cor:__COR__;--bg:__FUNDO__;--card:#16161f;--tx:#f0f0f4;--mut:#9a9aa8;--bd:#272733}
-@media(prefers-color-scheme:light){:root:not([data-t=dark]){--bg:#f5f5f8;--card:#fff;--tx:#17171c;--mut:#5a5a66;--bd:#e5e5ea}}
-*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--tx);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+:root{--cor:__COR__;--bg:__FUNDO__;--card:#16161f;--card2:#1e1e2a;--tx:#f1f1f5;--mut:#9a9aa8;--bd:#2a2a38}
+@media(prefers-color-scheme:light){:root:not([data-t=dark]){--bg:#f4f4f7;--card:#fff;--card2:#f0f0f4;--tx:#18181c;--mut:#5c5c68;--bd:#e4e4ea}}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
 a{color:var(--cor)}
-.topo{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;align-items:center;gap:10px}
-.topo .volta{background:none;border:0;color:var(--tx);font-size:22px;cursor:pointer;display:none;padding:2px 6px}
-.topo h1{font-size:16px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.capa{padding:26px 18px 10px;text-align:center}
-.capa .ic{width:84px;height:84px;border-radius:22px;margin:0 auto 14px;display:block;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-.capa h2{font-size:23px;font-weight:800;letter-spacing:-.4px}
-.capa p{color:var(--mut);margin-top:8px;font-size:14.5px}
-.busca{margin:16px 16px 0}.busca input{width:100%;background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:12px;padding:12px 14px;font-size:15px;outline:none}
-.prog{margin:14px 16px 0;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--mut)}
-.prog .barra{height:7px;background:var(--bd);border-radius:5px;margin-top:8px;overflow:hidden}.prog .barra i{display:block;height:100%;background:var(--cor);width:0;transition:.3s}
-.lista{padding:14px 16px 30px;max-width:640px;margin:0 auto}
-.mod{margin-bottom:12px;border:1px solid var(--bd);border-radius:14px;overflow:hidden;background:var(--card)}
+/* topo */
+.topo{position:sticky;top:0;z-index:8;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;align-items:center;gap:11px}
+.topo .volta{background:none;border:0;color:var(--tx);font-size:24px;cursor:pointer;display:none;padding:0 4px}
+.topo .av{width:34px;height:34px;border-radius:10px;background:var(--cor);color:#fff;font-weight:800;font-size:14px;display:grid;place-items:center;flex:none}
+.topo h1{font-size:15px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wrap{max-width:660px;margin:0 auto;padding:16px}
+.view{display:none}.view.on{display:block}
+/* dashboard */
+.ola{font-size:22px;font-weight:800;letter-spacing:-.3px;margin-bottom:3px}
+.ola span{color:var(--cor)}
+.sub{color:var(--mut);font-size:14px}
+.painel{display:flex;gap:16px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;margin:16px 0}
+.anel{--p:0;width:72px;height:72px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--cor) calc(var(--p)*1%),var(--card2) 0)}
+.anel i{width:56px;height:56px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-weight:800;font-size:16px;font-style:normal}
+.painel .txt b{display:block;font-size:15px}.painel .txt p{color:var(--mut);font-size:13px;margin-top:2px}
+.btn{display:block;width:100%;background:var(--cor);color:#fff;text-align:center;font-weight:800;font-size:15px;padding:14px;border-radius:12px;text-decoration:none;border:0;cursor:pointer;margin:14px 0}
+.btn.sec{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+.secao-t{font-size:13px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;margin:22px 0 10px}
+.cards{display:grid;gap:11px}
+.mcard{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;cursor:pointer;text-align:left;width:100%;color:inherit;font:inherit}
+.mcard .n{width:30px;height:30px;border-radius:9px;background:var(--card2);color:var(--mut);font-weight:800;font-size:13px;display:grid;place-items:center;flex:none}
+.mcard .m{flex:1;min-width:0}.mcard .m b{font-size:15px;display:block}.mcard .m small{color:var(--mut);font-size:12px}
+.mcard .barra{height:5px;background:var(--card2);border-radius:4px;margin-top:7px;overflow:hidden}.mcard .barra i{display:block;height:100%;background:var(--cor);width:0}
+.mcard .seta{color:var(--mut);font-size:20px}
+/* busca */
+.busca input{width:100%;background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:12px;padding:12px 14px;font-size:15px;outline:none;margin-bottom:12px}
+/* conteúdo (módulos) */
+.mod{margin-bottom:11px;border:1px solid var(--bd);border-radius:14px;overflow:hidden;background:var(--card)}
 .mod>summary{padding:15px 16px;font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px}
 .mod>summary::-webkit-details-marker{display:none}
-.mod>summary .n{background:var(--bg);color:var(--mut);font-size:12px;font-weight:700;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;flex:none}
+.mod>summary .n{background:var(--card2);color:var(--mut);font-size:12px;font-weight:700;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;flex:none}
 .mod>summary .seta{margin-left:auto;color:var(--mut);transition:.2s}.mod[open]>summary .seta{transform:rotate(90deg)}
 .item{padding:13px 16px 13px 50px;border-top:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;gap:10px}
-.item:hover{background:color-mix(in srgb,var(--card) 80%,var(--cor) 6%)}
+.item:hover{background:var(--card2)}
 .item .ck{width:20px;height:20px;border:2px solid var(--bd);border-radius:50%;flex:none}.item.feito .ck{background:var(--cor);border-color:var(--cor)}
 .item .tt{flex:1;font-size:14.5px}.item.feito .tt{color:var(--mut);text-decoration:line-through}
-.leitor{position:fixed;inset:0;background:var(--bg);z-index:20;overflow:auto;display:none;flex-direction:column}
-.leitor.on{display:flex}
-.leitor .conteudo{padding:20px 18px 40px;max-width:680px;margin:0 auto;width:100%}
+/* bônus */
+.bcard{display:flex;gap:13px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:13px;margin-bottom:11px;cursor:pointer;width:100%;color:inherit;font:inherit;text-align:left}
+.bcard img,.bcard .ph{width:52px;height:52px;border-radius:10px;object-fit:cover;flex:none}
+.bcard .ph{background:var(--card2);display:grid;place-items:center;font-size:20px}
+.bcard .m{flex:1}.bcard .m b{display:block;font-size:15px}.bcard .m small{color:var(--mut);font-size:12.5px}
+.bcard .tag{font-size:10px;font-weight:800;color:var(--cor);border:1px solid var(--cor);border-radius:20px;padding:2px 8px}
+/* suporte */
+.sup{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px;text-align:center}
+.sup p{color:var(--mut);font-size:14px;margin-bottom:14px}
+/* leitor */
+.leitor{position:fixed;inset:0;background:var(--bg);z-index:20;overflow:auto;display:none}
+.leitor.on{display:block}
+.leitor .c{max-width:680px;margin:0 auto;padding:18px 18px 50px}
 .leitor h3{font-size:22px;font-weight:800;margin-bottom:14px}
-.leitor p{margin:0 0 14px;color:#d8d8e0}.leitor img,.leitor video{max-width:100%;border-radius:12px;margin:6px 0 14px}
-.leitor .baixar{display:inline-block;background:var(--cor);color:#fff;padding:11px 18px;border-radius:11px;font-weight:700;text-decoration:none;margin:4px 0 14px}
-.leitor .nav{display:flex;gap:10px;margin-top:20px}.leitor .nav button{flex:1;background:var(--card);border:1px solid var(--bd);color:var(--tx);padding:12px;border-radius:11px;font-weight:700;cursor:pointer}
+.leitor p{margin:0 0 14px;color:#d6d6de}@media(prefers-color-scheme:light){:root:not([data-t=dark]) .leitor p{color:#33333c}}
+.leitor img,.leitor video{max-width:100%;border-radius:12px;margin:6px 0 14px}
+.leitor .baixar{display:inline-block;background:var(--cor);color:#fff;padding:11px 18px;border-radius:11px;font-weight:700;text-decoration:none;margin:4px 8px 14px 0}
+.leitor .nav{display:flex;gap:10px;margin-top:22px}.leitor .nav button{flex:1;background:var(--card);border:1px solid var(--bd);color:var(--tx);padding:13px;border-radius:12px;font-weight:700;cursor:pointer}
 .leitor .nav button.prim{background:var(--cor);color:#fff;border-color:var(--cor)}
-.off{text-align:center;color:var(--mut);font-size:12px;padding:16px}
+/* tabbar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:9;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(12px);border-top:1px solid var(--bd);display:flex;padding:8px 6px calc(8px + env(safe-area-inset-bottom))}
+.tabbar button{flex:1;background:none;border:0;color:var(--mut);font-size:11px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px}
+.tabbar button .ic{font-size:20px}.tabbar button.on{color:var(--cor)}
+.vazio{text-align:center;color:var(--mut);padding:30px 10px}
 </style>
 </head>
 <body>
-<div class="topo"><button class="volta" id="volta">‹</button><h1 id="tituloTopo">__TITULO__</h1></div>
+<div class="topo"><button class="volta" id="volta">‹</button><span class="av" id="av">?</span><h1 id="tituloTopo">__TITULO__</h1></div>
 
-<div id="inicio">
-  <div class="capa">
-    <img src="icone.svg" class="ic" alt="">
-    <h2>__TITULO__</h2>
-    <p>__DESCRICAO__</p>
+<!-- INÍCIO -->
+<div class="view on" id="v-inicio"><div class="wrap">
+  <div class="ola">Olá! 👋</div>
+  <p class="sub">__PROMESSA__</p>
+  <div class="painel">
+    <div class="anel" id="anel"><i id="anelP">0%</i></div>
+    <div class="txt"><b id="progTxt">Comece agora</b><p id="progSub">Seu progresso aparece aqui.</p></div>
   </div>
-  <div class="busca"><input id="q" placeholder="🔎 buscar no conteúdo…"></div>
-  <div class="prog">Seu progresso: <b id="pt">0%</b><div class="barra"><i id="pb"></i></div></div>
-  <div class="lista" id="lista"></div>
-  <div class="off">📶 Funciona offline depois de aberto uma vez.</div>
-</div>
+  <button class="btn" id="continuar">▶ Continuar de onde parei</button>
+  <div class="secao-t">Seus módulos</div>
+  <div class="cards" id="dashMods"></div>
+</div></div>
 
-<div class="leitor" id="leitor"><div class="conteudo" id="leitorC"></div></div>
+<!-- CONTEÚDO -->
+<div class="view" id="v-conteudo"><div class="wrap">
+  <div class="busca"><input id="q" placeholder="🔎 buscar no conteúdo…"></div>
+  <div id="lista"></div>
+</div></div>
+
+<!-- BÔNUS -->
+<div class="view" id="v-bonus"><div class="wrap">
+  <div class="secao-t">Seus bônus</div>
+  <div id="listaBonus"></div>
+</div></div>
+
+<!-- SUPORTE -->
+<div class="view" id="v-suporte"><div class="wrap">
+  <div class="secao-t">Precisa de ajuda?</div>
+  <div class="sup" id="supBox"></div>
+</div></div>
+
+<!-- LEITOR -->
+<div class="leitor" id="leitor"><div class="c" id="leitorC"></div></div>
+
+<!-- TABBAR -->
+<div class="tabbar" id="tabbar">
+  <button data-v="inicio" class="on"><span class="ic">🏠</span>Início</button>
+  <button data-v="conteudo"><span class="ic">📚</span>Conteúdo</button>
+  <button data-v="bonus" id="tabBonus"><span class="ic">🎁</span>Bônus</button>
+  <button data-v="suporte"><span class="ic">💬</span>Suporte</button>
+</div>
 
 <script id="dados" type="application/json">__DADOS__</script>
 <script>
@@ -70,48 +130,85 @@ const D=JSON.parse(document.getElementById('dados').textContent);
 const KP='escala_app_'+(D.slug||'x')+'_prog';
 let feitos=new Set();try{feitos=new Set(JSON.parse(localStorage.getItem(KP)||'[]'))}catch(e){}
 const planos=[];D.modulos.forEach((m,mi)=>m.itens.forEach((it,ii)=>planos.push({mi,ii,it,m})));
-function id(mi,ii){return mi+'-'+ii}
+const id=(mi,ii)=>mi+'-'+ii, esc=s=>{const e=document.createElement('div');e.textContent=s==null?'':s;return e.innerHTML};
 function salvar(){try{localStorage.setItem(KP,JSON.stringify([...feitos]))}catch(e){}}
-function prog(){const t=planos.length||1,f=[...feitos].filter(x=>planos.some(p=>id(p.mi,p.ii)===x)).length;
- const pc=Math.round(f/t*100);document.getElementById('pt').textContent=pc+'%';document.getElementById('pb').style.width=pc+'%';}
-function render(filtro){
- const L=document.getElementById('lista');L.innerHTML='';const f=(filtro||'').toLowerCase();
+document.getElementById('av').textContent=(D.titulo||'?').replace(/[^A-Za-zÀ-ú0-9]/g,' ').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'A';
+
+function modProg(mi){const its=D.modulos[mi].itens;const f=its.filter((_,ii)=>feitos.has(id(mi,ii))).length;return{f,t:its.length,pc:its.length?Math.round(f/its.length*100):0}}
+function geral(){const t=planos.length||1,f=[...feitos].filter(x=>planos.some(p=>id(p.mi,p.ii)===x)).length;return{f,t,pc:Math.round(f/t*100)}}
+function dash(){
+ const g=geral();document.getElementById('anel').style.setProperty('--p',g.pc);document.getElementById('anelP').textContent=g.pc+'%';
+ document.getElementById('progTxt').textContent=g.pc===0?'Comece agora':g.pc===100?'Você concluiu tudo! 🎉':'Continue de onde parou';
+ document.getElementById('progSub').textContent=g.f+' de '+g.t+' aulas concluídas';
+ const C=document.getElementById('dashMods');C.innerHTML='';
+ D.modulos.forEach((m,mi)=>{const p=modProg(mi);const b=document.createElement('button');b.className='mcard';
+  b.innerHTML='<span class="n">'+(mi+1)+'</span><span class="m"><b>'+esc(m.titulo)+'</b><small>'+p.f+'/'+p.t+' aulas</small><span class="barra"><i style="width:'+p.pc+'%"></i></span></span><span class="seta">›</span>';
+  b.onclick=()=>{mostrar('conteudo');const d=document.querySelectorAll('#lista .mod')[mi];if(d){d.open=true;d.scrollIntoView({behavior:'smooth'})}};C.appendChild(b);});
+}
+function lista(filtro){
+ const L=document.getElementById('lista');L.innerHTML='';const f=(filtro||'').toLowerCase();let algum=false;
  D.modulos.forEach((m,mi)=>{
   const its=m.itens.map((it,ii)=>({it,ii})).filter(({it})=>!f||(it.titulo+' '+(it.conteudo||'')).toLowerCase().includes(f));
-  if(!its.length)return;
+  if(!its.length)return;algum=true;
   const d=document.createElement('details');d.className='mod';d.open=!!f||mi===0;
-  const s=document.createElement('summary');s.innerHTML='<span class="n">'+(mi+1)+'</span>'+esc(m.titulo)+'<span class="seta">›</span>';
-  d.appendChild(s);
+  d.innerHTML='<summary><span class="n">'+(mi+1)+'</span>'+esc(m.titulo)+'<span class="seta">›</span></summary>';
   its.forEach(({it,ii})=>{const el=document.createElement('div');el.className='item'+(feitos.has(id(mi,ii))?' feito':'');
-   el.innerHTML='<span class="ck"></span><span class="tt">'+esc(it.titulo)+'</span>';
-   el.onclick=()=>abrir(mi,ii);d.appendChild(el);});
+   el.innerHTML='<span class="ck"></span><span class="tt">'+esc(it.titulo)+'</span>';el.onclick=()=>abrir(mi,ii);d.appendChild(el);});
   L.appendChild(d);
- });prog();
+ });
+ if(!algum)L.innerHTML='<div class="vazio">Nada encontrado.</div>';
 }
-function esc(s){const e=document.createElement('div');e.textContent=s==null?'':s;return e.innerHTML}
+function bonus(){
+ const L=document.getElementById('listaBonus');const bs=D.bonus||[];
+ if(!bs.length){L.innerHTML='<div class="vazio">Este acesso não tem bônus.</div>';return}
+ L.innerHTML='';bs.forEach((b,i)=>{const el=document.createElement('button');el.className='bcard';
+  el.innerHTML=(b.img?'<img src="'+esc(b.img)+'" alt="">':'<span class="ph">🎁</span>')+
+   '<span class="m"><b>'+esc(b.titulo)+'</b><small>'+esc(b.descricao||'Bônus incluso')+'</small></span><span class="tag">ABRIR</span>';
+  el.onclick=()=>abrirBonus(i);L.appendChild(el);});
+}
+function suporte(){
+ const s=D.suporte||{};const B=document.getElementById('supBox');let h='<p>'+esc(s.texto||'Ficou com alguma dúvida? Fale com a gente.')+'</p>';
+ if(s.whatsapp)h+='<a class="btn" href="https://wa.me/'+esc(s.whatsapp.replace(/\D/g,''))+'" target="_blank">💬 Falar no WhatsApp</a>';
+ if(s.email)h+='<a class="btn sec" href="mailto:'+esc(s.email)+'">✉️ Enviar e-mail</a>';
+ if(!s.whatsapp&&!s.email)h+='<p style="font-size:13px">O canal de suporte será informado pelo produtor.</p>';
+ B.innerHTML=h;
+}
 function abrir(mi,ii){
- const m=D.modulos[mi],it=m.itens[ii];const C=document.getElementById('leitorC');
- let h='<h3>'+esc(it.titulo)+'</h3>';
- if(it.video)h+=(/^https?:/.test(it.video)&&!/\.(mp4|webm|mov)$/i.test(it.video)?'<p><a class="baixar" href="'+esc(it.video)+'" target="_blank">▶ Assistir ao vídeo</a></p>':'<video controls src="'+esc(it.video)+'"></video>');
- if(it.imagem)h+='<img src="'+esc(it.imagem)+'" alt="">';
- if(it.conteudo)h+='<div>'+it.conteudo.split(/\n\n+/).map(p=>'<p>'+esc(p).replace(/\n/g,'<br>')+'</p>').join('')+'</div>';
- if(it.arquivo)h+='<a class="baixar" href="'+esc(it.arquivo)+'" download target="_blank">⬇ Baixar material</a>';
- const idx=planos.findIndex(p=>p.mi===mi&&p.ii===ii);
- h+='<div class="nav">';
- if(idx>0)h+='<button onclick="abrirIdx('+(idx-1)+')">‹ Anterior</button>';
+ const it=D.modulos[mi].itens[ii];conteudoLeitor(it);
+ const idx=planos.findIndex(p=>p.mi===mi&&p.ii===ii);let h=document.getElementById('leitorC').innerHTML;
+ h+='<div class="nav">';if(idx>0)h+='<button onclick="abrirIdx('+(idx-1)+')">‹ Anterior</button>';
  h+='<button class="prim" onclick="concluir('+mi+','+ii+')">'+(feitos.has(id(mi,ii))?'✓ Concluído':'Marcar como concluído')+'</button>';
- if(idx<planos.length-1)h+='<button onclick="abrirIdx('+(idx+1)+')">Próximo ›</button>';
- h+='</div>';
- C.innerHTML=h;document.getElementById('leitor').classList.add('on');document.getElementById('volta').style.display='block';
- document.getElementById('tituloTopo').textContent=it.titulo;window.scrollTo(0,0);
+ if(idx<planos.length-1)h+='<button onclick="abrirIdx('+(idx+1)+')">Próximo ›</button>';h+='</div>';
+ document.getElementById('leitorC').innerHTML=h;abrirLeitor(it.titulo);
 }
+function abrirBonus(i){const b=(D.bonus||[])[i];if(!b)return;
+ if(b.link&&!b.conteudo&&!b.arquivo&&!b.video){window.open(b.link,'_blank');return}
+ conteudoLeitor(b);if(b.link)document.getElementById('leitorC').innerHTML+='<a class="baixar" href="'+esc(b.link)+'" target="_blank">↗ Abrir bônus</a>';
+ abrirLeitor(b.titulo);
+}
+function conteudoLeitor(it){let h='<h3>'+esc(it.titulo)+'</h3>';
+ if(it.video)h+=(/^https?:/.test(it.video)&&!/\.(mp4|webm|mov)$/i.test(it.video)?'<a class="baixar" href="'+esc(it.video)+'" target="_blank">▶ Assistir ao vídeo</a>':'<video controls src="'+esc(it.video)+'"></video>');
+ if(it.imagem)h+='<img src="'+esc(it.imagem)+'" alt="">';
+ if(it.conteudo)h+=it.conteudo.split(/\n\n+/).map(p=>'<p>'+esc(p).replace(/\n/g,'<br>')+'</p>').join('');
+ if(it.arquivo)h+='<a class="baixar" href="'+esc(it.arquivo)+'" download target="_blank">⬇ Baixar material</a>';
+ document.getElementById('leitorC').innerHTML=h;}
+function abrirLeitor(t){document.getElementById('leitor').classList.add('on');document.getElementById('volta').style.display='block';
+ document.getElementById('tituloTopo').textContent=t;window.scrollTo(0,0);}
 function abrirIdx(i){const p=planos[i];abrir(p.mi,p.ii)}
-function concluir(mi,ii){feitos.add(id(mi,ii));salvar();abrir(mi,ii);}
-function fechar(){document.getElementById('leitor').classList.remove('on');document.getElementById('volta').style.display='none';
- document.getElementById('tituloTopo').textContent=D.titulo;render(document.getElementById('q').value);}
-document.getElementById('volta').onclick=fechar;
-document.getElementById('q').addEventListener('input',e=>render(e.target.value));
-render('');
+function concluir(mi,ii){feitos.add(id(mi,ii));salvar();abrir(mi,ii);dash();lista(document.getElementById('q').value);}
+function fecharLeitor(){document.getElementById('leitor').classList.remove('on');document.getElementById('volta').style.display='none';
+ document.getElementById('tituloTopo').textContent=D.titulo;}
+function mostrar(v){
+ document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));document.getElementById('v-'+v).classList.add('on');
+ document.querySelectorAll('.tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+ fecharLeitor();window.scrollTo(0,0);
+}
+document.getElementById('volta').onclick=fecharLeitor;
+document.getElementById('q').addEventListener('input',e=>lista(e.target.value));
+document.querySelectorAll('.tabbar button').forEach(b=>b.onclick=()=>mostrar(b.dataset.v));
+document.getElementById('continuar').onclick=()=>{const n=planos.find(p=>!feitos.has(id(p.mi,p.ii)))||planos[0];if(n)abrir(n.mi,n.ii)};
+if(!(D.bonus||[]).length)document.getElementById('tabBonus').style.display='none';
+dash();lista('');bonus();suporte();
 if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 </script>
 </body>

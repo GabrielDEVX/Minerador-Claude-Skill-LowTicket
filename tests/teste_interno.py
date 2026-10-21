@@ -586,16 +586,21 @@ def t_produto():
     # 4 — infoapp
     conteudo = {"titulo": "Meu Pack", "modulos": [{"titulo": "Início", "itens": [
         {"titulo": "Aula 1", "conteudo": "Bem-vindo ao pack."},
-        {"titulo": "Material", "arquivo": "guia.txt"}]}]}
+        {"titulo": "Material", "arquivo": "guia.txt"}]}],
+        "bonus": [{"titulo": "Bônus Fontes", "descricao": "+50 fontes", "conteudo": "Suas fontes extras."}],
+        "suporte": {"whatsapp": "5549999999999", "texto": "Fale com a gente."}}
     (base / "conteudo.json").write_text(json.dumps(conteudo, ensure_ascii=False), encoding="utf-8")
     (base / "guia.txt").write_text("exemplo", encoding="utf-8")
     out = sh("infoapp", "meu-pack-de-teste")
-    checar("INFOAPP:" in out and "ZIP:" in out, "gera o infoapp e o zip")
+    checar("INFOAPP:" in out and "ZIP:" in out and "BONUS: 1" in out, "gera o infoapp (área de membros) e o zip")
     app = base / "infoapp"
     checar((app / "index.html").exists() and (app / "manifest.webmanifest").exists() and (app / "sw.js").exists()
            and (app / "icone.svg").exists(), "app tem index, manifest, service worker e ícone")
     h = (app / "index.html").read_text(encoding="utf-8")
     checar('"modulos"' in h and "#e4336b" in h and "serviceWorker" in h, "app traz o conteúdo, a cor e o modo offline")
+    checar("tabbar" in h and "v-inicio" in h and "v-bonus" in h and "v-suporte" in h, "área de membros com abas início/conteúdo/bônus/suporte")
+    checar("anel" in h and "Continuar de onde" in h, "dashboard com progresso e continuar de onde parei")
+    checar("Bônus Fontes" in h and "wa.me" not in h or "5549999999999" in h, "bônus e suporte presentes no app")
     checar((app / "arquivos" / "guia.txt").exists(), "copia os arquivos locais para o app")
     import zipfile
     checar(zipfile.ZipFile(base / "infoapp.zip").namelist(), "o zip do app não está vazio")
