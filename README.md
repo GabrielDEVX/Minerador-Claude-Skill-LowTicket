@@ -6,6 +6,16 @@ Criado por **Gabriel Rodrigues** · [@gabrielrodriguesfx](https://instagram.com/
 
 > 📸 Conteúdo de low ticket, mineração de ofertas e tráfego pago no Instagram: **[@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)**. Me segue lá e me marca quando achar uma oferta boa com a ferramenta!
 
+## Sobre mim
+
+Sou o **Gabriel Rodrigues** ([@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)), fundador da **Legacy Mentoring**.
+
+Hoje faturo **mais de 1 milhão de euros por mês** vendendo nutra na Europa. Mas eu sei bem quais são os gargalos de quem está começando: não saber qual oferta escolher, perder tempo minerando na mão e entrar em produto que não está vendendo.
+
+Por isso resolvi ajudar com o que eu sei. Esta ferramenta é uma parte do processo que uso para encontrar ofertas validadas, colocada à disposição de quem está dando os primeiros passos.
+
+## O que é
+
 Plugin para o Claude Code que minera ofertas low ticket escaladas na Biblioteca de Anúncios da Meta e no Reclame Aqui. Ele roda em segundo plano, sem abrir o seu navegador.
 
 ## Antes de começar
