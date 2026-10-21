@@ -1,7 +1,7 @@
 {
   "name": "lowticket",
-  "version": "1.1.1",
-  "description": "Central de operação low ticket: mineração de ofertas escaladas na Biblioteca de Anúncios da Meta e no Reclame Aqui, com menu numerado.",
+  "version": "1.2.0",
+  "description": "Central Low Ticket + Nutra: minera infoprodutos low ticket no Brasil e ofertas de nutra por mecanismo (truque do cavalo, da gelatina…) em qualquer país e idioma, na Biblioteca de Anúncios da Meta e no Reclame Aqui.",
   "author": {
     "name": "Gabriel Rodrigues (@gabrielrodriguesfx)",
     "url": "https://instagram.com/gabrielrodriguesfx"

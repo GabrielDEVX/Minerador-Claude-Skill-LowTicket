@@ -285,5 +285,71 @@
       "peso": 2,
       "regex": "(acesso (imediato|vitalicio|na hora)|receba (no|pelo) (e-?mail|whatsapp)|baixe|download|arquivo(s)? (digital|em pdf)|formato (pdf|digital)|material digital|imprima (quantas|em casa))"
     }
+  ],
+  "_nutra": "Usado no modo nutra: não penaliza e-commerce (nutra físico usa frete grátis), só descarta a lista negra e soma sinais de VSL/advertorial em vários idiomas.",
+  "dominios_nutra": [
+    "digistore24",
+    "checkout-ds24",
+    "ds24",
+    "clickbank",
+    "hop.clickbank",
+    "clkbank",
+    "buygoods",
+    "maxweb",
+    "smartadv",
+    "cartpanda",
+    "shopify",
+    "myshopify",
+    "/vsl",
+    "vsl.",
+    "/presell",
+    "presell",
+    "/advertorial",
+    "/article",
+    "/news",
+    "health",
+    "gesundheit",
+    "sante",
+    "salud",
+    "salute",
+    "saude",
+    "wellness",
+    "natural",
+    "remedy",
+    "/order",
+    "/checkout",
+    "official"
+  ],
+  "padroes_nutra": [
+    {
+      "nome": "vídeo / VSL",
+      "peso": 2,
+      "regex": "(watch|video|vídeo|vidéo|regarde[rz]?|ansehen|schau|guarda|mira el|assista|veja o video|this video|dieses video|cette video|este video|questo video)"
+    },
+    {
+      "nome": "mecanismo (truque / ritual / receita)",
+      "peso": 2,
+      "regex": "(trick|truque|truco|astuce|trucco|kniff|ritual|rituel|rituale|recipe|recette|rezept|receta|ricetta|receita|hack|method|methode|método|metodo|méthode|tonic|tonico|tónico|tonique|elixir|drink|getränk|boisson|bebida|bevanda)"
+    },
+    {
+      "nome": "urgência / sigilo",
+      "peso": 1,
+      "regex": "(before (it|this)|taken down|banned|secret|geheim|secreto|segreto|segredo|vor dem|avant qu|antes de que|prima che|antes que|only \\d+|nur \\d+|médicos|doctors|ärzte|médecins|medici|big pharma|pharma)"
+    },
+    {
+      "nome": "resultado em tempo / dose",
+      "peso": 1,
+      "regex": "(\\d+\\s?(seconds?|segundos?|sekunden|secondes|secondi|minutes?|minutos?|minuten|minuti|days?|dias?|tage|jours|giorni|hours?|horas?|stunden|heures|ore)|once a day|einmal am tag|une fois par jour|una vez al dia|una volta al giorno|uma vez ao dia|before bed|vor dem schlafen|avant de dormir|antes de dormir|prima di dormire)"
+    },
+    {
+      "nome": "condição de saúde",
+      "peso": 1,
+      "regex": "(weight|belly|fat|abnehmen|bauch|fett|poids|ventre|graisse|peso|barriga|gordura|grasa|grasso|pancia|sugar|blood sugar|glucose|glukose|zucker|glycemie|azucar|zucchero|açucar|diabet|prostat|bladder|blase|vessie|vejiga|vescica|bexiga|erection|erektion|erection|ereccion|erezione|ereção|potenz|potency|stamina|libido|joint|gelenk|articul|memory|gedächtnis|memoire|memoria|tinnitus|neuropath)"
+    },
+    {
+      "nome": "manifestação / dinheiro",
+      "peso": 1,
+      "regex": "(prayer|oración|oração|gebet|prière|preghiera|frequency|frequenz|fréquence|frecuencia|frequenza|frequência|manifest|abundan|wealth|reichtum|richesse|riqueza|ricchezza|angel|engel|ange|ángel|angelo|anjo|pineal|solomon|salomon|salomão|salomone)"
+    }
   ]
 }

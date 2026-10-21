@@ -1,0 +1,93 @@
+{
+  "_como_funciona": "Palavras em português. Na hora de minerar, o Claude traduz para o idioma do país escolhido do jeito que os anúncios desse país escrevem (ex.: 'Truque do bicarbonato' nos EUA = 'baking soda trick'). 'principais' aparecem no menu; 'outras' só quando o usuário pede para ver todas.",
+
+  "paises": [
+    {"codigo": "US", "nome": "EUA",           "bandeira": "🇺🇸", "idioma": "inglês (EUA)"},
+    {"codigo": "DE", "nome": "Alemanha",      "bandeira": "🇩🇪", "idioma": "alemão"},
+    {"codigo": "FR", "nome": "França",        "bandeira": "🇫🇷", "idioma": "francês"},
+    {"codigo": "ES", "nome": "Espanha",       "bandeira": "🇪🇸", "idioma": "espanhol (Espanha)"},
+    {"codigo": "IT", "nome": "Itália",        "bandeira": "🇮🇹", "idioma": "italiano"},
+    {"codigo": "GB", "nome": "Reino Unido",   "bandeira": "🇬🇧", "idioma": "inglês (Reino Unido)"},
+    {"codigo": "PT", "nome": "Portugal",      "bandeira": "🇵🇹", "idioma": "português (Portugal)"},
+    {"codigo": "BR", "nome": "Brasil",        "bandeira": "🇧🇷", "idioma": "português (Brasil)"}
+  ],
+
+  "categorias": [
+    {
+      "id": "emagrecimento", "nome": "Emagrecimento / metabolismo", "emoji": "🔥",
+      "principais": [
+        "Truque da gelatina bariátrica", "Truque do gengibre", "Truque da banana", "Truque do sal rosa",
+        "Truque do café", "Truque do vinagre de maçã", "Chá bariátrico japonês", "Mounjaro natural"
+      ],
+      "outras": [
+        "Truque da cúrcuma", "Receita do cacau", "Truque do limão", "Truque do pó bariátrico", "Truque do arroz",
+        "Chá bariátrico natural", "Chá que seca gordura", "Semente bariátrica", "Parasita emagrecedor",
+        "Bactéria que engorda", "Método do arroz", "Ritual matinal para emagrecer", "Receita caseira que derrete gordura",
+        "Derreta gordura localizada", "Receita secreta que seca barriga", "Queime banha dormindo", "Receita para desinchar",
+        "Bebida natural que derrete gordura", "Dieta low carb", "Dieta cetogênica", "Dieta carnívora",
+        "Wegovy natural", "Ozempic natural", "Receita Mounjaro caseira"
+      ]
+    },
+    {
+      "id": "diabetes", "nome": "Diabetes / glicose", "emoji": "🩸",
+      "principais": ["Truque da aveia", "Truque da canela"],
+      "outras": []
+    },
+    {
+      "id": "ed", "nome": "Desempenho sexual / virilidade (ED)", "emoji": "🍆",
+      "principais": [
+        "Truque do cavalo", "Truque do bicarbonato", "Truque do sal azul", "Truque do mel amazônico",
+        "Truque da melancia", "Truque do rei Salomão", "Receita natural de viagra", "Truque do touro indiano"
+      ],
+      "outras": [
+        "Truque do pepino", "Tadalafila caseira", "Ritual do gengibre", "Tônico da virilidade", "Duro como pedra",
+        "Receita para ereção", "Mistura secreta para potência", "Técnica do anel mágico", "Truque do sal matinal",
+        "Cobra gigante natural", "Anaconda natural"
+      ]
+    },
+    {
+      "id": "prostata", "nome": "Próstata / hormônios", "emoji": "🔵",
+      "principais": [
+        "Truque da água morna", "Truque japonês para a próstata", "Truque da maçã para a próstata",
+        "Truque do vinagre para a próstata", "Receita caseira para próstata", "Chá redutor de próstata",
+        "Desinche a próstata", "Urine sem esforço"
+      ],
+      "outras": ["Esvaziar a bexiga naturalmente", "Bactéria que desinflama a próstata"]
+    },
+    {
+      "id": "prosperidade", "nome": "Prosperidade / manifestação", "emoji": "💸",
+      "principais": [
+        "Truque do rei Salomão", "Oração da prosperidade", "Frequência do dinheiro", "Glândula pineal ativada",
+        "Oração secreta do anjo", "Roteiro de 20 palavras mágicas", "Ritual da manhã para atrair dinheiro",
+        "Anjo da guarda da riqueza"
+      ],
+      "outras": [
+        "Ritual da bênção financeira", "Pergaminho da abundância", "Programa secreto do governo",
+        "Frequência divina da riqueza", "Técnica de manifestação em 24h", "Palavra bíblica para prosperidade",
+        "Chave vibracional da abundância", "Sintonize a frequência do dinheiro", "Canto do anjo da guarda"
+      ]
+    },
+    {
+      "id": "renda", "nome": "Renda extra / internet", "emoji": "📱",
+      "principais": [
+        "Ganhar com TikTok", "Ganhar com YouTube", "Renda extra avaliando produtos", "Renda com vídeos curtos",
+        "Ganhar com receitas caseiras", "Renda com vídeos virais", "Dinheiro com avaliações rápidas",
+        "Renda extra com OnlyFans"
+      ],
+      "outras": []
+    },
+    {
+      "id": "relacionamento", "nome": "Relacionamento / atração", "emoji": "❤️",
+      "principais": [
+        "Truque da Cleópatra", "Truque da atração secreta", "Ritual para deixar ele obcecado",
+        "Técnica para reconquistar em 24h", "Truque da voz irresistível", "Receita para deixar ela apaixonada",
+        "Técnica das palavras que dominam", "Fórmula do apego emocional"
+      ],
+      "outras": [
+        "Truque do toque que vicia", "Receita do olhar hipnótico", "Ritual da mensagem perfeita",
+        "Truque para dominar o pensamento dele", "Frase que ativa o ciúme", "Receita da saudade instantânea",
+        "Gatilho da obediência emocional", "Técnica da amante secreta", "Truque do sumiço estratégico"
+      ]
+    }
+  ]
+}

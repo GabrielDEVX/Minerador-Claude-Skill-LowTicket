@@ -9,7 +9,7 @@
     {
       "name": "lowticket",
       "source": "./plugins/lowticket",
-      "description": "Central low ticket: minera ofertas escaladas na Biblioteca de Anúncios e no Reclame Aqui"
+      "description": "Central Low Ticket + Nutra: minera ofertas escaladas de infoproduto e de nutra (qualquer país e idioma) na Biblioteca de Anúncios"
     }
   ]
 }

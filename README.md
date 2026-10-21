@@ -1,4 +1,4 @@
-# Legacy Mentoring · Central Low Ticket
+# Legacy Mentoring · Central Low Ticket + Nutra
 
 Criado por **Gabriel Rodrigues** · [@gabrielrodriguesfx](https://instagram.com/gabrielrodriguesfx)
 
@@ -16,7 +16,26 @@ Por isso resolvi ajudar com o meu conhecimento, e esta ferramenta é uma das for
 
 ## O que é
 
-Plugin para o Claude Code que minera ofertas low ticket escaladas na Biblioteca de Anúncios da Meta e no Reclame Aqui. Ele roda em segundo plano, sem abrir o seu navegador.
+Plugin para o Claude Code que minera ofertas escaladas na Biblioteca de Anúncios da Meta, em segundo plano e sem abrir o seu navegador. Ele tem dois modos:
+
+**🏷️ Low ticket (Brasil)**
+- Encontra infoprodutos baratos (packs, kits, apostilas, mapas mentais · R$ 7 a 47) por nicho e palavra-chave.
+- Descarta grandes empresas e e-commerce (Alibaba, Shopee, Amazon, lojas de produto físico).
+- Reconhece a estrutura da copy de low ticket: gancho de dor, "+100 …", "Ideal para:" com lista de emojis, CTA "saiba mais" e preço âncora.
+- Também minera pelo Reclame Aqui: os produtos mais reclamados nas plataformas BR (Kiwify, Hotmart, Cakto…).
+
+**💊 Nutra (qualquer país)**
+- Escolha o país (EUA, Alemanha, França, Espanha, Itália, Reino Unido, Portugal, Brasil ou qualquer outro) e a busca é feita **no idioma daquele país**.
+- 7 categorias com mais de 100 mecanismos prontos: emagrecimento, diabetes, ED, próstata, prosperidade, renda extra e relacionamento.
+- Exemplos: truque do cavalo, truque do bicarbonato (*baking soda trick*), truque da gelatina, truque da aveia, truque da canela, truque do gengibre…
+- Identifica a plataforma (Digistore24, ClickBank, BuyGoods, MaxWeb) e os sinais de VSL/advertorial.
+
+**Em todos os modos**, a ferramenta mostra os sinais de escala:
+- 🔥 **escala**: página com 5+ anúncios ativos
+- 💰 **lucrativo**: anúncio rodando há 30+ dias
+- 🎬 **testando**: vídeos com variações
+
+E entrega o link da biblioteca de cada página.
 
 ## Antes de começar
 
@@ -52,11 +71,18 @@ Dentro do Claude Code, digite:
 ```
 
 1. Na primeira vez, escolha **1 (setup e diagnóstico)**. Leva alguns minutos.
-2. Depois, **2 (minerar ofertas escaladas)**: escolha o método, o nicho e a palavra-chave.
+2. Depois, **2 (minerar ofertas escaladas)**:
+   - **Low ticket**: escolha o método, o nicho e a palavra-chave.
+   - **Nutra**: escolha o país, a categoria e o mecanismo.
 
 Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
+
+**1.2.0**
+- Modo **Nutra**: mineração por mecanismo em qualquer país, com busca no idioma local.
+- 7 categorias e mais de 100 mecanismos prontos (os principais aparecem primeiro; os outros ficam a um toque).
+- Filtro próprio para nutra e detecção de plataforma (Digistore24, ClickBank, BuyGoods, MaxWeb).
 
 **1.1.1**
 - Créditos ao criador nos menus.

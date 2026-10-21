@@ -1,7 +1,7 @@
 ---
 name: lowticket
 allowed-tools: Bash(bash ${CLAUDE_SKILL_DIR}/scripts/run.sh *)
-description: Central de operação low ticket com menu numerado (setup, minerar ofertas escaladas na Biblioteca de Anúncios da Meta ou no Reclame Aqui, analisar produto, gerar entregável, modelar funil, criativos, Meta Ads, configurações). Use quando o usuário digitar /lowticket, pedir o menu, ou pedir para minerar ofertas, packs, kits ou infoprodutos baratos (9,90, 19,90).
+description: Central de operação low ticket e nutra com menu numerado (setup, minerar ofertas escaladas na Biblioteca de Anúncios da Meta ou no Reclame Aqui, minerar nutra por mecanismo em qualquer país e idioma, analisar produto, gerar entregável, modelar funil, criativos, Meta Ads, configurações). Use quando o usuário digitar /lowticket, pedir o menu, ou pedir para minerar ofertas, packs, kits, infoprodutos baratos (9,90, 19,90) ou ofertas de nutra (truque do cavalo, truque da gelatina etc.) em países como EUA, Alemanha e França.
 ---
 
 # Central Low Ticket
@@ -86,12 +86,37 @@ Depois, mostre o menu principal.
 
 ## 2 · Minerar ofertas escaladas
 
-### Passo 1 — método
+### Passo 0 — tipo de oferta
 
 ```
   início › mineração
 
-  🔎  MINERAÇÃO DE OFERTAS
+  🔎  O QUE VOCÊ QUER MINERAR?
+  ──────────────────────────────────────────────
+  [1]  🏷️   Low ticket
+           infoprodutos baratos no Brasil
+           (packs, kits, apostilas · R$ 7 a 47)
+
+  [2]  💊  Nutra
+           ofertas de VSL por mecanismo
+           (truque do cavalo, da gelatina…)
+           em qualquer país e idioma
+
+  [0]  ← voltar
+
+  ──────────────────────────────────────────────
+  ➜  digite o número
+```
+
+- **1** → siga os passos 1 a 5 abaixo (low ticket).
+- **2** → pule para a seção **Mineração de nutra**.
+
+### Passo 1 — método (low ticket)
+
+```
+  início › mineração › low ticket
+
+  🔎  MINERAÇÃO LOW TICKET
   ──────────────────────────────────────────────
   Escolha o método:
 
@@ -113,7 +138,7 @@ Depois, mostre o menu principal.
 Leia `~/.lowticket/config/nichos.json` (se não existir, rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` antes) e monte a lista com o campo `nome` de cada nicho, na ordem do arquivo. Use os emojis abaixo para os nichos padrão; para nichos que o usuário criou, use `•`.
 
 ```
-  início › mineração › {método}
+  início › mineração › low ticket › {método}
 
   🎯  ESCOLHA O NICHO
   ──────────────────────────────────────────────
@@ -138,7 +163,7 @@ Leia `~/.lowticket/config/nichos.json` (se não existir, rode `bash ${CLAUDE_SKI
 Obrigatório no método 2; no método 1 é opcional (mostre a linha `[Enter]  pular` também). Leia a lista `palavras` de `~/.lowticket/config/nichos.json` e mostre em duas colunas, na ordem do arquivo:
 
 ```
-  início › mineração › {método} › {nicho}
+  início › mineração › low ticket › {método} › {nicho}
 
   🔑  PALAVRA-CHAVE
   ──────────────────────────────────────────────
@@ -251,6 +276,172 @@ Resumo no mesmo estilo (`✅ MINERAÇÃO CONCLUÍDA · Reclame Aqui · {nicho}` 
 
 ---
 
+## Mineração de nutra
+
+Os países, as categorias e os mecanismos ficam em `~/.lowticket/config/nutra.json` (padrões de fábrica em `${CLAUDE_SKILL_DIR}/config/nutra.json`; os do usuário são somados aos de fábrica). Leia o arquivo do usuário (se não existir, rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` antes).
+
+### N1 — país
+
+Mostre os `paises` do arquivo, na ordem, em duas colunas:
+
+```
+  início › mineração › nutra
+
+  🌍  EM QUAL PAÍS?
+  ──────────────────────────────────────────────
+  [1]  🇺🇸  EUA             [5]  🇮🇹  Itália
+  [2]  🇩🇪  Alemanha        [6]  🇬🇧  Reino Unido
+  [3]  🇫🇷  França          [7]  🇵🇹  Portugal
+  [4]  🇪🇸  Espanha         [8]  🇧🇷  Brasil
+
+  [9]  ✏️   outro país (digite o nome)
+
+  [0]  ← voltar
+
+  ──────────────────────────────────────────────
+  ➜  digite o número
+```
+
+Se for **outro país**: descubra o código ISO de 2 letras (ex.: Suíça = CH, Áustria = AT, Holanda = NL, Polônia = PL, Canadá = CA, México = MX) e o idioma dos anúncios. Se o país tiver mais de um idioma relevante (Suíça: alemão/francês/italiano; Bélgica: francês/holandês; Canadá: inglês/francês; Luxemburgo: francês/alemão), pergunte qual em uma linha:
+
+```
+  🗣️   A Suíça anuncia em mais de um idioma. Qual?
+  [1] alemão   [2] francês   [3] italiano
+```
+
+Depois de confirmar, ofereça em uma linha salvar o país na lista (`paises` do nutra.json do usuário).
+
+### N2 — categoria
+
+```
+  início › mineração › nutra › {bandeira} {país}
+
+  🧬  CATEGORIA
+  ──────────────────────────────────────────────
+  [1]  🔥  Emagrecimento / metabolismo
+  [2]  🩸  Diabetes / glicose
+  [3]  🍆  Desempenho sexual / virilidade (ED)
+  [4]  🔵  Próstata / hormônios
+  [5]  💸  Prosperidade / manifestação
+  [6]  📱  Renda extra / internet
+  [7]  ❤️   Relacionamento / atração
+
+  [0]  ← voltar
+
+  ──────────────────────────────────────────────
+  ➜  digite o número
+```
+
+(Use as `categorias` do arquivo, com `emoji` e `nome`; categorias criadas pelo usuário entram no fim.)
+
+### N3 — mecanismo
+
+Mostre **só os `principais`** da categoria, em duas colunas, com nomes curtos (pode encurtar "Truque do/da" para "T." se a linha passar de 50 caracteres):
+
+```
+  início › mineração › nutra › {bandeira} {país} › {categoria}
+
+  🧪  MECANISMO
+  ──────────────────────────────────────────────
+  [1]  T. do cavalo           [5]  T. da melancia
+  [2]  T. do bicarbonato      [6]  T. do rei Salomão
+  [3]  T. do sal azul         [7]  Receita natural de viagra
+  [4]  T. do mel amazônico    [8]  T. do touro indiano
+
+  [+]  ver todos ({total} mecanismos)
+  [*]  rodar todos os principais (um por vez)
+  ✏️   ou digite o seu mecanismo
+
+  [0]  ← voltar
+
+  ──────────────────────────────────────────────
+  ➜  digite o(s) número(s) · ex.: 1, 2
+```
+
+- **[+]**: mostre `principais` + `outras` numerados em sequência, em duas colunas, e peça o número de novo.
+- **[*]**: avise `⏳ são {N} buscas, leva de {N×3} a {N×6} min. Recomendo até 3 por vez para a Meta não bloquear. Confirma? (s/n)`.
+- Mecanismo digitado que não está na lista: depois do resultado, ofereça em uma linha salvar na categoria (`outras` do nutra.json do usuário).
+
+### N4 — traduzir para o idioma do país
+
+A busca **tem que ser no idioma do país** escolhido. Para cada mecanismo, crie **1 ou 2 variações** do jeito que os anúncios nativos desse país escrevem. Não faça tradução literal palavra por palavra: use o termo de busca que o público e os anunciantes usam ali.
+
+Regras:
+- Brasil: use o termo em português do Brasil como está.
+- Use o nome local do ingrediente e o formato que os anúncios usam para "truque": EN "trick" / "hack", DE "Trick" (também composto: "Pferdetrick"), FR "astuce", ES "truco", IT "trucco", PT-PT "truque".
+- Quando um ingrediente tem nome próprio no mercado, use esse nome. Exemplos: "bicarbonato" nos EUA é "baking soda"; "gelatina bariátrica" nos EUA é "gelatin trick" ou "jello trick"; "sal rosa" nos EUA é "pink salt trick"; "Mounjaro natural" nos EUA é "natural mounjaro" ou "nature's mounjaro".
+- A 2ª variação deve ser uma forma alternativa real (sinônimo, grafia composta, ordem diferente), e não a mesma frase com outra pontuação.
+- Não traduza nomes de marca ou de pessoa (Mounjaro, Ozempic, Salomão → Solomon em EN, Salomon em DE/FR).
+
+Mostre antes de rodar:
+
+```
+  🗣️   buscando em {idioma} · {bandeira} {país}
+      "Truque do cavalo" → "horse trick" · "horse hack"
+```
+
+### N5 — rodar (em segundo plano)
+
+**NUNCA use Claude in Chrome nem outra ferramenta de navegador.** Mostre:
+
+```
+  ⏳  Minerando "{mecanismo}" · {bandeira} {país}
+      roda em segundo plano · leva de 2 a 6 minutos
+```
+
+E rode (timeout de 10 min), um comando por mecanismo, com as variações em `--palavra` repetido:
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh meta --modo nutra --pais {CODIGO} --nicho {ID_CATEGORIA} --rotulo "{MECANISMO EM PT}" --palavra "{VARIAÇÃO 1}" --palavra "{VARIAÇÃO 2}"
+```
+
+O **filtro de nutra** descarta grandes empresas (Amazon, lojas, marcas) mas **não** penaliza e-commerce (nutra físico usa frete grátis). Ele pontua plataforma (Digistore24, ClickBank, BuyGoods, MaxWeb, CartPanda), landing de VSL/presell/advertorial, copy de VSL em vários idiomas ("watch the video", "sehen Sie das Video", "regardez la vidéo"), mecanismo, urgência, dose/tempo e criativo em vídeo. Se o usuário pedir "sem filtro", acrescente `--sem-filtro`.
+
+Se a saída trouxer `NENHUM_NUTRA`, mostre 3–5 exemplos de `DESCARTADAS` e sugira outras variações do termo no idioma do país. Para `NENHUM_ANUNCIO` ou `BLOQUEIO`, siga o mesmo tratamento do low ticket.
+
+### N6 — resultado
+
+```
+  ✅  MINERAÇÃO NUTRA CONCLUÍDA · "{mecanismo}" · {bandeira} {país}
+  ──────────────────────────────────────────────
+  buscado como: "{variação 1}" · "{variação 2}"
+  {ANUNCIOS_LIDOS} anúncios lidos
+  {NUTRA} com cara de oferta de nutra
+  {DESCARTADAS} páginas descartadas
+```
+
+Tabela markdown (fora do bloco de código), até 15 linhas:
+
+| # | Página | Ativos | Dias | Vídeos | Plataforma | Sinais | Biblioteca |
+|---|---|---|---|---|---|---|---|
+
+- **Plataforma**: campo `plataforma` (vazio → `—`).
+- **Sinais**: `🔥 escala`, `💰 lucrativo`, `🎬 testando`, `🎥 VSL`.
+- **Biblioteca**: `[abrir](link_biblioteca)` (vazio → `anuncio_top`).
+
+Legenda (uma vez):
+
+```
+  🔥 escala ...... página com 5+ anúncios ativos
+  💰 lucrativo ... anúncio rodando há 30+ dias
+  🎬 testando .... vídeos com variações (sinal de que funciona)
+  🎥 VSL ......... leva para VSL / plataforma de afiliado
+```
+
+Depois: **⭐ Mais fortes** (🔥 + 💰), onde ficaram os arquivos (`ranking.md`, `ranking.csv`, `descartadas.md`) e o bloco final:
+
+```
+  💡  PRÓXIMOS PASSOS
+  ──────────────────────────────────────────────
+  [1]  🔁  mesmo mecanismo em outro país
+  [2]  🧪  outro mecanismo da mesma categoria
+  [3]  🧪  analisar e definir produto
+  [5]  🧭  modelar funil (se já tem o link da página)
+  [m]  ↩   menu principal
+```
+
+---
+
 ## 3 a 7 · Em construção
 
 Para as opções 3, 4, 5, 6 e 7, mostre:
@@ -292,6 +483,10 @@ Leia `~/.lowticket/config/config.json` (se não existir, rode `bash ${CLAUDE_SKI
   [11]  lista negra e termos do filtro
   [12]  ✏️  ensinar o filtro com um anúncio
 
+  NUTRA
+  [13]  países e mecanismos de nutra
+  [14]  rigor do filtro nutra ........... {min_score_nutra}
+
   [0]  ← voltar
 
   ──────────────────────────────────────────────
@@ -302,12 +497,14 @@ Ao escolher um item de 1 a 7, 9 ou 10, pergunte o novo valor e grave em `~/.lowt
 
 - **8**: mostre os nichos e palavras de `~/.lowticket/config/nichos.json` e permita adicionar/remover palavras ou termos de um nicho.
 - **9**: alterne `filtro_lowticket` (true/false).
+- **13**: mostre as categorias de `~/.lowticket/config/nutra.json` e permita adicionar/remover mecanismos (em `principais` ou `outras`), criar uma categoria nova (`id`, `nome`, `emoji`) ou adicionar um país (`codigo`, `nome`, `bandeira`, `idioma`). Grave só no arquivo do usuário.
+- **14**: `min_score_nutra`. Explique: 2 = solto, 3 = padrão, 5+ = rigoroso.
 - **10**: `min_score_lowticket`. Explique: 3 = solto (entra mais coisa), 5 = padrão, 8+ = rigoroso.
 - **11**: edite `~/.lowticket/config/filtros.json`: `lista_negra` (empresas/marcas a ignorar), `termos_infoproduto` (somam pontos), `termos_ecommerce` (tiram pontos), `dominios_lowticket` (checkouts e construtores de página). Para tirar um item que veio de fábrica, adicione-o à lista `removidos` do mesmo arquivo. Se o usuário disser que uma página grande ainda apareceu, ofereça adicioná-la à lista negra.
 
 ### 12 · Ensinar o filtro com um anúncio
 
-Use quando o usuário colar a copy de um anúncio (texto ou print) ou disser "a página X é / não é low ticket".
+Use quando o usuário colar a copy de um anúncio (texto ou print) ou disser "a página X é / não é low ticket" (ou nutra). Para anúncio de nutra, os padrões vão em `padroes_nutra` e os domínios em `dominios_nutra`, e o teste usa `--modo nutra`.
 
 ```
   ✏️   ENSINAR O FILTRO
@@ -327,7 +524,7 @@ Se for **NÃO é low ticket**: proponha adicionar o nome da página/domínio à 
 Depois de gravar, teste em silêncio: confirme que a copy colada agora soma os pontos esperados (ou é descartada) rodando:
 
 ```bash
-bash ${CLAUDE_SKILL_DIR}/scripts/run.sh testar "COPY COLADA AQUI"
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh testar "COPY COLADA AQUI" [--modo nutra]
 ```
 
 E mostre `✅  filtro atualizado · esse anúncio agora soma {N} pontos (mínimo {min})`.

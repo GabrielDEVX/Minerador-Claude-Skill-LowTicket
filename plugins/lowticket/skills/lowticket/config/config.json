@@ -10,6 +10,7 @@
   "pasta_saida": "~/mineracao",
   "filtro_lowticket": true,
   "min_score_lowticket": 5,
+  "min_score_nutra": 3,
   "max_curtidas_pagina": 300000,
   "max_ativos_pagina": 800
 }

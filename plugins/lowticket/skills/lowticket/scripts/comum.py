@@ -14,7 +14,7 @@ def pasta_config():
     """Copia os arquivos padrão para ~/.lowticket/config na primeira vez e usa de lá."""
     destino = DADOS / "config"
     destino.mkdir(parents=True, exist_ok=True)
-    for nome in ("config.json", "nichos.json", "filtros.json"):
+    for nome in ("config.json", "nichos.json", "filtros.json", "nutra.json"):
         if not (destino / nome).exists():
             (destino / nome).write_text((RAIZ / "config" / nome).read_text(encoding="utf-8"), encoding="utf-8")
     return destino
@@ -39,7 +39,7 @@ def carregar_filtros():
     usuario = _ler(pasta_config() / "filtros.json")
     removidos = {_sem_acento(x) for x in usuario.get("removidos", [])}
     out = {}
-    for chave in ("termos_infoproduto", "termos_ecommerce", "dominios_lowticket", "lista_negra"):
+    for chave in ("termos_infoproduto", "termos_ecommerce", "dominios_lowticket", "lista_negra", "dominios_nutra"):
         vistos, lista = set(), []
         for item in padrao.get(chave, []) + usuario.get(chave, []):
             k = _sem_acento(item)
@@ -50,7 +50,79 @@ def carregar_filtros():
     por_nome = {p["nome"]: p for p in padrao.get("padroes_copy", [])}
     por_nome.update({p["nome"]: p for p in usuario.get("padroes_copy", [])})
     out["padroes_copy"] = [p for n, p in por_nome.items() if _sem_acento(n) not in removidos]
+    por_nome = {p["nome"]: p for p in padrao.get("padroes_nutra", [])}
+    por_nome.update({p["nome"]: p for p in usuario.get("padroes_nutra", [])})
+    out["padroes_nutra"] = [p for n, p in por_nome.items() if _sem_acento(n) not in removidos]
     return out
+
+
+def carregar_nutra():
+    """Países e mecanismos de nutra: padrão da versão + o que o usuário adicionou."""
+    padrao = _ler(RAIZ / "config" / "nutra.json")
+    usuario = _ler(pasta_config() / "nutra.json")
+    paises = {p["codigo"]: p for p in padrao["paises"]}
+    paises.update({p["codigo"]: p for p in usuario.get("paises", [])})
+    cats = {c["id"]: {**c, "principais": list(c["principais"]), "outras": list(c.get("outras", []))}
+            for c in padrao["categorias"]}
+    for c in usuario.get("categorias", []):
+        base = cats.setdefault(c["id"], {**c, "principais": [], "outras": []})
+        for k in ("principais", "outras"):
+            for m in c.get(k, []):
+                if m not in base["principais"] and m not in base["outras"]:
+                    base[k].append(m)
+    return {"paises": list(paises.values()), "categorias": list(cats.values())}
+
+
+def plataforma(link):
+    l = (link or "").lower()
+    for nome, marcas in [("Digistore24", ["digistore24", "ds24"]), ("ClickBank", ["clickbank", "clkbank", "hop."]),
+                         ("BuyGoods", ["buygoods"]), ("MaxWeb", ["maxweb"]), ("CartPanda", ["cartpanda"]),
+                         ("Shopify", ["myshopify", "/products/"]), ("Hotmart", ["hotmart"]), ("Kiwify", ["kiwify"]),
+                         ("Cakto", ["cakto"]), ("Monetizze", ["monetizze"]), ("Braip", ["braip"])]:
+        if any(m in l for m in marcas):
+            return nome
+    return ""
+
+
+def _checar_lista_negra(ad, filtros, cfg):
+    pagina = ad.get("pagina") or ""
+    pag_norm = _sem_acento(pagina).strip()
+    host, base, _ = _dominio_base(ad.get("link"))
+    negra = {_sem_acento(b) for b in filtros["lista_negra"]}
+    if base and base.replace("-", "") in {b.replace(" ", "").replace("-", "") for b in negra}:
+        return f"grande empresa ({host})"
+    for b in negra:
+        if pag_norm == b or any(pag_norm == f"{b} {s}" for s in ("brasil", "br", "oficial", "store", "loja", "shop")):
+            return f"grande empresa ({pagina})"
+    curtidas = ad.get("curtidas") or 0
+    if curtidas and curtidas > cfg.get("max_curtidas_pagina", 300000):
+        return f"página grande ({curtidas:,} curtidas)".replace(",", ".")
+    return ""
+
+
+def classificar_nutra(ad, filtros, cfg):
+    """Devolve (pontos, motivo_descartado_ou_vazio, sinais) para o modo nutra."""
+    motivo = _checar_lista_negra(ad, filtros, cfg)
+    if motivo:
+        return 0, motivo, []
+    pontos, sinais = 0, []
+    link = (ad.get("link") or "").lower()
+    plat = plataforma(link)
+    if plat:
+        pontos += 3
+        sinais.append(f"plataforma {plat}")
+    elif any(d in link for d in filtros.get("dominios_nutra", [])):
+        pontos += 2
+        sinais.append("landing de VSL/advertorial")
+    txt = _sem_acento(ad.get("texto", "") + " " + ad.get("titulo_link", ""))
+    padroes = [p for p in filtros.get("padroes_nutra", []) if _regex(p["regex"]).search(txt)]
+    if padroes:
+        pontos += min(7, sum(int(p.get("peso", 1)) for p in padroes))
+        sinais.append("copy: " + ", ".join(p["nome"] for p in padroes[:4]))
+    if (ad.get("videos") or ad.get("formato") == "VIDEO"):
+        pontos += 1
+        sinais.append("criativo em vídeo")
+    return pontos, "", sinais
 
 
 # ---------- filtro low ticket ----------
@@ -64,7 +136,8 @@ def _dominio_base(link):
     host = urlparse(link or "").netloc.lower().split(":")[0]
     partes = [p for p in host.split(".") if p and p != "www"]
     # remove sufixos tipo com.br / net / org
-    sufixos = {"com", "br", "net", "org", "io", "app", "co", "site", "online", "store", "shop", "info", "biz"}
+    sufixos = {"com", "br", "net", "org", "io", "app", "co", "site", "online", "store", "shop", "info", "biz",
+               "de", "fr", "es", "it", "uk", "pt", "us", "ch", "at", "lu", "nl", "be", "ca", "au", "mx", "ar", "eu", "ie"}
     while len(partes) > 1 and partes[-1] in sufixos:
         partes.pop()
     # partes agora = [subdominio..., dominio]; ex.: nutricao.guiapractico.com -> ['nutricao', 'guiapractico']

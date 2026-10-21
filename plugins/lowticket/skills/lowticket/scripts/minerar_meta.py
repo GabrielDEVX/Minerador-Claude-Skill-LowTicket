@@ -17,8 +17,9 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote, urlparse
 
-from comum import (UA, carregar_config, carregar_filtros, classificar_lowticket, extrair_anuncios,
-                   extrair_total, fmt_preco, parse_html, parse_payload, precos, total_do_texto)
+from comum import (UA, carregar_config, carregar_filtros, classificar_lowticket, classificar_nutra,
+                   extrair_anuncios, extrair_total, fmt_preco, parse_html, parse_payload, plataforma, precos,
+                   total_do_texto)
 
 BASE = "https://www.facebook.com/ads/library/"
 
@@ -119,11 +120,14 @@ class Biblioteca:
         return list(anuncios.values()), total, texto, bloqueado
 
 
-def filtrar_lowticket(anuncios, filtros, cfg):
-    """Mantém só páginas com cara de infoproduto low ticket. Devolve (mantidos, descartadas{pagina: motivo})."""
+def filtrar_lowticket(anuncios, filtros, cfg, modo="lowticket"):
+    """Mantém só páginas com cara de low ticket (ou de nutra). Devolve (mantidos, descartadas{pagina: motivo})."""
+    classificar = classificar_nutra if modo == "nutra" else classificar_lowticket
+    minimo = cfg["min_score_nutra"] if modo == "nutra" else cfg["min_score_lowticket"]
+    rotulo = "oferta de nutra" if modo == "nutra" else "infoproduto"
     por_pagina = defaultdict(list)
     for ad in anuncios:
-        pts, motivo, sinais = classificar_lowticket(ad, filtros, cfg)
+        pts, motivo, sinais = classificar(ad, filtros, cfg)
         ad["lt_pontos"], ad["lt_motivo"], ad["lt_sinais"] = pts, motivo, sinais
         por_pagina[ad["page_id"] or ad["pagina"]].append(ad)
     mantidos, descartadas = [], {}
@@ -134,14 +138,16 @@ def filtrar_lowticket(anuncios, filtros, cfg):
             descartadas[nome] = bloqueio
             continue
         melhor = max(a["lt_pontos"] for a in ads)
-        if melhor < cfg["min_score_lowticket"]:
-            descartadas[nome] = f"não parece infoproduto (pontos {melhor})"
+        if melhor < minimo:
+            descartadas[nome] = f"não parece {rotulo} (pontos {melhor})"
             continue
         mantidos.extend(ads)
     return mantidos, descartadas
 
 
-def montar_buscas(palavra, nicho, nichos_cfg):
+def montar_buscas(palavra, nicho, nichos_cfg, modo="lowticket"):
+    if modo == "nutra":
+        return [(palavra, True)]          # mecanismo já vem traduzido: frase exata
     nicho_obj = next((n for n in nichos_cfg["nichos"] if n["id"] == nicho), None)
     if not nicho_obj or not nicho_obj["termos"]:
         # nicho geral: a palavra sozinha + combinações que puxam infoproduto
@@ -149,7 +155,7 @@ def montar_buscas(palavra, nicho, nichos_cfg):
     return [(f"{palavra} {t}", False) for t in nicho_obj["termos"][:3]]
 
 
-def analisar(anuncios, cfg, contagens):
+def analisar(anuncios, cfg, contagens, modo="lowticket"):
     agora = time.time()
     paginas = defaultdict(list)
     for ad in anuncios:
@@ -175,7 +181,11 @@ def analisar(anuncios, cfg, contagens):
             sinais.append("LUCRATIVO")
         if variacoes_video >= 2:
             sinais.append("TESTANDO VÍDEOS")
-        if low:
+        plats = sorted({plataforma(a["link"]) for a in ads} - {""})
+        if modo == "nutra":
+            if plats or any("landing de VSL" in s for a in ads for s in a.get("lt_sinais", [])):
+                sinais.append("VSL")
+        elif low:
             sinais.append("LOW TICKET")
 
         score = (10 * len(sinais) + 3 * math.log1p(ativos or len(ads)) + 2 * math.log1p(dias_max)
@@ -190,6 +200,7 @@ def analisar(anuncios, cfg, contagens):
             "precos": " / ".join(fmt_preco(p) for p in low) or (
                 " / ".join(fmt_preco(p) for p in sorted(set(todos_precos))[:3])),
             "sinais": ", ".join(sinais),
+            "plataforma": ", ".join(plats),
             "score": round(score, 1),
             "link_biblioteca": url_pagina(pid, cfg["pais"]) if pid.isdigit() else "",
             "anuncio_top": url_anuncio(top["ad_id"]),
@@ -210,7 +221,8 @@ def salvar(linhas, anuncios, pasta, cabecalho):
             w = csv.DictWriter(f, fieldnames=list(linhas[0].keys()))
             w.writeheader()
             w.writerows(linhas)
-    cols = ["#", "pagina", "ativos_pagina", "dias_max", "variacoes_video", "precos", "sinais", "link_biblioteca"]
+    cols = ["#", "pagina", "ativos_pagina", "dias_max", "variacoes_video", "precos", "plataforma", "sinais",
+            "link_biblioteca"]
     md = [f"# {cabecalho}", "", "| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
     for i, r in enumerate(linhas, 1):
         md.append("| " + " | ".join([str(i)] + [str(r[c]).replace("|", "/") for c in cols[1:]]) + " |")
@@ -219,7 +231,10 @@ def salvar(linhas, anuncios, pasta, cabecalho):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--palavra")
+    ap.add_argument("--palavra", action="append", help="pode repetir (variações da mesma busca)")
+    ap.add_argument("--modo", choices=["lowticket", "nutra"], default="lowticket")
+    ap.add_argument("--pais", help="código do país (US, DE, FR…); padrão: config")
+    ap.add_argument("--rotulo", default="", help="nome da busca para a pasta/relatório (ex.: mecanismo em PT)")
     ap.add_argument("--nicho", default="geral")
     ap.add_argument("--max", type=int)
     ap.add_argument("--top", type=int, default=20)
@@ -228,6 +243,8 @@ def main():
     ap.add_argument("--sem-filtro", action="store_true", help="não aplica o filtro de low ticket")
     a = ap.parse_args()
     cfg, nichos = carregar_config()
+    if a.pais:
+        cfg["pais"] = a.pais.upper()
     log = lambda *x: print(*x, file=sys.stderr, flush=True)
 
     try:
@@ -250,7 +267,7 @@ def main():
         if not a.palavra:
             sys.exit("Informe --palavra")
         max_ads = a.max or cfg["max_anuncios"]
-        buscas = montar_buscas(a.palavra, a.nicho, nichos)
+        buscas = [b for p in a.palavra for b in montar_buscas(p, a.nicho, nichos, a.modo)]
         por_busca = max(30, max_ads // len(buscas))
         todos = {}
         for q, exata in buscas:
@@ -260,6 +277,11 @@ def main():
             if bloq:
                 log("  BLOQUEIO da Meta detectado — parando e salvando o que já foi coletado.")
                 break
+            if a.modo == "nutra" and exata and len(ads) < 10 and not bloq:
+                log(f"  poucos resultados na frase exata — buscando {q!r} com todas as palavras")
+                extra, _, _, bloq = bib.abrir(url_busca(q, cfg["pais"], False), max_anuncios=por_busca)
+                log(f"  +{len(extra)} anúncios")
+                ads += extra
             for ad in ads:
                 ad["busca"] = q
                 todos.setdefault(ad["ad_id"], ad)
@@ -273,16 +295,20 @@ def main():
         lidos = len(anuncios)
         descartadas = {}
         if cfg.get("filtro_lowticket", True) and not a.sem_filtro:
-            anuncios, descartadas = filtrar_lowticket(anuncios, carregar_filtros(), cfg)
-            log(f"filtro low ticket: {len(anuncios)} de {lidos} anúncios mantidos, {len(descartadas)} páginas descartadas")
+            anuncios, descartadas = filtrar_lowticket(anuncios, carregar_filtros(), cfg, a.modo)
+            log(f"filtro {a.modo}: {len(anuncios)} de {lidos} anúncios mantidos, {len(descartadas)} páginas descartadas")
             if not anuncios:
-                print(f"NENHUM_LOWTICKET: {lidos} anúncios lidos, mas nenhum com cara de infoproduto low ticket. "
-                      "Tente uma palavra mais específica (ex.: 'pack pdf', 'mapas mentais', 'apostila') ou outro nicho.")
+                if a.modo == "nutra":
+                    print(f"NENHUM_NUTRA: {lidos} anúncios lidos, mas nenhum com cara de oferta de nutra (VSL/advertorial). "
+                          "Tente outra variação do mecanismo ou outro país.")
+                else:
+                    print(f"NENHUM_LOWTICKET: {lidos} anúncios lidos, mas nenhum com cara de infoproduto low ticket. "
+                          "Tente uma palavra mais específica (ex.: 'pack pdf', 'mapas mentais', 'apostila') ou outro nicho.")
                 print("DESCARTADAS: " + json.dumps(dict(list(descartadas.items())[:15]), ensure_ascii=False))
                 sys.exit(4)
 
         # conta os ativos das páginas mais promissoras
-        pre = analisar(anuncios, cfg, {})
+        pre = analisar(anuncios, cfg, {}, a.modo)
         contagens = {}
         for r in pre[: cfg["paginas_para_contar"]]:
             if not r["page_id"].isdigit():
@@ -302,17 +328,19 @@ def main():
                     descartadas[ad["pagina"]] = f"{contagens[ad['page_id']]} anúncios ativos (provável empresa grande)"
             anuncios = [ad for ad in anuncios if ad["page_id"] not in grandes]
 
-        linhas = analisar(anuncios, cfg, contagens)
+        linhas = analisar(anuncios, cfg, contagens, a.modo)
         data = datetime.now().strftime("%Y-%m-%d_%Hh%M")
-        slug = "".join(c if c.isalnum() else "-" for c in a.palavra).strip("-") or "busca"
-        pasta = Path(cfg["pasta_saida"]) / f"{data}_{a.nicho}_{slug}"
-        salvar(linhas, anuncios, pasta, f"Mineração: '{a.palavra}' · nicho {a.nicho} · {cfg['pais']}")
+        nome_busca = a.rotulo or a.palavra[0]
+        slug = "".join(c if c.isalnum() else "-" for c in nome_busca).strip("-")[:40] or "busca"
+        pasta = Path(cfg["pasta_saida"]) / f"{data}_{a.modo}_{cfg['pais']}_{a.nicho}_{slug}"
+        salvar(linhas, anuncios, pasta, f"Mineração {a.modo}: '{nome_busca}' ({' / '.join(a.palavra)}) · "
+                                         f"{a.nicho} · {cfg['pais']}")
         if descartadas:
             (pasta / "descartadas.md").write_text("# Páginas descartadas pelo filtro low ticket\n\n" + "\n".join(
                 f"- {p}: {m}" for p, m in descartadas.items()) + "\n", encoding="utf-8")
 
         print(f"PASTA: {pasta}")
-        print(f"ANUNCIOS_LIDOS: {lidos} · LOWTICKET: {len(anuncios)} · PAGINAS: {len(linhas)} · DESCARTADAS: {len(descartadas)}")
+        print(f"ANUNCIOS_LIDOS: {lidos} · {a.modo.upper()}: {len(anuncios)} · PAGINAS: {len(linhas)} · DESCARTADAS: {len(descartadas)}")
         if descartadas:
             print("EXEMPLOS_DESCARTADOS: " + json.dumps(dict(list(descartadas.items())[:8]), ensure_ascii=False))
         print(json.dumps(linhas[: a.top], ensure_ascii=False, indent=1))
