@@ -210,6 +210,8 @@ def analisar(anuncios, cfg, contagens, modo="lowticket"):
             "score": round(score, 1),
             "link_biblioteca": url_pagina(pid, cfg["pais"]) if pid.isdigit() else "",
             "anuncio_top": url_anuncio(top["ad_id"]),
+            "thumb": top.get("thumb", ""),
+            "thumb_local": "",
             "landing": top["link"],
             "dominios": ", ".join(dominios[:3]),
             "copy_top": top["texto"][:160].replace("\n", " "),
@@ -217,6 +219,32 @@ def analisar(anuncios, cfg, contagens, modo="lowticket"):
         })
     linhas.sort(key=lambda r: r["score"], reverse=True)
     return linhas
+
+
+def baixar_thumbs(linhas, pasta, quantos, log):
+    """Baixa a miniatura do criativo das top N páginas para {pasta}/criativos/."""
+    if quantos <= 0:
+        return
+    import urllib.request
+    destino = pasta / "criativos"
+    destino.mkdir(parents=True, exist_ok=True)
+    baixadas = 0
+    for r in linhas[:quantos]:
+        url = r.get("thumb")
+        if not url:
+            continue
+        nome = "".join(c if c.isalnum() else "-" for c in (r.get("pagina") or "x"))[:30] + "_" + str(r.get("page_id"))[:10] + ".jpg"
+        arq = destino / nome
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                arq.write_bytes(resp.read())
+            r["thumb_local"] = str(arq)
+            baixadas += 1
+        except Exception as e:
+            log(f"  miniatura de {r.get('pagina')} indisponível ({e})")
+        time.sleep(0.3)
+    log(f"miniaturas baixadas: {baixadas}")
 
 
 def salvar(linhas, anuncios, pasta, cabecalho, meta=None):
@@ -252,6 +280,7 @@ def main():
     ap.add_argument("--visivel", action="store_true", help="mostra o navegador (só para depurar)")
     ap.add_argument("--diagnostico", action="store_true")
     ap.add_argument("--sem-filtro", action="store_true", help="não aplica o filtro de low ticket")
+    ap.add_argument("--thumbs", type=int, default=15, help="baixa a miniatura dos N primeiros criativos (0 = nenhum)")
     a = ap.parse_args()
     cfg, nichos = carregar_config()
     if a.pais:
@@ -349,6 +378,7 @@ def main():
         nome_busca = a.rotulo or a.palavra[0]
         slug = "".join(c if c.isalnum() else "-" for c in nome_busca).strip("-")[:40] or "busca"
         pasta = Path(cfg["pasta_saida"]) / f"{data}_{a.modo}_{cfg['pais']}_{a.nicho}_{slug}"
+        baixar_thumbs(linhas, pasta, a.thumbs, log)
         meta = {"modo": a.modo, "titulo": nome_busca, "pais": cfg["pais"], "nicho": a.nicho,
                 "subtitulo": f"{a.modo} · {a.nicho} · {cfg['pais']} · " + " / ".join(a.palavra)}
         salvar(linhas, anuncios, pasta, f"Mineração {a.modo}: '{nome_busca}' ({' / '.join(a.palavra)}) · "

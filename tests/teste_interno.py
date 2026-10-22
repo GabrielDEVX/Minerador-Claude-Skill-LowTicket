@@ -723,6 +723,36 @@ def t_produto():
            "breakdown: detecta urgência, prova social e mecanismo")
     checar(j["estrutura_detectada"] and "AGORA_O_CLAUDE" in out, "breakdown: detecta a estrutura e pede a interpretação ao Claude")
 
+    # SCANNER VISUAL: miniatura extraída, baixada e padrões disponíveis
+    from comum import normalizar_anuncio as _na, carregar_padroes_visuais as _cpv
+    th = _na({"ad_archive_id": "1", "page_id": "9", "page_name": "Quick Choices",
+              "snapshot": {"body": {"text": "see how"}, "display_format": "VIDEO",
+                           "videos": [{"video_preview_image_url": "https://fbcdn.net/t.jpg"}], "cards": []}})
+    checar(th.get("thumb") == "https://fbcdn.net/t.jpg", "scanner visual: extrai a miniatura do criativo")
+    import minerar_meta as _mm, urllib.request as _u
+    class _R:
+        def __init__(s, b): s.b = b
+        def read(s): return s.b
+        def __enter__(s): return s
+        def __exit__(s, *a): return False
+    _orig = _u.urlopen
+    try:
+        _u.urlopen = lambda req, timeout=30: _R(b"\xff\xd8\xff fake")
+        from pathlib import Path as _P
+        pasta = _P(os.environ["HOME"]) / "mineracao/scan"
+        pasta.mkdir(parents=True, exist_ok=True)
+        linhas = [{"pagina": "Quick Choices", "page_id": "25", "thumb": "https://fbcdn.net/a.jpg", "thumb_local": ""},
+                  {"pagina": "Sem", "page_id": "9", "thumb": "", "thumb_local": ""}]
+        _mm.baixar_thumbs(linhas, pasta, 15, lambda *a: None)
+        checar(linhas[0]["thumb_local"] and _P(linhas[0]["thumb_local"]).exists(), "scanner visual: baixa a miniatura para criativos/")
+        checar(linhas[1]["thumb_local"] == "" and (pasta / "criativos").is_dir(), "scanner visual: anúncio sem miniatura não quebra")
+    finally:
+        _u.urlopen = _orig
+    pv = _cpv()
+    ids = [x["id"] for x in pv]
+    checar("ed-ugc-medico" in ids and "ugc-talking-head" in ids, "scanner visual: padrões de referência (nutra e UGC geral)")
+    checar(all(x.get("assinatura") and x.get("nao_e") for x in pv), "scanner visual: cada padrão tem assinatura e 'não é'")
+
 
 
 def t_seguranca():

@@ -284,6 +284,8 @@ Mostre:
       roda em segundo plano · leva de 2 a 6 minutos
 ```
 
+A mineração também **baixa a miniatura** de cada criativo do topo (para o scanner visual). Isso é automático (`--thumbs 15`); para pular, acrescente `--thumbs 0`.
+
 E rode (timeout de 10 min):
 
 Método 2 — biblioteca:
@@ -357,6 +359,7 @@ Depois:
   [3]  🧪  analisar e dar nota à oferta
   [4]  🧬  clonar a oferta (gera produto + app + página + criativos)
   [8]  🔬  breakdown da copy/VSL da oferta
+  [v]  👁️   scanner visual (achar criativos no mesmo padrão)
   [r]  📊  abrir o relatório visual
   [s]  ⭐  salvar uma oferta nos favoritos (ex.: "salva a 3")
 
@@ -626,6 +629,32 @@ E o bloco final:
 ```
 
 ---
+
+## Scanner visual de criativos
+
+A mineração acha ofertas pela **copy**. O scanner visual vai além: separa os anúncios cujo **criativo** bate com um padrão visual (ex.: UGC de "médico/enfermeira" falando pra câmera, típico de ED/nutra; e low ticket segue a mesma pegada de UGC). Funciona porque o Claude Code enxerga imagens.
+
+**Quando usar:** o usuário quer "achar anúncios nesse padrão de criativo", manda prints de referência, ou pede para filtrar por estilo de vídeo.
+
+**Como funciona:**
+1. A mineração já baixou as miniaturas em `{PASTA}/criativos/` (campo `thumb_local` de cada linha do ranking). Se o usuário rodou com `--thumbs 0`, rode de novo sem isso.
+2. Defina o **padrão visual**:
+   - Se o usuário colou prints de referência, **olhe os prints** e descreva a assinatura visual (enquadramento, quem aparece, cenário, legendas, sensação).
+   - Ou use um padrão salvo: pegue a lista `padroes_visuais` da saída de `run.sh config` (ex.: `ed-ugc-medico` já vem pronto, com `assinatura` e `nao_e`).
+3. **Olhe as miniaturas**: abra os arquivos de `{PASTA}/criativos/` com a ferramenta de leitura de imagem (Read), um a um ou em lotes. Para cada um, decida **BATE / PARCIAL / NÃO** comparando com a `assinatura` (e descartando o que está em `nao_e`).
+4. Entregue o shortlist só com os que batem:
+
+```
+  🎯  CRIATIVOS NO PADRÃO · {padrão}
+  ──────────────────────────────────────────────
+  {n} criativos batem com o padrão (de {total} analisados)
+```
+
+Depois uma tabela: `# | Página | Por que bate | Ativos | Dias | Biblioteca`. Em "por que bate", diga em poucas palavras o que casou (ex.: "mulher de scrubs falando pra câmera + legenda de confissão"). Ordene pelos mais escalados (ativos/dias). Para cada um, o link da biblioteca (`link_biblioteca`).
+
+5. Ofereça: **clonar** o melhor (opção 4), fazer o **breakdown** da copy (opção 8), ou **salvar o padrão** que você montou dos prints para reusar (`padroes_visuais` em `~/.lowticket/config/padroes_visuais.json`, com `id`, `nome`, `assinatura`, `nao_e`).
+
+**Importante:** não baixe nem redistribua os vídeos; use só as miniaturas que a biblioteca já mostra, para reconhecer o padrão. O objetivo é modelar o estilo, com o seu próprio criativo.
 
 ## 3 · Analisar e definir produto
 

@@ -1,0 +1,48 @@
+{
+  "_como_funciona": "Padrões visuais de criativo para o scanner. O minerador baixa as miniaturas (--thumbs) e o Claude (que enxerga imagens) compara cada uma com a 'assinatura' aqui. Adicione os seus com a opção 'ensinar padrão visual' (colando prints de referência).",
+  "padroes": [
+    {
+      "id": "ed-ugc-medico",
+      "nome": "ED/nutra · UGC + autoridade médica (horse trick, etc.)",
+      "nichos": [
+        "ed",
+        "prostata",
+        "emagrecimento",
+        "diabetes"
+      ],
+      "assinatura": [
+        "pessoa falando para a câmera (UGC vertical), enquadramento de celular",
+        "visual de autoridade médica: jaleco, roupa de enfermagem/cirurgia (scrubs), sala de cirurgia ao fundo, ou médico segurando um objeto de demonstração",
+        "mulher jovem de scrubs azul OU homem mais velho de touca/avental cirúrgico",
+        "legendas grandes na tela (captions), estilo depoimento",
+        "às vezes b-roll granulado/caseiro noturno sobreposto",
+        "sensação de confissão/segredo proibido, não de propaganda limpa"
+      ],
+      "nao_e": [
+        "foto de produto em fundo branco (e-commerce)",
+        "arte estática com muito texto/preço (típico de low ticket BR)",
+        "banner de marca grande, logotipo oficial"
+      ]
+    },
+    {
+      "id": "ugc-talking-head",
+      "nome": "UGC · pessoa falando para a câmera (nutra e low ticket)",
+      "nichos": [
+        "todos"
+      ],
+      "assinatura": [
+        "vídeo vertical gravado de celular, pessoa falando direto para a câmera (estilo depoimento/UGC)",
+        "legendas grandes na tela, ritmo de fala rápido",
+        "ambiente caseiro ou 'de autoridade' (cozinha, quarto, consultório, carro)",
+        "gancho de curiosidade/confissão no texto, não propaganda limpa",
+        "às vezes demonstração na mão, print de tela ou b-roll caseiro sobreposto",
+        "serve tanto para nutra (mecanismo/saúde) quanto para low ticket (segue a mesma pegada de UGC)"
+      ],
+      "nao_e": [
+        "foto de produto em fundo branco (e-commerce)",
+        "arte estática só com texto e preço (banner de loja)",
+        "banner de marca grande com logotipo oficial"
+      ]
+    }
+  ]
+}

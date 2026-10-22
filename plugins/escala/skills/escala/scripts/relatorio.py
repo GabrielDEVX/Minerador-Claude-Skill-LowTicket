@@ -42,11 +42,16 @@ def _card(l, i, modo):
     bib = l.get("link_biblioteca") or l.get("anuncio_top") or ""
     land = l.get("landing") or ""
     copy = (l.get("copy_top") or "")[:240]
+    import os as _os
+    _tl = l.get("thumb_local")
+    _src = ("criativos/" + _os.path.basename(_tl)) if _tl else (l.get("thumb") or "")
+    thumb_html = (f'<div class="thumb"><img loading="lazy" src="{html.escape(_src)}" alt=""></div>' if _src else "")
     dados_fav = html.escape(json.dumps({"pagina": l.get("pagina"), "page_id": l.get("page_id"),
                                         "link_biblioteca": bib, "landing": land, "plataforma": plat,
                                         "produto": produto, "sinais": l.get("sinais")}, ensure_ascii=False), quote=True)
     return f"""<article class="card" data-sinais="{html.escape(('|'.join(sinais)).lower())}" data-tend="{html.escape(estado.lower())}"
   data-ativos="{ativos}" data-dias="{l.get('dias_max',0)}" data-busca="{html.escape((str(l.get('pagina',''))+' '+produto+' '+copy).lower(), quote=True)}">
+  {thumb_html}
   <div class="top">
     <span class="rank">{i}</span>
     <div class="nome">
@@ -104,6 +109,8 @@ input:focus,select:focus{border-color:var(--ac)}input{flex:1;min-width:150px}
 .grid{max-width:900px;margin:18px auto;padding:0 14px;display:grid;gap:12px}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:15px;padding:15px 16px;transition:.15s}
 .card:hover{border-color:#36364a;transform:translateY(-1px)}
+.thumb{margin:-15px -16px 12px;border-radius:15px 15px 0 0;overflow:hidden;max-height:180px;background:#0c0c12}
+.thumb img{width:100%;height:180px;object-fit:cover;display:block}
 .top{display:flex;align-items:flex-start;gap:11px}
 .rank{background:var(--card2);color:var(--mut);font-weight:700;font-size:12px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none}
 .nome{flex:1;min-width:0}.nome b{font-size:16px;font-weight:700}.prod{display:block;color:var(--ac);font-size:12.5px;font-weight:600;margin-top:1px}

@@ -31,6 +31,9 @@ def pasta_config():
     for nome, modelo in MODELOS_USUARIO.items():
         if not (destino / nome).exists():
             (destino / nome).write_text(json.dumps(modelo, ensure_ascii=False, indent=2), encoding="utf-8")
+    if not (destino / "padroes_visuais.json").exists():
+        (destino / "padroes_visuais.json").write_text(
+            (RAIZ / "config" / "padroes_visuais.json").read_text(encoding="utf-8"), encoding="utf-8")
     return destino
 
 
@@ -95,13 +98,26 @@ def carregar_nutra():
     return {"paises": list(paises.values()), "categorias": list(cats.values())}
 
 
+def carregar_padroes_visuais():
+    """Padrões visuais de fábrica + os do usuário (por id)."""
+    padrao = _ler(RAIZ / "config" / "padroes_visuais.json").get("padroes", [])
+    try:
+        user = _ler(pasta_config() / "padroes_visuais.json").get("padroes", [])
+    except Exception:
+        user = []
+    por_id = {p["id"]: p for p in padrao}
+    por_id.update({p["id"]: p for p in user})
+    return list(por_id.values())
+
+
 def config_efetiva():
     """Configuração final (fábrica + usuário) para mostrar no menu de configurações."""
     cfg, nichos = carregar_config()
     cfg = {k: v for k, v in cfg.items() if not k.startswith("_")}
     if cfg.get("urlscan_api_key"):
         cfg["urlscan_api_key"] = "configurada"          # nunca mostra a chave
-    return {"arquivo_usuario": str(pasta_config()), "config": cfg, "nichos": nichos, "nutra": carregar_nutra()}
+    return {"arquivo_usuario": str(pasta_config()), "config": cfg, "nichos": nichos, "nutra": carregar_nutra(),
+            "padroes_visuais": carregar_padroes_visuais()}
 
 
 def plataforma(link):
@@ -419,6 +435,20 @@ def normalizar_anuncio(d):
     for c in cards:
         partes += [_texto(c.get("body")), c.get("title") or "", c.get("link_description") or ""]
     link = snap.get("link_url") or next((c.get("link_url") for c in cards if c.get("link_url")), "") or ""
+
+    def _thumb():
+        for v in (snap.get("videos") or []):
+            if v.get("video_preview_image_url"):
+                return v["video_preview_image_url"]
+        for im in (snap.get("images") or []):
+            if im.get("resized_image_url") or im.get("original_image_url"):
+                return im.get("resized_image_url") or im.get("original_image_url")
+        for c in cards:
+            for campo in ("video_preview_image_url", "resized_image_url", "original_image_url"):
+                if c.get(campo):
+                    return c[campo]
+        return ""
+
     videos = len(snap.get("videos") or []) + sum(
         1 for c in cards if c.get("video_hd_url") or c.get("video_sd_url"))
     formato = (snap.get("display_format") or ("VIDEO" if videos else "IMAGE")).upper()
@@ -436,6 +466,7 @@ def normalizar_anuncio(d):
         "videos": videos,
         "formato": formato,
         "ativo": d.get("is_active", True),
+        "thumb": _thumb(),
     }
 
 

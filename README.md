@@ -94,6 +94,9 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
 
+**1.14.0**
+- **Scanner visual de criativos**: a mineração baixa a miniatura de cada criativo, e o Claude (que enxerga imagens) separa os anúncios cujo **visual** bate com um padrão — ex.: UGC de "médico/enfermeira" falando pra câmera, típico de ED/nutra; low ticket segue a mesma pegada. Vem com padrões prontos (`ed-ugc-medico`, `ugc-talking-head`) e dá para ensinar novos colando prints de referência. O relatório visual agora mostra a miniatura de cada oferta.
+
 **1.13.0**
 - **Lista de palavras-chave de low ticket em inglês**: ao escolher um país de língua inglesa (EUA, Reino Unido, Canadá, Austrália…), aparece uma lista pronta de termos em inglês (bundle, printable, templates, planner, 500+, instant download, only \$9…) — sem precisar traduzir na hora. Para outras línguas, segue traduzindo a escolha.
 
