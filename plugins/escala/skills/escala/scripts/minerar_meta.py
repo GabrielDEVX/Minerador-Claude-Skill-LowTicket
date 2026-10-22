@@ -19,7 +19,7 @@ from urllib.parse import quote, urlparse
 
 from comum import (UA, carregar_config, carregar_filtros, classificar_lowticket, classificar_nutra,
                    extrair_anuncios, extrair_total, fmt_preco, nome_produto, parse_html, parse_payload, plataforma,
-                   precos, tipo_landing, total_do_texto)
+                   precos, tipo_landing, tipo_oferta, total_do_texto)
 
 BASE = "https://www.facebook.com/ads/library/"
 
@@ -158,6 +158,16 @@ def montar_buscas(palavra, nicho, nichos_cfg, modo="lowticket", pais="BR"):
     return [(f"{palavra} {t}", False) for t in nicho_obj["termos"][:3]]
 
 
+_FILTROS_CACHE = None
+
+
+def filtros_cache():
+    global _FILTROS_CACHE
+    if _FILTROS_CACHE is None:
+        _FILTROS_CACHE = carregar_filtros()
+    return _FILTROS_CACHE
+
+
 def analisar(anuncios, cfg, contagens, modo="lowticket"):
     agora = time.time()
     paginas = defaultdict(list)
@@ -212,6 +222,9 @@ def analisar(anuncios, cfg, contagens, modo="lowticket"):
             "anuncio_top": url_anuncio(top["ad_id"]),
             "thumb": top.get("thumb", ""),
             "thumb_local": "",
+            "tipo_oferta": tipo_oferta(top, filtros_cache()),
+            "tem_legenda": bool(top.get("tem_legenda")),
+            "legenda": (top.get("legenda") or "")[:200].replace("\n", " "),
             "landing": top["link"],
             "dominios": ", ".join(dominios[:3]),
             "copy_top": top["texto"][:160].replace("\n", " "),

@@ -150,6 +150,63 @@ def _checar_lista_negra(ad, filtros, cfg):
     return ""
 
 
+# hosts que NUNCA são oferta de afiliado/infoproduto (lojas de app, marketplaces, grandes)
+HOSTS_NAO_OFERTA = ("play.google.com", "apps.apple.com", "itunes.apple.com", "apple.com", "microsoft.com",
+                    "amazon.", "mercadolivre", "mercadolibre", "aliexpress", "alibaba", "shopee", "shein",
+                    "temu.com", "ebay.", "walmart", "magazineluiza", "americanas", "casasbahia",
+                    "doubleclick", "googleadservices", "youtube.com", "facebook.com", "instagram.com",
+                    "linktr.ee", "wa.me", "api.whatsapp", "whatsapp.com", "t.me", "spotify", "netflix",
+                    "booking.", "airbnb", "uber.", "99app", ".gov", "bet", "casino")
+
+
+def link_de_oferta(link, filtros):
+    """True se o link tem cara de oferta de low ticket/nutra; False para empresa/loja/app."""
+    l = (link or "").lower()
+    if not l.startswith("http"):
+        return False
+    host, base, _ = _dominio_base(l)
+    if any(h in l for h in HOSTS_NAO_OFERTA):
+        return False
+    negra = {_sem_acento(b).replace(" ", "").replace("-", "") for b in filtros.get("lista_negra", [])}
+    if base and base.replace("-", "") in negra:
+        return False
+    # sinais positivos: plataforma, domínio de infoproduto/advertorial, ou domínio "solto" (não-marca)
+    if any(d in l for d in filtros.get("dominios_nutra", []) + filtros.get("dominios_lowticket", [])):
+        return True
+    if plataforma(l):
+        return True
+    # domínio aleatório .site/.pro/.online/.store, caminho de artigo/vsl/checkout
+    if re.search(r"\.(site|pro|online|store|shop|click|life|co|info|xyz|blog|buzz|website|space)(/|$)", host):
+        return True
+    if re.search(r"/(vsl|order|checkout|cart|go|out|presell|lp|pv|artigo|article|news|secure)\b", l):
+        return True
+    # subdomínio de rastreamento/advertorial (find.x.com, trk.x.site, fc.x.pro, go.x…) — marcas usam apex/www
+    labels = [p for p in host.split(".") if p]
+    if labels and labels[0] in ("find", "fc", "trk", "track", "go", "out", "lp", "pv", "vsl", "get", "try",
+                                 "news", "read", "secure", "offer", "click", "app", "the", "my", "see", "health", "info"):
+        return True
+    if len([p for p in labels if p != "www"]) >= 3:   # subdomínio extra = cara de advertorial, não de marca
+        return True
+    return False
+
+
+def tipo_oferta(ad, filtros):
+    """nutra / lowticket / indefinido, pela legenda e pelo link (heurística do Gabriel):
+    nutra quase não tem legenda (o criativo carrega tudo); low ticket costuma ter legenda com oferta."""
+    if not link_de_oferta(ad.get("link"), filtros):
+        return "nao_oferta"
+    leg = _sem_acento(ad.get("legenda", ""))
+    tem_preco = bool(precos(ad.get("legenda", "") + " " + ad.get("titulo_link", "")))
+    termos_info = any(_sem_acento(t) in leg for t in filtros.get("termos_infoproduto", []))
+    # low ticket: legenda com oferta (preço, termos de infoproduto, lista, CTA de compra)
+    if (ad.get("tem_legenda") and (tem_preco or termos_info)) or (tem_preco and termos_info):
+        return "lowticket"
+    # nutra: pouca/nenhuma legenda + criativo em vídeo + link advertorial/VSL
+    if (not ad.get("tem_legenda") or len(leg) < 120) and (ad.get("videos") or ad.get("formato") == "VIDEO"):
+        return "nutra"
+    return "indefinido"
+
+
 def classificar_nutra(ad, filtros, cfg):
     """Devolve (pontos, motivo_descartado_ou_vazio, sinais) para o modo nutra."""
     motivo = _checar_lista_negra(ad, filtros, cfg)
@@ -434,6 +491,7 @@ def normalizar_anuncio(d):
               snap.get("caption") or ""]
     for c in cards:
         partes += [_texto(c.get("body")), c.get("title") or "", c.get("link_description") or ""]
+    legenda = _texto(snap.get("body")).strip()
     link = snap.get("link_url") or next((c.get("link_url") for c in cards if c.get("link_url")), "") or ""
 
     def _thumb():
@@ -467,6 +525,8 @@ def normalizar_anuncio(d):
         "formato": formato,
         "ativo": d.get("is_active", True),
         "thumb": _thumb(),
+        "legenda": legenda[:1500],
+        "tem_legenda": len(legenda) >= 60,
     }
 
 

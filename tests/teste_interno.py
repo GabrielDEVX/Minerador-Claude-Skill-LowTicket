@@ -751,6 +751,24 @@ def t_produto():
     pv = _cpv()
     ids = [x["id"] for x in pv]
     checar("ed-ugc-medico" in ids and "ugc-talking-head" in ids, "scanner visual: padrões de referência (nutra e UGC geral)")
+    # inteligência de link + legenda (exemplos reais do Gabriel)
+    from comum import tipo_oferta as _to, link_de_oferta as _lo, carregar_filtros as _cf2
+    f2 = _cf2()
+    def _ad(leg, link, vid=1):
+        return {"legenda": leg, "tem_legenda": len(leg) >= 60, "link": link, "videos": vid,
+                "formato": "VIDEO" if vid else "IMAGE", "titulo_link": ""}
+    # empresas/app/loja são descartadas pelo link
+    checar(not _lo("https://play.google.com/store/apps/x", f2) and not _lo("https://nike.com/x", f2)
+           and not _lo("https://amazon.com.br/x", f2), "link: descarta app store, Nike e Amazon")
+    # advertorial de nutra (os 4 exemplos) é oferta
+    checar(all(_lo(u, f2) for u in ["https://trk.go-stonepathway.site/", "https://find.quick-choices.com/",
+           "https://corestrive.site/", "https://fc.goldhealth.pro/x"]), "link: reconhece advertorial de nutra (.site/.pro, subdomínio trk/find/fc)")
+    # nutra = sem legenda; low ticket = com legenda de oferta
+    checar(_to(_ad("weird ritual my husband discovered", "https://trk.go-stonepathway.site/"), f2) == "nutra",
+           "tipo: nutra (criativo carrega tudo, link advertorial)")
+    checar(_to(_ad("Pega o pack com +300 receitas em PDF por apenas R$ 19,90. Acesso imediato!", "https://x.cakto.com.br/y", 0), f2) == "lowticket",
+           "tipo: low ticket (legenda com oferta + preço)")
+    checar(_to(_ad("Baixe o app agora", "https://play.google.com/x", 0), f2) == "nao_oferta", "tipo: empresa/app = nao_oferta")
     checar(all(x.get("assinatura") and x.get("nao_e") for x in pv), "scanner visual: cada padrão tem assinatura e 'não é'")
 
 

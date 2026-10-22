@@ -638,11 +638,11 @@ A mineração acha ofertas pela **copy**. O scanner visual vai além: separa os 
 
 **Como funciona:**
 1. A mineração já baixou as miniaturas em `{PASTA}/criativos/` (campo `thumb_local` de cada linha do ranking). Se o usuário rodou com `--thumbs 0`, rode de novo sem isso.
-2. Defina o **padrão visual**:
-   - Se o usuário colou prints de referência, **olhe os prints** e descreva a assinatura visual (enquadramento, quem aparece, cenário, legendas, sensação).
-   - Ou use um padrão salvo: pegue a lista `padroes_visuais` da saída de `run.sh config` (ex.: `ed-ugc-medico` já vem pronto, com `assinatura` e `nao_e`).
-3. **Olhe as miniaturas**: abra os arquivos de `{PASTA}/criativos/` com a ferramenta de leitura de imagem (Read), um a um ou em lotes. Para cada um, decida **BATE / PARCIAL / NÃO** comparando com a `assinatura` (e descartando o que está em `nao_e`).
-4. Entregue o shortlist só com os que batem:
+2. **Descarte o que não é oferta pelo link** (antes de olhar a imagem): cada linha do ranking tem `tipo_oferta` (`nutra` / `lowticket` / `indefinido` / `nao_oferta`). **Ignore as `nao_oferta`** — são empresas, lojas, app stores, marcas. Fique só com links de cara de oferta (advertorial/VSL, plataforma de infoproduto, domínio aleatório .site/.pro, subdomínio de rastreamento como find./trk./fc.).
+3. **Use a legenda para distinguir nutra de low ticket** (campos `tem_legenda` e `legenda`): **nutra quase não tem legenda** — o criativo (vídeo) carrega tudo, a legenda é curta ou só um gancho; **low ticket costuma ter legenda** com a oferta (preço, bullets, "acesso imediato"). Use isso como um dos sinais ao rotular cada achado.
+4. Defina o **padrão visual** e **seja inteligente, não mecânico**: use os padrões salvos (`padroes_visuais` da saída de `run.sh config`: `ugc-talking-head`, `ed-ugc-medico`) como referência, mas julgue pelo conjunto — se o usuário colou prints, extraia a assinatura deles. Reconheça variações do mesmo padrão (UGC falando pra câmera, autoridade médica, depoimento, demonstração), não só uma foto idêntica.
+5. **Olhe as miniaturas**: abra os arquivos de `{PASTA}/criativos/` com a ferramenta de leitura de imagem (Read), um a um ou em lotes. Para cada um, decida **BATE / PARCIAL / NÃO** cruzando os três sinais: o **link** (é oferta?), a **legenda** (nutra sem / low ticket com), e o **visual** (bate com a assinatura, e não está em `nao_e`).
+6. Entregue o shortlist só com os que batem:
 
 ```
   🎯  CRIATIVOS NO PADRÃO · {padrão}
@@ -650,9 +650,9 @@ A mineração acha ofertas pela **copy**. O scanner visual vai além: separa os 
   {n} criativos batem com o padrão (de {total} analisados)
 ```
 
-Depois uma tabela: `# | Página | Por que bate | Ativos | Dias | Biblioteca`. Em "por que bate", diga em poucas palavras o que casou (ex.: "mulher de scrubs falando pra câmera + legenda de confissão"). Ordene pelos mais escalados (ativos/dias). Para cada um, o link da biblioteca (`link_biblioteca`).
+Depois uma tabela: `# | Página | Tipo | Por que bate | Ativos | Dias | Biblioteca` (Tipo = nutra ou low ticket, pelo `tipo_oferta` + legenda). Em "por que bate", diga em poucas palavras o que casou (ex.: "mulher de scrubs falando pra câmera + legenda de confissão"). Ordene pelos mais escalados (ativos/dias). Para cada um, o link da biblioteca (`link_biblioteca`).
 
-5. Ofereça: **clonar** o melhor (opção 4), fazer o **breakdown** da copy (opção 8), ou **salvar o padrão** que você montou dos prints para reusar (`padroes_visuais` em `~/.lowticket/config/padroes_visuais.json`, com `id`, `nome`, `assinatura`, `nao_e`).
+7. Ofereça: **clonar** o melhor (opção 4), fazer o **breakdown** da copy (opção 8), ou **salvar o padrão** que você montou dos prints para reusar (`padroes_visuais` em `~/.lowticket/config/padroes_visuais.json`, com `id`, `nome`, `assinatura`, `nao_e`).
 
 **Importante:** não baixe nem redistribua os vídeos; use só as miniaturas que a biblioteca já mostra, para reconhecer o padrão. O objetivo é modelar o estilo, com o seu próprio criativo.
 
