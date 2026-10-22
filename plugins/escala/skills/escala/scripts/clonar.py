@@ -76,7 +76,8 @@ def main():
     ancora = max(precos) if precos and max(precos) > preco else 0
 
     slug = slugify(a.nome)
-    base = pasta_produtos() / slug
+    from produtos import dir_produto as _dp
+    base = _dp(slug)
     base.mkdir(parents=True, exist_ok=True)
     prod = dict(MODELO_PRODUTO)
     prod.update({

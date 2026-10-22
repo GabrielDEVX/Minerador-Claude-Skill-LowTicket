@@ -63,8 +63,20 @@ OBRIGATORIOS = {
 }
 
 
+def slug_seguro(slug):
+    """Impede sair da pasta de produtos: reduz o slug ao formato a-z0-9-."""
+    s = slugify(str(slug))
+    if not s:
+        raise SystemExit("SLUG_INVALIDO: use só letras, números e hífen.")
+    return s
+
+
+def dir_produto(slug):
+    return pasta_produtos() / slug_seguro(slug)
+
+
 def caminho(slug, arquivo="produto"):
-    return pasta_produtos() / slug / f"{arquivo}.json"
+    return dir_produto(slug) / f"{arquivo}.json"
 
 
 def validar(slug, arquivo="produto"):
@@ -116,7 +128,7 @@ def main():
         if not nome:
             sys.exit("informe o nome do produto")
         slug = slugify(nome)
-        pasta = pasta_produtos() / slug
+        pasta = dir_produto(slug)
         pasta.mkdir(parents=True, exist_ok=True)
         p = pasta / "produto.json"
         if p.exists():
@@ -138,7 +150,10 @@ def main():
                               "modo": dados.get("modo"), "feito": feitos})
         print(json.dumps(itens, ensure_ascii=False, indent=1))
     elif cmd == "mostrar":
-        print(caminho(sys.argv[2]).read_text(encoding="utf-8"))
+        c = caminho(sys.argv[2])
+        if not c.exists():
+            sys.exit(f"NAO_ENCONTRADO: {c}")
+        print(c.read_text(encoding="utf-8"))
     elif cmd == "validar":
         arq = sys.argv[3] if len(sys.argv) > 3 else "produto"
         erros = validar(sys.argv[2], arq)

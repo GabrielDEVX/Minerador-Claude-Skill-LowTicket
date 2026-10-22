@@ -18,8 +18,8 @@ cmd="$1"; shift
 case "$cmd" in
   setup)       exec bash "$SCRIPTS/setup.sh" ;;
   status)      { [ -n "$PY" ] && [ -f "$OK" ]; } && echo "PRONTO" || echo "SETUP_PENDENTE" ;;
-  config)      "$PYRUN" -c "import sys, json; sys.path.insert(0, r'$SCRIPTS'); from comum import config_efetiva; print(json.dumps(config_efetiva(), ensure_ascii=False, indent=1))" ;;
-  filtros)     "$PYRUN" -c "import sys, json; sys.path.insert(0, r'$SCRIPTS'); from comum import carregar_filtros; print(json.dumps(carregar_filtros(), ensure_ascii=False, indent=1))" ;;
+  config)      ESCALA_SCRIPTS="$SCRIPTS" "$PYRUN" -c "import os,sys,json; sys.path.insert(0, os.environ['ESCALA_SCRIPTS']); from comum import config_efetiva; print(json.dumps(config_efetiva(), ensure_ascii=False, indent=1))" ;;
+  filtros)     ESCALA_SCRIPTS="$SCRIPTS" "$PYRUN" -c "import os,sys,json; sys.path.insert(0, os.environ['ESCALA_SCRIPTS']); from comum import carregar_filtros; print(json.dumps(carregar_filtros(), ensure_ascii=False, indent=1))" ;;
   testar)      exec "$PYRUN" "$SCRIPTS/testar.py" "$@" ;;
   radar)       exec "$PYRUN" "$SCRIPTS/radar.py" "$@" ;;
   favoritos)   exec "$PYRUN" "$SCRIPTS/favoritos.py" "$@" ;;

@@ -706,8 +706,39 @@ def t_produto():
 
 
 
+def t_seguranca():
+    secao("14) Seguranca (regressoes)")
+    import re as _re
+    base = Path(os.environ["HOME"]) / "mineracao/produtos/seg-teste"
+    base.mkdir(parents=True, exist_ok=True)
+    (base / "produto.json").write_text(json.dumps({"nome": "Seg", "slug": "seg-teste", "promessa": "p",
+        "publico": "x", "preco": 9.9, "formato": "infoapp", "cores": {"primaria": "#111", "fundo": "#000"}}), encoding="utf-8")
+    mal = "antes </script><script>alert(1)</script> depois"
+    (base / "conteudo.json").write_text(json.dumps({"titulo": "T", "modulos": [
+        {"titulo": "M", "itens": [{"titulo": "A", "conteudo": mal}]}]}, ensure_ascii=False), encoding="utf-8")
+    sh("infoapp", "seg-teste")
+    h = (base / "infoapp" / "index.html").read_text(encoding="utf-8")
+    checar("</script><script>alert" not in h, "infoapp: </script> na copy nao quebra a pagina")
+    m = _re.search(r'type="application/json">(.*?)</script>', h, _re.S)
+    raw = m.group(1).replace(r"\u003c", "<").replace(r"\u003e", ">").replace(r"\u0026", "&")
+    json.loads(raw)
+    checar("alert(1)" in raw, "infoapp: o texto e preservado (escapado), nao perdido")
+    import produtos as _p
+    d = _p.dir_produto("../../../../etc/passwd")
+    checar(".." not in str(d) and str(d).endswith("etc-passwd"), "slug com ../ e contido na pasta de produtos")
+    out = sh("produto", "mostrar", "../../../../etc/passwd")
+    checar("NAO_ENCONTRADO" in out and "/etc/passwd/produto.json" not in out, "produto mostrar nao le fora da pasta nem da traceback")
+    import relatorio as _r
+    checar('const meta=' not in _r.PAGINA, "relatorio: sem o 'const meta' morto/malformado")
+    (base / "funil.json").write_text(json.dumps({"link_checkout": "https://x", "pagina_vendas": {
+        "headline": "oi <script>alert(2)</script>", "planos": {"basico": {"nome": "p", "por": 9.9, "bullets": ["<img onerror=alert(3)>"]}}}}, ensure_ascii=False), encoding="utf-8")
+    sh("pagina", "seg-teste")
+    pg = (base / "pagina" / "index.html").read_text(encoding="utf-8")
+    checar("<script>alert(2)" not in pg and "<img onerror" not in pg, "pagina de vendas: escapa HTML da copy e dos bullets")
+
+
 def t_comandos():
-    secao("14) Comandos do run.sh, diagnóstico e setup")
+    secao("15) Comandos do run.sh, diagnóstico e setup")
     checar("SETUP_PENDENTE" in sh("status"), "status antes do setup: SETUP_PENDENTE")
     checar("SETUP_PENDENTE" in sh("meta", "--palavra", "x"), "minerar sem setup: pede a opção 1")
     venv = Path(os.environ["HOME"]) / ".lowticket/.venv/bin"
@@ -742,7 +773,7 @@ def t_comandos():
 
 
 def main():
-    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_urlscan, t_premium, t_produto, t_comandos):
+    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_urlscan, t_premium, t_produto, t_seguranca, t_comandos):
         try:
             t()
         except Exception as e:  # um erro numa seção não esconde as outras

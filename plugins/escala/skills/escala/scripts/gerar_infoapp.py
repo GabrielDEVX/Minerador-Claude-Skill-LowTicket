@@ -60,7 +60,8 @@ def main():
     if len(sys.argv) < 2:
         sys.exit("informe o slug do produto")
     slug = sys.argv[1]
-    base = pasta_produtos() / slug
+    from produtos import dir_produto
+    base = dir_produto(slug)
     erros = validar(slug, "produto")
     if erros:
         sys.exit("INVALIDO_PRODUTO:\n  - " + "\n  - ".join(erros))
@@ -111,7 +112,7 @@ def main():
     html = TEMPLATE.read_text(encoding="utf-8")
     html = (html.replace("__TITULO__", _esc(titulo)).replace("__TITULO_CURTO__", _esc(titulo[:28]))
             .replace("__PROMESSA__", _esc(descricao)).replace("__COR__", cor).replace("__FUNDO__", fundo)
-            .replace("__DADOS__", json.dumps(dados, ensure_ascii=False)))
+            .replace("__DADOS__", json.dumps(dados, ensure_ascii=False).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")))
     (destino / "index.html").write_text(html, encoding="utf-8")
     (destino / "icone.svg").write_text(icone_svg(titulo, cor), encoding="utf-8")
     manifest = {"name": titulo, "short_name": titulo[:18], "start_url": "./index.html", "display": "standalone",

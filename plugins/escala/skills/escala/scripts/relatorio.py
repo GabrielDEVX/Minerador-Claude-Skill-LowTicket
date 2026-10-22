@@ -83,7 +83,7 @@ def gerar(linhas, pasta, meta):
     novas = sum(1 for l in linhas if (l.get("tendencia") or {}).get("estado") == "NOVA")
     pagina = PAGINA.replace("__TITULO__", titulo).replace("__SUBT__", subt).replace("__QUANDO__", quando) \
         .replace("__N__", str(n)).replace("__SUBINDO__", str(subindo)).replace("__NOVAS__", str(novas)) \
-        .replace("__CARDS__", cards).replace("__META__", html.escape(json.dumps(meta, ensure_ascii=False), quote=True))
+        .replace("__CARDS__", cards)
     (pasta / "relatorio.html").write_text(pagina, encoding="utf-8")
     return pasta / "relatorio.html"
 
@@ -141,7 +141,6 @@ __CARDS__
 <script>
 const grid=document.getElementById('grid'),cards=[...grid.querySelectorAll('.card')];
 const q=document.getElementById('q'),fs=document.getElementById('fs'),ft=document.getElementById('ft'),or=document.getElementById('or');
-const meta="__META__";
 function aplicar(){
  const tq=q.value.toLowerCase().trim(),vs=fs.value,vt=ft.value;let vis=0;
  cards.forEach(c=>{

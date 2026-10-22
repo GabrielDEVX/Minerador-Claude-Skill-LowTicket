@@ -151,11 +151,12 @@ def main():
     escuro = cores.get("escuro") or cores.get("fundo", "#15372a")
     creme = cores.get("creme", "#f4f2ec")
 
-    destino = pasta_produtos() / slug / "pagina"
+    from produtos import dir_produto
+    destino = dir_produto(slug) / "pagina"
     if destino.exists():
         shutil.rmtree(destino)
     destino.mkdir(parents=True)
-    img = Imagens(pasta_produtos() / slug, destino)
+    img = Imagens(dir_produto(slug), destino)
 
     checkout = funil.get("link_checkout") or produto.get("link_checkout") or "#"
 
