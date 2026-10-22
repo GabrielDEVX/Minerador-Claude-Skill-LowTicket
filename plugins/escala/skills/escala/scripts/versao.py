@@ -12,7 +12,7 @@ import urllib.request
 from pathlib import Path
 
 AQUI = Path(__file__).resolve()
-RAW = ("https://raw.githubusercontent.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket/"
+RAW = ("https://raw.githubusercontent.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket-Nutra/"
        "main/plugins/escala/.claude-plugin/plugin.json")
 CMD_ATUALIZAR = "claude plugin marketplace update legacy-mentoring"
 

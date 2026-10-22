@@ -1,8 +1,8 @@
 #!/bin/bash
 # Instalador da Central Escala para macOS. Cole no Terminal:
-#   curl -fsSL https://raw.githubusercontent.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket/main/instalar.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket-Nutra/main/instalar.sh | bash
 set -e
-MARKET="GabrielDEVX/Minerador-Claude-Skill-LowTicket"
+MARKET="GabrielDEVX/Minerador-Claude-Skill-LowTicket-Nutra"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "   CENTRAL ESCALA · instalacao"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

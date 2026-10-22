@@ -58,18 +58,18 @@ E entrega o link da biblioteca de cada página.
 
 No **Mac/Linux**, no Terminal:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket/main/instalar.sh | bash
+curl -fsSL https://raw.githubusercontent.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket-Nutra/main/instalar.sh | bash
 ```
 No **Windows**, no PowerShell:
 ```powershell
-irm https://raw.githubusercontent.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket/main/instalar.ps1 | iex
+irm https://raw.githubusercontent.com/GabrielDEVX/Minerador-Claude-Skill-LowTicket-Nutra/main/instalar.ps1 | iex
 ```
 Ele instala o Claude Code (se faltar), adiciona o catálogo e instala o plugin. No Windows, lembre de ter o **Git para Windows** instalado.
 
 **Ou manualmente, no Terminal:**
 
 ```bash
-claude plugin marketplace add GabrielDEVX/Minerador-Claude-Skill-LowTicket
+claude plugin marketplace add GabrielDEVX/Minerador-Claude-Skill-LowTicket-Nutra
 claude plugin install escala@legacy-mentoring
 ```
 
