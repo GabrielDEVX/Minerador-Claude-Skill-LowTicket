@@ -159,6 +159,20 @@ HOSTS_NAO_OFERTA = ("play.google.com", "apps.apple.com", "itunes.apple.com", "ap
                     "booking.", "airbnb", "uber.", "99app", ".gov", "bet", "casino")
 
 
+_CEREBRO_DOMS = None
+
+
+def dominios_aprendidos():
+    """Domínios que o cérebro já viu como oferta várias vezes (aprendidos sozinho)."""
+    global _CEREBRO_DOMS
+    if _CEREBRO_DOMS is None:
+        try:
+            _CEREBRO_DOMS = set(json.loads((DADOS / "cerebro.json").read_text(encoding="utf-8")).get("dominios_oferta", []))
+        except Exception:
+            _CEREBRO_DOMS = set()
+    return _CEREBRO_DOMS
+
+
 def link_de_oferta(link, filtros):
     """True se o link tem cara de oferta de low ticket/nutra; False para empresa/loja/app."""
     l = (link or "").lower()
@@ -170,6 +184,9 @@ def link_de_oferta(link, filtros):
     negra = {_sem_acento(b).replace(" ", "").replace("-", "") for b in filtros.get("lista_negra", [])}
     if base and base.replace("-", "") in negra:
         return False
+    # o cérebro já viu este domínio como oferta antes → reconhece sozinho
+    if host in dominios_aprendidos() or (host.startswith("www.") and host[4:] in dominios_aprendidos()):
+        return True
     # sinais positivos: plataforma, domínio de infoproduto/advertorial, ou domínio "solto" (não-marca)
     if any(d in l for d in filtros.get("dominios_nutra", []) + filtros.get("dominios_lowticket", [])):
         return True

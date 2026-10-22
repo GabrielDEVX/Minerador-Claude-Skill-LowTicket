@@ -360,6 +360,7 @@ Depois:
   [4]  🧬  clonar a oferta (gera produto + app + página + criativos)
   [8]  🔬  breakdown da copy/VSL da oferta
   [v]  👁️   scanner visual (achar criativos no mesmo padrão)
+  [c]  🧠  ver o que a ferramenta já aprendeu (cérebro)
   [r]  📊  abrir o relatório visual
   [s]  ⭐  salvar uma oferta nos favoritos (ex.: "salva a 3")
 
@@ -629,6 +630,35 @@ E o bloco final:
 ```
 
 ---
+
+## Cérebro (aprende sozinho)
+
+A ferramenta tem uma memória que **aprende sozinha a cada mineração** (roda automático, não precisa pedir). Ela guarda em `~/.lowticket/cerebro.json`:
+- **domínios e plataformas** que aparecem como oferta de verdade — um domínio visto em 3+ minerações passa a ser reconhecido como oferta sozinho (melhora o filtro de link daqui pra frente);
+- **páginas que vivem escalando** (aparecem em várias buscas / crescendo no tempo);
+- **quais palavras-chave rendem mais ofertas** por nicho e país.
+
+Quanto mais o usuário (e os mentorados) garimpam, mais esperta ela fica. Para mostrar o que já aprendeu:
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh cerebro resumo [--pais BR]
+```
+
+Apresente assim (use os campos da saída):
+
+```
+  🧠  O QUE A FERRAMENTA JÁ APRENDEU
+  ──────────────────────────────────────────────
+  {mineracoes_aprendidas} minerações · {paginas_conhecidas} páginas · {dominios_oferta_aprendidos} domínios de oferta
+
+  🔁 páginas que vivem escalando:
+     {paginas_recorrentes: nome · N aparições · max ativos}
+  🔑 palavras que mais renderam:
+     {palavras_que_mais_rendem: busca (nicho/país) · melhor ativos}
+  🛒 plataformas mais vistas: {plataformas_mais_vistas}
+```
+
+Use isso proativamente: ao sugerir palavras ou ao analisar, leve em conta o que o cérebro já sabe (páginas recorrentes = ofertas consolidadas; palavras que renderam = bons pontos de partida). É honesto dizer que é uma memória estatística que cresce com o uso, não um modelo se re-treinando.
 
 ## Scanner visual de criativos
 

@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Saídas locais de teste / mineração (nunca versionar)
+$HOME/
+mineracao/
+*.navegador_ok
+.lowticket/

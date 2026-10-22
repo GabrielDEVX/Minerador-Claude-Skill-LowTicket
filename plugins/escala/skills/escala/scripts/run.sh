@@ -1,6 +1,6 @@
 #!/bin/bash
 # Ponto único de entrada (Mac, Linux e Windows com Git Bash).
-# run.sh <setup|status|config|filtros|testar|urlscan|radar|favoritos|comparar|versao|analisar|produto|clonar|breakdown|infoapp|pagina|utm|meta|reclameaqui> [argumentos]
+# run.sh <setup|status|config|filtros|testar|urlscan|radar|favoritos|comparar|versao|analisar|produto|clonar|breakdown|cerebro|infoapp|pagina|utm|meta|reclameaqui> [argumentos]
 SCRIPTS="$(cd "$(dirname "$0")" && pwd)"
 OK="$HOME/.lowticket/.navegador_ok"
 
@@ -32,6 +32,7 @@ case "$cmd" in
   utm)         exec "$PYRUN" "$SCRIPTS/utm.py" "$@" ;;
   clonar)      exec "$PYRUN" "$SCRIPTS/clonar.py" "$@" ;;
   breakdown)   exec "$PYRUN" "$SCRIPTS/breakdown.py" "$@" ;;
+  cerebro)     exec "$PYRUN" "$SCRIPTS/cerebro.py" "$@" ;;
   meta|reclameaqui|urlscan)
     # trava de atualizacao: nao minera desatualizado (ESCALA_SEM_UPDATE=1 pula a trava)
     if [ "${ESCALA_SEM_UPDATE:-0}" != "1" ]; then
@@ -51,5 +52,5 @@ case "$cmd" in
       reclameaqui) { [ -n "$PY" ] && [ -f "$OK" ]; } || { echo "SETUP_PENDENTE: rode a opção 1 (setup e diagnóstico)."; exit 2; }
                exec "$PY" "$SCRIPTS/minerar_reclameaqui.py" "$@" ;;
     esac ;;
-  *) echo "uso: run.sh setup|status|config|filtros|testar|urlscan|radar|favoritos|comparar|versao|analisar|produto|clonar|breakdown|infoapp|pagina|utm|meta|reclameaqui [args]"; exit 1 ;;
+  *) echo "uso: run.sh setup|status|config|filtros|testar|urlscan|radar|favoritos|comparar|versao|analisar|produto|clonar|breakdown|cerebro|infoapp|pagina|utm|meta|reclameaqui [args]"; exit 1 ;;
 esac

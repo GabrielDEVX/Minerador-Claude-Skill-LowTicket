@@ -834,6 +834,41 @@ def t_internacional():
     checar(_n.get("idiomas_en") and "US" in _n["idiomas_en"] and "GB" in _n["idiomas_en"], "idiomas_en marca os países de língua inglesa")
 
 
+def t_cerebro():
+    secao("16) Cerebro (aprende sozinho)")
+    import cerebro as _c
+    from pathlib import Path as _P
+    try:
+        _c.ARQ.unlink()          # zera o cérebro: minerações de testes anteriores não contam aqui
+    except FileNotFoundError:
+        pass
+    base = _P(os.environ["HOME"]) / "mineracao"
+    def mina(nome, rows):
+        pa = base / nome; pa.mkdir(parents=True, exist_ok=True)
+        with open(pa / "ranking.csv", "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=["pagina", "page_id", "ativos_pagina", "dias_max", "plataforma", "landing", "dominios", "tipo_oferta"])
+            w.writeheader()
+            for r in rows: w.writerow(r)
+        return pa
+    def row(pag, pid, at, plat, land):
+        return {"pagina": pag, "page_id": pid, "ativos_pagina": at, "dias_max": 40, "plataforma": plat,
+                "landing": land, "dominios": land.split("//")[-1].split("/")[0], "tipo_oferta": "nutra"}
+    _c.aprender(mina("2026-10-20_nutra_US_ed_cavalo", [row("A", "1", 80, "Digistore24", "https://aprende-dom.pro/v"), row("Chef Ana", "9", 30, "Kiwify", "https://x.cakto.com.br/a")]))
+    _c.aprender(mina("2026-10-21_nutra_US_ed_cavalo", [row("B", "2", 50, "", "https://aprende-dom.pro/v2"), row("Chef Ana", "9", 45, "Kiwify", "https://x.cakto.com.br/a")]))
+    cc = _c.aprender(mina("2026-10-22_nutra_US_ed_touro", [row("C", "3", 90, "ClickBank", "https://aprende-dom.pro/v3"), row("Chef Ana", "9", 60, "Kiwify", "https://x.cakto.com.br/a")]))
+    checar(cc["mineracoes"] == 3, "cérebro: conta as minerações aprendidas")
+    checar("aprende-dom.pro" in cc["dominios_oferta"], "cérebro: aprende um domínio de oferta visto 3x")
+    checar(cc["paginas"]["9"]["aparicoes"] == 3 and cc["paginas"]["9"]["max_ativos"] == 60, "cérebro: acompanha página recorrente e seu pico")
+    checar(_c.aprender(base / "2026-10-22_nutra_US_ed_touro")["mineracoes"] == 3, "cérebro: não aprende a mesma pasta duas vezes")
+    import comum as _cm
+    _cm._CEREBRO_DOMS = None
+    checar(_cm.link_de_oferta("https://aprende-dom.pro/x", _cm.carregar_filtros()), "cérebro: domínio aprendido passa a ser reconhecido como oferta")
+    res = _c.resumo("US")
+    checar(res["paginas_recorrentes"] and res["paginas_recorrentes"][0]["pagina"] == "Chef Ana", "cérebro: resumo lista a página que mais apareceu")
+    out = sh("cerebro", "resumo")
+    checar("paginas_recorrentes" in out, "run.sh cerebro resumo funciona")
+
+
 def t_comandos():
     secao("15) Comandos do run.sh, diagnóstico e setup")
     checar("SETUP_PENDENTE" in sh("status"), "status antes do setup: SETUP_PENDENTE")
@@ -870,7 +905,7 @@ def t_comandos():
 
 
 def main():
-    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_urlscan, t_premium, t_produto, t_internacional, t_seguranca, t_comandos):
+    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_urlscan, t_premium, t_produto, t_internacional, t_seguranca, t_cerebro, t_comandos):
         try:
             t()
         except Exception as e:  # um erro numa seção não esconde as outras

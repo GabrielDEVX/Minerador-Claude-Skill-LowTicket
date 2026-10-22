@@ -400,6 +400,11 @@ def main():
             (pasta / "descartadas.md").write_text("# Páginas descartadas pelo filtro low ticket\n\n" + "\n".join(
                 f"- {p}: {m}" for p, m in descartadas.items()) + "\n", encoding="utf-8")
 
+        try:
+            import cerebro
+            cerebro.aprender(pasta)          # o cérebro aprende sozinho com esta mineração
+        except Exception as e:
+            log(f"(cérebro não atualizado: {e})")
         print(f"PASTA: {pasta}")
         print(f"RELATORIO: {pasta / 'relatorio.html'}")
         print(f"ANUNCIOS_LIDOS: {lidos} · {a.modo.upper()}: {len(anuncios)} · PAGINAS: {len(linhas)} · DESCARTADAS: {len(descartadas)}")

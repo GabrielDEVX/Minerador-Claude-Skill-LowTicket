@@ -1,6 +1,6 @@
 {
   "name": "escala",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "description": "Central Escala: minera ofertas escaladas de low ticket e de nutra em qualquer país e idioma (Biblioteca de Anúncios, Reclame Aqui, urlscan.io), analisa e dá nota, clona a oferta e gera entregável (área de membros), página de vendas e criativos. Comando: /escala.",
   "author": {
     "name": "Gabriel Rodrigues (@gabrielrodriguesfx)",
