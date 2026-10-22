@@ -103,7 +103,7 @@ def analisar_pagina(anuncios, ranking, alvo, cfg):
             "criativos_em_video": len(videos),
             "variacoes_de_video": variacoes,
             "duplicados_total": duplicados,
-            "precos_na_copy": [fmt_preco(p) for p in todos_precos],
+            "precos_na_copy": [fmt_preco(p, cfg.get("pais", "BR")) for p in todos_precos],
             "plataforma": ", ".join(plats),
             "concorrentes_parecidos": len(concorrentes),
             "nomes_concorrentes": sorted(concorrentes, key=concorrentes.get, reverse=True)[:5],

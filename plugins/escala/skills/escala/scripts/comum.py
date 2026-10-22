@@ -105,6 +105,9 @@ def plataforma(link):
     l = (link or "").lower()
     for nome, marcas in [("Digistore24", ["digistore24", "ds24"]), ("ClickBank", ["clickbank", "clkbank", "hop."]),
                          ("BuyGoods", ["buygoods"]), ("MaxWeb", ["maxweb"]), ("CartPanda", ["cartpanda"]),
+                         ("Gumroad", ["gumroad"]), ("Payhip", ["payhip"]), ("Lemon Squeezy", ["lemonsqueezy", "lemon-squeezy"]),
+                         ("Stan", ["stan.store"]), ("Ko-fi", ["ko-fi.com", "kofi"]), ("Etsy", ["etsy.com"]),
+                         ("Sellfy", ["sellfy"]), ("Podia", ["podia"]), ("ThriveCart", ["thrivecart"]),
                          ("Shopify", ["myshopify", "/products/"]), ("Hotmart", ["hotmart"]), ("Kiwify", ["kiwify"]),
                          ("Cakto", ["cakto"]), ("Monetizze", ["monetizze"]), ("Braip", ["braip"])]:
         if any(m in l for m in marcas):
@@ -301,23 +304,34 @@ def classificar_lowticket(ad, filtros, cfg):
 
 
 # ---------- preços ----------
+# detecta preço em R$, $, €, £ (com símbolo antes ou depois) e valor solto com centavos
 PRECO_RE = re.compile(
-    r"R\$\s*(\d{1,4}(?:[.,]\d{2})?)"           # R$ 19,90 / R$19 / R$ 1.000
-    r"|(?<![\d,.])(\d{1,3},\d{2})(?![\d])",    # 19,90 solto
+    r"(?:R\$|US\$|\$|€|£)\s*(\d{1,4}(?:[.,]\d{3})*(?:[.,]\d{2})?)"   # R$19,90 / $17 / €19.90 / £9
+    r"|(\d{1,4}(?:[.,]\d{2})?)\s*(?:€|£|reais|usd|eur|gbp|dollars?|euros?)"  # 19,90€ / 17 usd / 9 dollars
+    r"|(?<![\d,.])(\d{1,3}[,.]\d{2})(?![\d])",                             # 19,90 / 19.90 solto
     re.I,
 )
+
+
+def _num(bruto):
+    bruto = bruto.strip()
+    # decide o separador decimal: o último . ou , com 2 dígitos depois é o decimal
+    m = re.search(r"[.,](\d{2})$", bruto)
+    if m:
+        dec = bruto[-3]
+        inteiro = bruto[:-3].replace(".", "").replace(",", "")
+        return float(f"{inteiro}.{m.group(1)}")
+    return float(re.sub(r"[.,]", "", bruto))
 
 
 def precos(texto):
     out = []
     for m in PRECO_RE.finditer(texto or ""):
-        bruto = m.group(1) or m.group(2)
-        if "," in bruto:
-            valor = bruto.replace(".", "").replace(",", ".")
-        else:
-            valor = bruto.replace(".", "")
+        bruto = m.group(1) or m.group(2) or m.group(3)
+        if not bruto:
+            continue
         try:
-            v = float(valor)
+            v = _num(bruto)
         except ValueError:
             continue
         if 1 <= v <= 5000:
@@ -325,8 +339,15 @@ def precos(texto):
     return out
 
 
-def fmt_preco(v):
-    return ("R$ %.2f" % v).replace(".", ",")
+MOEDA = {"BR": "R$", "PT": "€", "US": "$", "GB": "£", "FR": "€", "DE": "€", "ES": "€", "IT": "€",
+         "CA": "C$", "AU": "A$", "MX": "$", "CH": "CHF", "AT": "€", "NL": "€", "BE": "€", "LU": "€"}
+
+
+def fmt_preco(v, pais="BR"):
+    simbolo = MOEDA.get((pais or "BR").upper(), "R$")
+    if simbolo in ("$", "£", "C$", "A$", "CHF"):                 # formato 9.90
+        return f"{simbolo} {v:.2f}"
+    return (f"{simbolo} %.2f" % v).replace(".", ",")              # formato 9,90 (R$/€)
 
 
 # ---------- parse da Meta ----------

@@ -147,12 +147,13 @@ def filtrar_lowticket(anuncios, filtros, cfg, modo="lowticket"):
     return mantidos, descartadas
 
 
-def montar_buscas(palavra, nicho, nichos_cfg, modo="lowticket"):
+def montar_buscas(palavra, nicho, nichos_cfg, modo="lowticket", pais="BR"):
     if modo == "nutra":
         return [(palavra, True)]          # mecanismo já vem traduzido: frase exata
-    nicho_obj = next((n for n in nichos_cfg["nichos"] if n["id"] == nicho), None)
+    # fora do Brasil, os termos de nicho do arquivo (PT) não valem: a palavra já vem
+    # traduzida pelo Claude, então usamos a estratégia genérica (palavra + pdf/digital).
+    nicho_obj = None if pais != "BR" else next((n for n in nichos_cfg["nichos"] if n["id"] == nicho), None)
     if not nicho_obj or not nicho_obj["termos"]:
-        # nicho geral: a palavra sozinha + combinações que puxam infoproduto
         return [(palavra, True), (f"{palavra} pdf", False), (f"{palavra} digital", False)]
     return [(f"{palavra} {t}", False) for t in nicho_obj["termos"][:3]]
 
@@ -199,8 +200,8 @@ def analisar(anuncios, cfg, contagens, modo="lowticket"):
             "anuncios_na_busca": len(ads),
             "dias_max": dias_max,
             "variacoes_video": variacoes_video,
-            "precos": " / ".join(fmt_preco(p) for p in low) or (
-                " / ".join(fmt_preco(p) for p in sorted(set(todos_precos))[:3])),
+            "precos": " / ".join(fmt_preco(p, cfg.get("pais", "BR")) for p in low) or (
+                " / ".join(fmt_preco(p, cfg.get("pais", "BR")) for p in sorted(set(todos_precos))[:3])),
             "sinais": ", ".join(sinais),
             "plataforma": ", ".join(plats),
             "tipo_provavel": max(([a.get("tipo_landing") for a in ads if a.get("tipo_landing")] or [""]),
@@ -277,7 +278,7 @@ def main():
         if not a.palavra:
             sys.exit("Informe --palavra")
         max_ads = a.max or cfg["max_anuncios"]
-        buscas = [b for p in a.palavra for b in montar_buscas(p, a.nicho, nichos, a.modo)]
+        buscas = [b for p in a.palavra for b in montar_buscas(p, a.nicho, nichos, a.modo, cfg["pais"])]
         por_busca = max(30, max_ads // len(buscas))
         todos = {}
         for q, exata in buscas:

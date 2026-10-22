@@ -112,7 +112,14 @@ NUTRA_FR = [
             "l'astuce de la gélatine rose. Regardez la vidéo.", "https://sante-decouvertes.fr/article/gelatine-rose",
             dias=31, dup=7, video=True, titulo="L'énigme est résolue !"),
 ]
-TOTAIS_PAGINA = {"501": 14, "502": 3, "506": 6, "601": 27, "604": 9, "606": 2500, "701": 41}
+LOWTICKET_US = [
+    anuncio(31, 801, "Sarah Study", "Tired of boring notes? Get 100+ printable Nursing cheat sheets. Instant digital "
+            "download. Perfect for students. Only $9.90. Click here to get instant access!",
+            "https://sarah.gumroad.com/l/nursing", dias=40, dup=5),
+    anuncio(32, 802, "Trendy Fashion US", "Summer dresses. Free shipping, add to cart now! In stock, fast shipping.",
+            "https://trendyfashion.com/dress"),
+]
+TOTAIS_PAGINA = {"801": 22, "501": 14, "502": 3, "506": 6, "601": 27, "604": 9, "606": 2500, "701": 41}
 
 
 class BibliotecaFalsa:
@@ -134,6 +141,8 @@ class BibliotecaFalsa:
             ads = NUTRA_DE
         elif "country=FR" in url:
             ads = NUTRA_FR
+        elif "country=US" in url:
+            ads = LOWTICKET_US
         elif "vazio" in url:
             ads = [LOWTICKET[4], LOWTICKET[5]]
         else:
@@ -228,6 +237,16 @@ def t_lowticket():
     r = rodar(["--palavra", "pack", "--nicho", "culinaria"])
     buscas = [u for u in r["bib"].urls if "q=" in u]
     checar(len(buscas) == 3 and "pack%20receitas" in buscas[0], "combina a palavra com os termos do nicho")
+
+    secao("3b) Low ticket INTERNACIONAL (EUA, em inglês)")
+    r = rodar(["--pais", "US", "--palavra", "nursing cheat sheets", "--nicho", "educacao"])
+    checar(all("country=US" in u for u in r["bib"].urls), "minera low ticket no país escolhido (US)")
+    buscas = [u for u in r["bib"].urls if "q=" in u]
+    checar(len(buscas) == 3 and "nursing%20cheat%20sheets%20pdf" in " ".join(buscas),
+           "fora do BR usa a estratégia genérica (palavra + pdf/digital), ignora termos de nicho PT")
+    nomes = [l["pagina"] for l in r["linhas"]]
+    checar("Sarah Study" in nomes, f"mantém o infoproduto em inglês ({nomes})")
+    checar("Trendy Fashion US" not in nomes, "descarta a loja de roupa dos EUA")
 
     secao("4) Várias palavras, sem filtro, nenhum resultado e bloqueio")
     r = rodar(["--palavra", "pack", "--palavra", "kit completo"])
@@ -737,6 +756,30 @@ def t_seguranca():
     checar("<script>alert(2)" not in pg and "<img onerror" not in pg, "pagina de vendas: escapa HTML da copy e dos bullets")
 
 
+def t_internacional():
+    secao("3b) Low ticket internacional (país + idioma)")
+    from comum import precos as _precos, plataforma as _plat, fmt_preco as _fmt, classificar_lowticket, carregar_filtros as _cf, carregar_config as _cc
+    # preço em várias moedas
+    checar(_precos("only $9.90 today") == [9.9] and _precos("nur 12,90 €") == [12.9] and _precos("£9.99") == [9.99],
+           "detecta preço em $, € e £")
+    # moeda no display por país
+    checar(_fmt(9.9, "US") == "$ 9.90" and _fmt(19.9, "DE") == "€ 19,90" and _fmt(9.9, "BR") == "R$ 9,90",
+           "mostra o preço na moeda do país")
+    # plataformas internacionais de low ticket
+    checar(_plat("https://x.gumroad.com/l/a") == "Gumroad" and _plat("https://x.payhip.com/b/a") == "Payhip"
+           and _plat("https://x.stan.store/a") == "Stan", "detecta Gumroad, Payhip e Stan")
+    # filtro mantém infoproduto gringo e descarta loja
+    cfg, _ = _cc(); f = _cf(); cfg["pais"] = "US"
+    def cl(txt, pag, link, tit=""):
+        return classificar_lowticket({"pagina": pag, "link": link, "texto": txt, "titulo_link": tit, "cta": "", "curtidas": 0}, f, cfg)
+    p1, m1, _ = cl("Tired of messy budgets? 50+ printable templates, instant download only $9", "Sofia Printables", "https://sofia.gumroad.com/l/x", "Budget Bundle")
+    checar(p1 >= cfg["min_score_lowticket"] and not m1, f"US: infoproduto (printables) mantido ({p1})")
+    p2, m2, _ = cl("Shop the new Air Max. Free shipping, 30-day returns.", "Nike", "https://nike.com/x")
+    checar(m2 or p2 < cfg["min_score_lowticket"], "US: loja física (Nike) descartada")
+    p3, m3, _ = cl("Über 100 Notion Vorlagen als Sofort-Download. Nur 12,90 €. Jetzt sichern!", "Lena", "https://lena.payhip.com/b/x", "Notion Vorlagen")
+    checar(p3 >= cfg["min_score_lowticket"] and not m3, f"DE: infoproduto (Vorlagen) mantido ({p3})")
+
+
 def t_comandos():
     secao("15) Comandos do run.sh, diagnóstico e setup")
     checar("SETUP_PENDENTE" in sh("status"), "status antes do setup: SETUP_PENDENTE")
@@ -773,7 +816,7 @@ def t_comandos():
 
 
 def main():
-    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_urlscan, t_premium, t_produto, t_seguranca, t_comandos):
+    for t in (t_leitura, t_lowticket, t_nutra, t_filtros, t_config, t_reclameaqui, t_urlscan, t_premium, t_produto, t_internacional, t_seguranca, t_comandos):
         try:
             t()
         except Exception as e:  # um erro numa seção não esconde as outras

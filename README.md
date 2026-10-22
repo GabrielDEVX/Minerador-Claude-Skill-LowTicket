@@ -20,8 +20,8 @@ Por isso resolvi ajudar com o meu conhecimento, e esta ferramenta é uma das for
 
 Plugin para o Claude Code que minera ofertas escaladas na Biblioteca de Anúncios da Meta, em segundo plano e sem abrir o seu navegador. Ele tem dois modos:
 
-**🏷️ Low ticket (Brasil)**
-- Encontra infoprodutos baratos (packs, kits, apostilas, mapas mentais · R$ 7 a 47) por nicho e palavra-chave.
+**🏷️ Low ticket (qualquer país)**
+- Encontra infoprodutos baratos (packs, kits, apostilas, mapas mentais) por nicho e palavra-chave. Escolha o país (Brasil, EUA, Europa…) e a busca é feita **no idioma local**, com as palavras-chave traduzidas.
 - Descarta grandes empresas e e-commerce (Alibaba, Shopee, Amazon, lojas de produto físico).
 - Reconhece a estrutura da copy de low ticket: gancho de dor, "+100 …", "Ideal para:" com lista de emojis, CTA "saiba mais" e preço âncora.
 - Também minera pelo Reclame Aqui: os produtos mais reclamados nas plataformas BR (Kiwify, Hotmart, Cakto…).
@@ -93,6 +93,12 @@ Dentro do Claude Code, na primeira vez, digite:
 Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
+
+**1.12.0**
+- **Low ticket internacional**: além do Brasil, minere em EUA, Europa e outros países. Você escolhe o país, o Claude traduz as palavras-chave para o idioma local, e a busca roda lá. O filtro reconhece infoproduto em inglês/alemão/espanhol/francês/italiano, preços em $, € e £, e plataformas internacionais (Gumroad, Payhip, Lemon Squeezy, Stan.store, Etsy, Ko-fi…). O preço aparece na moeda do país.
+
+**1.12.0**
+- **Low ticket em qualquer país**: além do Brasil, minere infoprodutos nos EUA e na Europa. Você escolhe o país e a ferramenta traduz as palavras-chave para o idioma local (e o preço para a moeda local). O filtro reconhece infoproduto e descarta e-commerce em inglês, espanhol, francês, alemão e italiano.
 
 **1.11.0**
 - **Clonar oferta (opção 4)**: pega uma oferta minerada e, num fluxo só, cria a ficha do produto já pré-preenchida (nicho, preço, plataforma, cores, ângulo de referência) e gera o entregável, a página de vendas e os criativos.

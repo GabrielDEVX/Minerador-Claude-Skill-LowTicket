@@ -110,8 +110,9 @@ Depois, mostre o menu principal.
   🔎  O QUE VOCÊ QUER MINERAR?
   ──────────────────────────────────────────────
   [1]  🏷️   Low ticket
-           infoprodutos baratos no Brasil
-           (packs, kits, apostilas · R$ 7 a 47)
+           infoprodutos baratos (packs, kits,
+           printables) no Brasil ou em outros
+           países, no idioma local
 
   [2]  💊  Nutra
            ofertas de VSL por mecanismo
@@ -154,6 +155,30 @@ Depois, mostre o menu principal.
 ```
 
 Se escolher **3 (urlscan.io)**, siga a seção **Método urlscan.io** (logo abaixo do passo 5).
+
+### Passo 1b — país (métodos 1 e 2)
+
+Pergunte em qual país minerar. O **Brasil** é o padrão (infoproduto em português). Para outros países, a busca é feita **no idioma local** — igual ao nutra. Use a lista `paises` do campo `nutra` da saída de `run.sh config`:
+
+```
+  início › mineração › low ticket › {método}
+
+  🌍  EM QUAL PAÍS?
+  ──────────────────────────────────────────────
+  [1]  🇧🇷  Brasil (padrão)     [5]  🇮🇹  Itália
+  [2]  🇺🇸  EUA                 [6]  🇬🇧  Reino Unido
+  [3]  🇵🇹  Portugal            [7]  🇪🇸  Espanha
+  [4]  🇫🇷  França              [8]  🇩🇪  Alemanha
+
+  [9]  ✏️   outro país (digite o nome)
+
+  [0]  ← voltar
+
+  ──────────────────────────────────────────────
+  ➜  digite o número
+```
+
+Guarde o código do país (BR, US, PT, FR, IT, GB, ES, DE…) e o idioma. Para "outro país", descubra o código ISO de 2 letras e o idioma (igual ao nutra N1). O **Reclame Aqui (método 1) só existe no Brasil** — se o usuário escolher outro país no método 1, avise e use o método 2.
 
 ### Passo 2 — nicho
 
@@ -205,6 +230,21 @@ Obrigatório no método 2; no método 1 é opcional (mostre a linha `[Enter]  pu
 
 Se o usuário escolher várias, rode uma mineração para cada uma, em sequência.
 
+**Se o país não for o Brasil, traduza cada palavra-chave para o idioma do país**, do jeito que os anúncios de low ticket são escritos lá (não tradução literal). Mostre antes de rodar, como no nutra:
+
+```
+  🗣️   buscando em {idioma} · {bandeira} {país}
+      "pack" → "bundle" · "digital bundle"
+      "9,90" → "$9.90" · "9.99"
+```
+
+Guias de tradução:
+- **Preço**: converta para o formato/moeda local — "9,90" nos EUA = "$9.90" ou "9.99"; no Reino Unido "£9.90"; na Europa (FR/DE/IT/ES) "9,90 €" ou "9,99". Use o preço típico de low ticket do país (US/UK ~ $7–$27; Europa ~ 7–27 €).
+- **Pack/kit**: EN "bundle", "pack", "digital pack", "printable pack"; ES "pack", "paquete"; FR "pack", "lot"; DE "paket", "set"; IT "pacchetto", "bundle".
+- **Quantidade** ("+500", "mega pack"): mantém o número — "500+ templates", "mega bundle", "over 1000".
+- **Inclua o nicho na palavra traduzida** quando ajudar (ex.: nicho educação nos EUA → "printable study guide", "nursing cheat sheets"), já que os termos de nicho em português não valem fora do Brasil.
+- Não traduza nomes de marca.
+
 ### Passo 4 — rodar (em segundo plano)
 
 **NUNCA use Claude in Chrome, Playwright MCP ou qualquer ferramenta de navegador para isto.** A mineração roda num navegador invisível dentro do script, sem abrir nada na tela do usuário.
@@ -212,7 +252,7 @@ Se o usuário escolher várias, rode uma mineração para cada uma, em sequênci
 Mostre:
 
 ```
-  ⏳  Minerando "{palavra}" · {nicho}
+  ⏳  Minerando "{palavra}" · {bandeira} {país} · {nicho}
       roda em segundo plano · leva de 2 a 6 minutos
 ```
 
@@ -220,8 +260,9 @@ E rode (timeout de 10 min):
 
 Método 2 — biblioteca:
 ```bash
-bash ${CLAUDE_SKILL_DIR}/scripts/run.sh meta --palavra "{PALAVRA}" --nicho {ID_DO_NICHO}
+bash ${CLAUDE_SKILL_DIR}/scripts/run.sh meta --pais {CODIGO_PAIS} --palavra "{PALAVRA_TRADUZIDA}" --nicho {ID_DO_NICHO}
 ```
+(No Brasil, `--pais BR` e a palavra em português. Fora do Brasil, use `--nicho geral` e passe a(s) palavra(s) já traduzida(s); pode repetir `--palavra` para as variações.)
 
 Método 1 — Reclame Aqui:
 ```bash
@@ -248,7 +289,7 @@ Se a saída trouxer `NENHUM_ANUNCIO`, `NENHUMA_RECLAMACAO` ou `BLOQUEIO`, diga o
 Comece com o resumo:
 
 ```
-  ✅  MINERAÇÃO CONCLUÍDA · "{palavra}" · {nicho}
+  ✅  MINERAÇÃO CONCLUÍDA · "{palavra}" · {bandeira} {país} · {nicho}
   ──────────────────────────────────────────────
   {ANUNCIOS_LIDOS} anúncios lidos
   {LOWTICKET} com cara de low ticket
