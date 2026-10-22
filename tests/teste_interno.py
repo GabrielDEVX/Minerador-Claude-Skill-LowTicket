@@ -778,6 +778,12 @@ def t_internacional():
     checar(m2 or p2 < cfg["min_score_lowticket"], "US: loja física (Nike) descartada")
     p3, m3, _ = cl("Über 100 Notion Vorlagen als Sofort-Download. Nur 12,90 €. Jetzt sichern!", "Lena", "https://lena.payhip.com/b/x", "Notion Vorlagen")
     checar(p3 >= cfg["min_score_lowticket"] and not m3, f"DE: infoproduto (Vorlagen) mantido ({p3})")
+    # lista de palavras-chave em inglês disponível no config (e para quem já tinha o nichos.json)
+    _cfg2, _n = _cc()
+    palavras_en = _n.get("palavras_en", [])
+    checar(len(palavras_en) >= 30 and "bundle" in palavras_en and "printables" in palavras_en and "instant download" in palavras_en,
+           "lista palavras_en (inglês) disponível no config")
+    checar(_n.get("idiomas_en") and "US" in _n["idiomas_en"] and "GB" in _n["idiomas_en"], "idiomas_en marca os países de língua inglesa")
 
 
 def t_comandos():

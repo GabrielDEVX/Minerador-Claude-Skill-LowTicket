@@ -43,6 +43,9 @@ def carregar_config():
     cfg = _ler(RAIZ / "config" / "config.json")        # padrões novos de cada versão
     cfg.update(_ler(pasta / "config.json"))             # valores que o usuário mudou
     nichos = _ler(pasta / "nichos.json")
+    base_nichos = _ler(RAIZ / "config" / "nichos.json")
+    for k, v in base_nichos.items():          # campos novos de cada versão (ex.: palavras_en) chegam a quem já tinha o arquivo
+        nichos.setdefault(k, v)
     cfg["pasta_saida"] = os.path.expanduser(cfg.get("pasta_saida", "~/mineracao"))
     return cfg, nichos
 

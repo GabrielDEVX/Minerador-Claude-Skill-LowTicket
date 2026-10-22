@@ -94,6 +94,9 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
 
+**1.13.0**
+- **Lista de palavras-chave de low ticket em inglês**: ao escolher um país de língua inglesa (EUA, Reino Unido, Canadá, Austrália…), aparece uma lista pronta de termos em inglês (bundle, printable, templates, planner, 500+, instant download, only \$9…) — sem precisar traduzir na hora. Para outras línguas, segue traduzindo a escolha.
+
 **1.12.0**
 - **Low ticket internacional**: além do Brasil, minere em EUA, Europa e outros países. Você escolhe o país, o Claude traduz as palavras-chave para o idioma local, e a busca roda lá. O filtro reconhece infoproduto em inglês/alemão/espanhol/francês/italiano, preços em $, € e £, e plataformas internacionais (Gumroad, Payhip, Lemon Squeezy, Stan.store, Etsy, Ko-fi…). O preço aparece na moeda do país.
 

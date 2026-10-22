@@ -1,14 +1,106 @@
 {
   "nichos": [
-    {"id": "geral", "nome": "Geral (todos os nichos)", "termos": []},
-    {"id": "saude", "nome": "Saúde / emagrecimento", "termos": ["emagrecer", "dieta", "receitas fit", "jejum", "detox", "barriga"]},
-    {"id": "artesanato", "nome": "Artesanato", "termos": ["moldes", "crochê", "amigurumi", "bordado", "papelaria", "laços"]},
-    {"id": "culinaria", "nome": "Culinária", "termos": ["receitas", "bolos", "doces", "marmitas", "salgados", "confeitaria"]},
-    {"id": "beleza", "nome": "Beleza", "termos": ["unhas", "maquiagem", "cabelo", "skincare", "sobrancelha", "cílios"]},
-    {"id": "educacao", "nome": "Educação / concurso", "termos": ["concurso", "apostila", "questões", "atividades", "alfabetização", "enem"]},
-    {"id": "renda", "nome": "Renda / digital", "termos": ["renda extra", "plr", "revenda", "inteligência artificial", "chatgpt", "vender online"]},
-    {"id": "esoterico", "nome": "Esotérico", "termos": ["tarô", "oração", "signos", "simpatia", "manifestação", "numerologia"]},
-    {"id": "design", "nome": "Design / social media", "termos": ["canva", "artes editáveis", "posts", "templates", "social media", "feed"]}
+    {
+      "id": "geral",
+      "nome": "Geral (todos os nichos)",
+      "termos": []
+    },
+    {
+      "id": "saude",
+      "nome": "Saúde / emagrecimento",
+      "termos": [
+        "emagrecer",
+        "dieta",
+        "receitas fit",
+        "jejum",
+        "detox",
+        "barriga"
+      ]
+    },
+    {
+      "id": "artesanato",
+      "nome": "Artesanato",
+      "termos": [
+        "moldes",
+        "crochê",
+        "amigurumi",
+        "bordado",
+        "papelaria",
+        "laços"
+      ]
+    },
+    {
+      "id": "culinaria",
+      "nome": "Culinária",
+      "termos": [
+        "receitas",
+        "bolos",
+        "doces",
+        "marmitas",
+        "salgados",
+        "confeitaria"
+      ]
+    },
+    {
+      "id": "beleza",
+      "nome": "Beleza",
+      "termos": [
+        "unhas",
+        "maquiagem",
+        "cabelo",
+        "skincare",
+        "sobrancelha",
+        "cílios"
+      ]
+    },
+    {
+      "id": "educacao",
+      "nome": "Educação / concurso",
+      "termos": [
+        "concurso",
+        "apostila",
+        "questões",
+        "atividades",
+        "alfabetização",
+        "enem"
+      ]
+    },
+    {
+      "id": "renda",
+      "nome": "Renda / digital",
+      "termos": [
+        "renda extra",
+        "plr",
+        "revenda",
+        "inteligência artificial",
+        "chatgpt",
+        "vender online"
+      ]
+    },
+    {
+      "id": "esoterico",
+      "nome": "Esotérico",
+      "termos": [
+        "tarô",
+        "oração",
+        "signos",
+        "simpatia",
+        "manifestação",
+        "numerologia"
+      ]
+    },
+    {
+      "id": "design",
+      "nome": "Design / social media",
+      "termos": [
+        "canva",
+        "artes editáveis",
+        "posts",
+        "templates",
+        "social media",
+        "feed"
+      ]
+    }
   ],
   "palavras": [
     "pack",
@@ -35,5 +127,63 @@
     "Kirvano": "kirvano",
     "Greenn": "greenn",
     "Lastlink": "lastlink"
-  }
+  },
+  "palavras_en": [
+    "bundle",
+    "mega bundle",
+    "digital bundle",
+    "printable",
+    "printables",
+    "printable bundle",
+    "template",
+    "templates",
+    "canva template",
+    "canva templates",
+    "notion template",
+    "planner",
+    "digital planner",
+    "budget planner",
+    "workbook",
+    "worksheet",
+    "worksheets",
+    "cheat sheet",
+    "study guide",
+    "lesson plan",
+    "flashcards",
+    "spreadsheet",
+    "tracker",
+    "ebook",
+    "e-book",
+    "guide",
+    "toolkit",
+    "swipe file",
+    "presets",
+    "lightroom presets",
+    "pack",
+    "kit",
+    "500+",
+    "1000+",
+    "100+",
+    "coloring pages",
+    "meal plan",
+    "workout plan",
+    "instant download",
+    "digital download",
+    "$7",
+    "$9",
+    "$9.90",
+    "$17",
+    "$27",
+    "only $9",
+    "just $7",
+    "only $7"
+  ],
+  "idiomas_en": [
+    "US",
+    "GB",
+    "CA",
+    "AU",
+    "IE",
+    "NZ"
+  ]
 }

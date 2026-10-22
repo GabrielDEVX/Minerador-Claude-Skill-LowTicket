@@ -207,7 +207,35 @@ Use os `nichos` da saída de `run.sh config` e monte a lista com o campo `nome` 
 
 ### Passo 3 — palavra-chave
 
-Obrigatório no método 2; no método 1 é opcional (mostre a linha `[Enter]  pular` também). Use a lista `palavras` de `nichos` (saída de `run.sh config`) e mostre em duas colunas, na ordem do arquivo:
+Obrigatório no método 2; no método 1 é opcional (mostre a linha `[Enter]  pular` também).
+
+**Qual lista mostrar:**
+- País **Brasil** (ou outro de língua portuguesa) → use a lista `palavras` de `nichos`.
+- País de **língua inglesa** (código em `idiomas_en` de `nichos`: US, GB, CA, AU, IE, NZ) → use a lista **`palavras_en`** de `nichos`: ela já traz as palavras de low ticket em inglês prontas (bundle, printable, templates, planner, 500+, instant download, only $9…). Mostre numerada, em duas colunas, e **não precisa traduzir** — já estão no idioma.
+- País de **outra língua** (DE/FR/ES/IT…) → mostre a lista `palavras` (PT) como referência e **traduza** a escolha para o idioma local (passo de tradução abaixo).
+
+Mostre em duas colunas, na ordem do arquivo. Exemplo com a lista em inglês:
+
+```
+  início › mineração › low ticket › {método} › 🇺🇸 {país} › {nicho}
+
+  🔑  PALAVRA-CHAVE (inglês)
+  ──────────────────────────────────────────────
+  [1]   bundle            [7]   planner
+  [2]   mega bundle       [8]   worksheets
+  [3]   printable         [9]   cheat sheet
+  [4]   printables        [10]  500+
+  [5]   templates         [11]  instant download
+  [6]   canva templates   [12]  only $9
+
+  [+]  ver todas ({total})
+  [0]  ← voltar
+
+  ──────────────────────────────────────────────
+  ➜  digite o(s) número(s) ou escreva a sua palavra
+```
+
+(com `[+]` mostre todas as `palavras_en`.) Para o Brasil, a lista em português:
 
 ```
   início › mineração › low ticket › {método} › {nicho}
