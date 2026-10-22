@@ -1,7 +1,7 @@
 ---
 name: escala
 allowed-tools: Bash(bash ${CLAUDE_SKILL_DIR}/scripts/run.sh *)
-description: Central de operação low ticket e nutra com menu numerado (setup, minerar ofertas escaladas na Biblioteca de Anúncios da Meta ou no Reclame Aqui, minerar nutra por mecanismo em qualquer país e idioma, analisar e dar nota à oferta, gerar entregável em infoapp, modelar funil e página de vendas, gerar criativos, configurações). Use quando o usuário digitar /escala, pedir o menu, ou pedir para minerar ofertas, packs, kits, infoprodutos baratos (9,90, 19,90) ou ofertas de nutra (truque do cavalo, truque da gelatina etc.) em países como EUA, Alemanha e França.
+description: Central de operação low ticket e nutra com menu numerado (setup, minerar ofertas escaladas na Biblioteca de Anúncios da Meta ou no Reclame Aqui, minerar nutra por mecanismo em qualquer país e idioma, analisar e dar nota à oferta, clonar a oferta num fluxo, gerar entregável em infoapp, modelar funil e página de vendas, gerar criativos, fazer breakdown de copy/VSL, configurações). Use quando o usuário digitar /escala, pedir o menu, ou pedir para minerar ofertas, packs, kits, infoprodutos baratos (9,90, 19,90) ou ofertas de nutra (truque do cavalo, truque da gelatina etc.) em países como EUA, Alemanha e França.
 ---
 
 # Central Low Ticket
@@ -46,10 +46,12 @@ Os dados do usuário (ambiente Python, configurações) ficam em `~/.lowticket/`
   [1]  ⚙️   Setup e diagnóstico
   [2]  🔎  Minerar ofertas escaladas
   [3]  🧪  Analisar e definir produto
-  [4]  📦  Gerar entregável
-  [5]  🧭  Modelar funil
-  [6]  🎨  Gerar criativos
-  [7]  🛠️   Configurações
+  [4]  🧬  Clonar oferta (do garimpo ao pronto)
+  [5]  📦  Gerar entregável (área de membros)
+  [6]  🧭  Modelar funil + página de vendas
+  [7]  🎨  Gerar criativos
+  [8]  🔬  Breakdown de copy / VSL
+  [9]  🛠️   Configurações
 
   ──────────────────────────────────────────────
   ➜  digite o número da opção
@@ -283,8 +285,9 @@ Depois:
   ──────────────────────────────────────────────
   copie o nome da página ou o link do anúncio e:
 
-  [3]  🧪  analisar e definir produto
-  [5]  🧭  modelar funil (se já tem o link da página)
+  [3]  🧪  analisar e dar nota à oferta
+  [4]  🧬  clonar a oferta (gera produto + app + página + criativos)
+  [8]  🔬  breakdown da copy/VSL da oferta
   [r]  📊  abrir o relatório visual
   [s]  ⭐  salvar uma oferta nos favoritos (ex.: "salva a 3")
 
@@ -548,8 +551,8 @@ E o bloco final:
   ──────────────────────────────────────────────
   [1]  🔁  mesmo mecanismo em outro país
   [2]  🧪  outro mecanismo da mesma categoria
-  [3]  🧪  analisar e definir produto
-  [5]  🧭  modelar funil (se já tem o link da página)
+  [3]  🧪  analisar e dar nota
+  [4]  🧬  clonar a oferta (do garimpo ao pronto)
   [m]  ↩   menu principal
 ```
 
@@ -601,12 +604,42 @@ Isso cria `~/mineracao/produtos/{slug}/produto.json`. Preencha com a ferramenta 
   ✅  Produto definido: {nome}  ·  R$ {preco}  ·  {checkout}
 
   próximos passos:
-  [4]  📦  gerar o entregável (infoapp)
-  [5]  🧭  modelar o funil e a página de vendas
-  [6]  🎨  gerar os criativos
+  [5]  📦  gerar o entregável (infoapp)
+  [6]  🧭  modelar o funil e a página de vendas
+  [7]  🎨  gerar os criativos
 ```
 
-## 4 · Gerar entregável (infoapp)
+## 4 · Clonar oferta (do garimpo ao pronto)
+
+Fluxo express: pega uma oferta que você minerou e, num caminho só, cria o seu produto, o entregável (área de membros), a página de vendas e os criativos. É a opção 3 + 5 + 6 + 7 encadeadas, para quem já decidiu modelar.
+
+1. Precisa de uma mineração feita. Pergunte qual oferta clonar (nome da página da última mineração, ou peça para rodar a 2 antes) e **qual o nome do novo produto** (o nome do usuário, não o do concorrente).
+2. Crie a ficha já pré-preenchida:
+   ```bash
+   bash ${CLAUDE_SKILL_DIR}/scripts/run.sh clonar --ultima --pagina "{NOME DA PÁGINA}" --nome "{NOME DO SEU PRODUTO}"
+   ```
+   (ou `--pasta {PASTA}` em vez de `--ultima`.) Isso lê a análise e já preenche nicho, preço, preço âncora, plataforma, cores do nicho e guarda as copies da oferta como **referência de ângulo** (campo `referencias`). A saída traz `SLUG:` e o que ficou `FALTA_PREENCHER`.
+3. Complete o `produto.json` (promessa, público, dor, mecanismo, order_bumps, bônus) com a ferramenta de edição, a partir do ângulo da referência — **com palavras suas, sem copiar a copy do concorrente**. Pergunte só o essencial (confirme preço e checkout).
+4. Gere tudo em sequência, usando as seções 5, 6 e 7:
+   - escreva `conteudo.json` e rode `run.sh infoapp {slug}` (área de membros);
+   - escreva `funil.json` e rode `run.sh pagina {slug}` (página de vendas);
+   - escreva `criativos.md` (ganchos, roteiros, legendas, briefings).
+5. Entregue um resumo com os caminhos dos três (app, página, criativos) e ofereça abrir cada um. Feche assim:
+
+```
+  ✅  OFERTA CLONADA · {nome}
+  ──────────────────────────────────────────────
+  📦  área de membros: {.../infoapp/index.html}
+  🧭  página de vendas: {.../pagina/index.html}
+  🎨  criativos: {.../criativos.md}
+
+  próximo: suba a página no seu checkout e o app no Netlify/Vercel.
+  [8] 🔬 quer dissecar a copy da oferta de referência? faço o breakdown.
+```
+
+Regra: a referência serve para você entender o ângulo que já vende, não para copiar. Tudo que a ferramenta gerar sai com as suas palavras.
+
+## 5 · Gerar entregável (infoapp)
 
 Entrega o produto como um **app** que o comprador adiciona à tela do celular (funciona offline). Precisa de um produto definido (opção 3b).
 
@@ -627,7 +660,7 @@ Entrega o produto como um **app** que o comprador adiciona à tela do celular (f
    ```
 3. A saída traz `INFOAPP:` (o index.html) e `ZIP:` (pronto para publicar). Ofereça abrir com o comando do sistema (`open`/`start`/`xdg-open`) o arquivo da linha `INFOAPP:`. Explique que, para entregar ao comprador, ele sobe a pasta `infoapp/` (ou o zip) em um host grátis como **Netlify Drop** (arrasta a pasta em app.netlify.com/drop) ou Vercel, e usa o link gerado como área de membros. Se vier `ARQUIVOS_FALTANDO`, diga quais caminhos não foram encontrados.
 
-## 5 · Modelar funil
+## 6 · Modelar funil
 
 Entrega a estrutura do funil e a **página de vendas em HTML**. Precisa do produto (opção 3b).
 
@@ -669,7 +702,7 @@ Mostre o caminho (`PAGINA:`), ofereça abrir com o comando do sistema (`open`/`s
 bash ${CLAUDE_SKILL_DIR}/scripts/run.sh utm "{link_checkout}"
 ```
 
-## 6 · Gerar criativos
+## 7 · Gerar criativos
 
 Gera os criativos do anúncio a partir do produto e da oferta validada. Escreva em `~/mineracao/produtos/{slug}/criativos.md` com a ferramenta de edição, contendo:
 
@@ -684,7 +717,38 @@ Em qualquer uma destas opções, se ainda não houver um produto definido, leve 
 
 ---
 
-## 7 · Configurações
+## 8 · Breakdown de copy / VSL
+
+Disseca a copy de um anúncio, de uma página de vendas ou de uma VSL para você modelar o ângulo. Use quando o usuário colar um texto ou pedir para "analisar essa copy / essa VSL".
+
+1. Rode o extrator de sinais (passe o link se tiver):
+   ```bash
+   bash ${CLAUDE_SKILL_DIR}/scripts/run.sh breakdown "{COPY COLADA}" --link "{LINK SE TIVER}"
+   ```
+   (ou `-` para ler de um arquivo grande via pipe.) A saída `SINAIS` traz: gancho provável, tamanho (copy curta / média / VSL longa), preços citados, plataforma, **gatilhos detectados** (urgência, prova social, mecanismo único, inimigo comum…), **estrutura detectada** (gancho → agitação → virada → mecanismo → prova → oferta → fechamento) e o que está **faltando na estrutura**.
+2. Com os sinais + a sua leitura da copy, monte o breakdown e **mostre no chat** assim:
+
+```
+  🔬  BREAKDOWN · {tipo: VSL / advertorial / copy de anúncio}
+  ──────────────────────────────────────────────
+  🎯 Ângulo: {em 1 linha}
+  👤 Público / nível de consciência: {…}
+  🩹 Dor principal: {…}
+  🏆 Promessa: {…}
+  🧬 Mecanismo (o "porquê funciona"): {…}
+  🪝 Gancho: {o que prende nos 3 primeiros segundos}
+  🧱 Estrutura: {sequência real dos blocos}
+  🔫 Gatilhos usados: {os principais}
+  💰 Oferta: {preço, âncora, bônus, garantia}
+  ⚠️ Pontos fracos / o que faltou: {ex.: sem prova, sem virada}
+  ✍️ Como modelar (com suas palavras): {2–3 bullets de como adaptar o ângulo ao seu produto}
+```
+
+3. Ofereça salvar em `~/mineracao/breakdowns/{nome}.md` (crie a pasta) e, se o usuário já tem um produto em andamento, ofereça usar esse breakdown para escrever o `funil.json` (opção 6) ou os criativos (opção 7).
+
+Nunca copie frases do concorrente: o breakdown é para entender e **remontar** o ângulo com originalidade. Se o texto tiver promessas de saúde fortes (cura, garantia de resultado), avise que, para a Meta, convém suavizar na sua versão.
+
+## 9 · Configurações
 
 Rode `bash ${CLAUDE_SKILL_DIR}/scripts/run.sh config` e mostre com os valores do campo `config`:
 

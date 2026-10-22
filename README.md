@@ -94,6 +94,10 @@ Os resultados ficam em `~/mineracao/` (para abrir: `open ~/mineracao`).
 
 ## Novidades
 
+**1.11.0**
+- **Clonar oferta (opção 4)**: pega uma oferta minerada e, num fluxo só, cria a ficha do produto já pré-preenchida (nicho, preço, plataforma, cores, ângulo de referência) e gera o entregável, a página de vendas e os criativos.
+- **Breakdown de copy/VSL (opção 8)**: cole a copy de um anúncio ou VSL e receba a dissecação — gancho, estrutura (gancho → agitação → virada → mecanismo → prova → oferta → fechamento), gatilhos, preços, o que faltou, e como modelar com palavras próprias.
+
 **1.10.0**
 - **Trava de atualização**: a ferramenta checa a versão mais recente no GitHub e **bloqueia a mineração** se estiver desatualizada, pedindo para atualizar antes (1 comando). Sem internet, não bloqueia. O menu também avisa quando saiu versão nova.
 

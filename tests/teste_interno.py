@@ -676,6 +676,34 @@ def t_produto():
     out = sh("utm", "https://pay.cakto.com.br/x?ja=tem")
     checar("ja=tem&utm_source" in out, "preserva parâmetros já existentes no link")
 
+    # CLONAR (do garimpo ao pronto): usa a mineração salva e pré-preenche o produto
+    r2 = rodar(["--palavra", "pack", "--nicho", "culinaria"])
+    pasta2 = r2["pasta"]
+    out = sh("clonar", "--pasta", str(pasta2), "--pagina", "Mariana Oliveira", "--nome", "Meu Pack Clonado")
+    checar("CLONADO" in out and "SLUG: meu-pack-clonado" in out, "clonar: cria a ficha pré-preenchida")
+    cl = Path(os.environ["HOME"]) / "mineracao/produtos/meu-pack-clonado/produto.json"
+    d = json.loads(cl.read_text(encoding="utf-8"))
+    checar(d["nome"] == "Meu Pack Clonado" and d["nicho"] == "culinaria" and d.get("referencias"),
+           "clonar: nome do usuário, nicho da pasta e referência de ângulo guardada")
+    checar(d.get("cores", {}).get("primaria") and d.get("analise", {}).get("veredito"),
+           "clonar: cores do nicho e veredito da análise embutidos")
+    checar("FALTA_PREENCHER" in out, "clonar: aponta o que o Claude ainda preenche")
+    out = sh("clonar", "--pasta", str(pasta2), "--pagina", "Inexistente", "--nome", "X")
+    checar("PAGINA_NAO_ENCONTRADA" in out, "clonar: avisa quando a página não existe")
+
+    # BREAKDOWN de copy
+    copy = ("Cansado de tentar de tudo e nada funcionar? Com o Metodo Caixa Preta voce resolve em 7 dias. "
+            "Mais de 1.000 pessoas ja usam. Os medicos ficam calados. De R$ 97 por apenas R$ 19,90. "
+            "Garantia de 7 dias. Clique agora, ultimas vagas!")
+    out = sh("breakdown", copy, "--link", "https://pay.kiwify.com.br/x")
+    j = json.loads(out[out.index("{"):out.rindex("}") + 1])
+    checar(j["gancho_provavel"].endswith("?") and j["tamanho"], "breakdown: pega o gancho e o tamanho")
+    checar("R$ 19,90" in j["precos_citados"] and j["plataforma"] == "Kiwify", "breakdown: lê preços e plataforma")
+    g = j["gatilhos_detectados"]
+    checar(any("urgência" in x for x in g) and any("prova social" in x for x in g) and any("mecanismo" in x for x in g),
+           "breakdown: detecta urgência, prova social e mecanismo")
+    checar(j["estrutura_detectada"] and "AGORA_O_CLAUDE" in out, "breakdown: detecta a estrutura e pede a interpretação ao Claude")
+
 
 
 def t_comandos():
@@ -703,6 +731,7 @@ def t_comandos():
     checar("urlscan" in sh("qualquercoisa"), "urlscan listado nos comandos")
     checar(all(c in sh("qualquercoisa") for c in ("radar", "favoritos", "comparar", "versao")), "novos comandos listados no uso")
     checar(all(c in sh("qualquercoisa") for c in ("analisar", "produto", "infoapp", "pagina", "utm")), "comandos das opções 3-6 listados")
+    checar(all(c in sh("qualquercoisa") for c in ("clonar", "breakdown")), "comandos clonar e breakdown listados")
     r = rodar(["--diagnostico"])
     checar("META_OK anuncios_lidos=" in r["texto"] and "bloqueado=False" in r["texto"], "diagnóstico da biblioteca")
     for f in ("run.sh", "setup.sh"):
